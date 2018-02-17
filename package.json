@@ -36,14 +36,21 @@
     "electron-updater": "^2.20.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-redux": "^5.0.7",
     "react-scripts-ts": "2.13.0",
-    "typeface-roboto": "^0.0.54"
+    "redux": "^3.7.2",
+    "redux-logger": "^3.0.6",
+    "typeface-roboto": "^0.0.54",
+    "typescript-fsa": "^2.0.0",
+    "typescript-fsa-reducers": "^0.4.5"
   },
   "devDependencies": {
     "@types/jest": "^22.1.3",
     "@types/node": "^9.4.6",
     "@types/react": "^16.0.38",
     "@types/react-dom": "^16.0.4",
+    "@types/react-redux": "^5.0.15",
+    "@types/redux-logger": "^3.0.5",
     "@types/webpack-env": "^1.13.5",
     "concurrently": "^3.5.1",
     "electron": "^1.8.2",

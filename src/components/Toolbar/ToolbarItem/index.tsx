@@ -7,6 +7,8 @@ import './styles.css';
 interface Props
 {
   title: string;
+  active: boolean;
+  onClick: () => void;
 }
 
 export default class ToolbarItem extends React.Component<Props>
@@ -14,7 +16,14 @@ export default class ToolbarItem extends React.Component<Props>
   render()
   {
     return (
-      <Tooltip className="toolbar-item" title={this.props.title}>
+      <Tooltip
+        className={[
+          'toolbar-item',
+          this.props.active ? 'active' : ''
+        ].join( ' ' )}
+        title={this.props.title}
+        onClick={this.props.onClick}
+      >
         {this.props.children}
       </Tooltip>
     );
