@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import ToolbarItem from 'components/Toolbar/ToolbarItem';
 import { setTool } from 'store/reducers/drawing';
-import { Tool } from 'utils/draw';
+import { DrawingType, DrawingTool } from 'utils/draw';
 
 import './styles.css';
 
@@ -12,7 +12,7 @@ const downArrow = require( 'assets/down_arrow.svg' );
 
 interface PropsFromState
 {
-  tool: Tool | null;
+  tool: DrawingTool | null;
 }
 
 interface PropsFromDispatch
@@ -30,16 +30,16 @@ class Toolbar extends React.Component<Props>
       <div className="toolbar">
         <ToolbarItem
           title="Above"
-          active={this.props.tool === Tool.Above}
-          onClick={() => this.props.setTool( Tool.Above )}
+          active={this.props.tool === DrawingType.Above}
+          onClick={() => this.props.setTool( DrawingType.Above )}
         >
           <img src={upArrow} style={{ width: '2rem', height: '2rem' }} />
         </ToolbarItem>
 
         <ToolbarItem
           title="At"
-          active={this.props.tool === Tool.At}
-          onClick={() => this.props.setTool( Tool.At )}
+          active={this.props.tool === DrawingType.At}
+          onClick={() => this.props.setTool( DrawingType.At )}
         >
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <img src={downArrow} style={{ width: '2rem', height: '2rem', marginBottom: '-20px' }} />
@@ -49,16 +49,16 @@ class Toolbar extends React.Component<Props>
 
         <ToolbarItem
           title="Below"
-          active={this.props.tool === Tool.Below}
-          onClick={() => this.props.setTool( Tool.Below )}
+          active={this.props.tool === DrawingType.Below}
+          onClick={() => this.props.setTool( DrawingType.Below )}
         >
           <img src={downArrow} style={{ width: '2rem', height: '2rem' }} />
         </ToolbarItem>
 
         <ToolbarItem
           title="Between"
-          active={this.props.tool === Tool.Between}
-          onClick={() => this.props.setTool( Tool.Between )}
+          active={this.props.tool === DrawingType.Between}
+          onClick={() => this.props.setTool( DrawingType.Between )}
         >
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <img src={downArrow} style={{ width: '2rem', height: '2rem', marginBottom: '-8px' }} />

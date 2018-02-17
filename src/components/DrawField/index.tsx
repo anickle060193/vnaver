@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import { addDrawing } from 'store/reducers/drawing';
-import { Tool, Drawing } from 'utils/draw';
+import { DrawingType, Drawing, DrawingTool } from 'utils/draw';
 import { createBitmapFromSrc } from 'utils/image';
 
 import './styles.css';
@@ -14,7 +14,7 @@ const ARROW_SIZE = 30;
 
 interface PropsFromState
 {
-  tool: Tool | null;
+  tool: DrawingTool | null;
   drawings: Drawing[];
 }
 
@@ -115,20 +115,20 @@ class DrawField extends React.Component<Props, State>
 
     let { x, y } = drawing;
 
-    if( drawing.type === Tool.Above )
+    if( drawing.type === DrawingType.Above )
     {
       context.drawImage( this.upArrowImage, x - ARROW_SIZE / 2, y - ARROW_SIZE / 2, ARROW_SIZE, ARROW_SIZE );
     }
-    else if( drawing.type === Tool.Below )
+    else if( drawing.type === DrawingType.Below )
     {
       context.drawImage( this.downArrowImage, x - ARROW_SIZE / 2, y - ARROW_SIZE + 8, ARROW_SIZE, ARROW_SIZE );
     }
-    else if( drawing.type === Tool.At )
+    else if( drawing.type === DrawingType.At )
     {
       context.drawImage( this.downArrowImage, x - ARROW_SIZE / 2, y - ARROW_SIZE + 3, ARROW_SIZE, ARROW_SIZE );
       context.drawImage( this.upArrowImage, x - ARROW_SIZE / 2, y - 16, ARROW_SIZE, ARROW_SIZE );
     }
-    else if( drawing.type === Tool.Between )
+    else if( drawing.type === DrawingType.Between )
     {
       context.drawImage( this.downArrowImage, x - ARROW_SIZE / 2, y - ARROW_SIZE, ARROW_SIZE, ARROW_SIZE );
       context.drawImage( this.upArrowImage, x - ARROW_SIZE / 2, y + drawing.height, ARROW_SIZE, ARROW_SIZE );
@@ -150,7 +150,7 @@ class DrawField extends React.Component<Props, State>
 
     if( this.props.tool && this.state.mouseX !== null && this.state.mouseY !== null )
     {
-      if( this.props.tool === Tool.Between )
+      if( this.props.tool === DrawingType.Between )
       {
         if( this.state.startY !== null && this.state.startX !== null )
         {
@@ -171,7 +171,9 @@ class DrawField extends React.Component<Props, State>
           } );
         }
       }
-      else
+      else if( this.props.tool === DrawingType.At ||
+        this.props.tool === DrawingType.Above ||
+        this.props.tool === DrawingType.Below )
       {
         this.drawDrawing( context, {
           type: this.props.tool,
@@ -221,7 +223,7 @@ class DrawField extends React.Component<Props, State>
   {
     if( this.props.tool )
     {
-      if( this.props.tool === Tool.Between )
+      if( this.props.tool === DrawingType.Between )
       {
         if( this.state.startY !== null && this.state.startX !== null )
         {
@@ -234,7 +236,9 @@ class DrawField extends React.Component<Props, State>
           } );
         }
       }
-      else
+      else if( this.props.tool === DrawingType.At ||
+        this.props.tool === DrawingType.Above ||
+        this.props.tool === DrawingType.Below )
       {
         this.props.addDrawing( {
           type: this.props.tool!,

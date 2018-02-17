@@ -1,4 +1,4 @@
-export const enum Tool
+export const enum DrawingType
 {
   Above = 'Above',
   At = 'At',
@@ -6,31 +6,38 @@ export const enum Tool
   Between = 'Between'
 }
 
-export interface DrawingBase<T extends Tool>
+export const enum Tool
+{
+  Move = 'Move'
+}
+
+export type DrawingTool = DrawingType | Tool;
+
+export interface DrawingBase<T extends DrawingType>
 {
   type: T;
   x: number;
   y: number;
 }
 
-type BasicTools = Tool.Above | Tool.At | Tool.Below;
+type BasicDrawingTypes = DrawingType.Above | DrawingType.At | DrawingType.Below;
 
-export interface BasicDrawing<T extends BasicTools> extends DrawingBase<T>
+export interface BasicDrawing<T extends BasicDrawingTypes> extends DrawingBase<T>
 {
   type: T;
   x: number;
   y: number;
 }
 
-export interface BetweenDrawing extends DrawingBase<Tool.Between>
+export interface BetweenDrawing extends DrawingBase<DrawingType.Between>
 {
-  type: Tool.Between;
+  type: DrawingType.Between;
   x: number;
   y: number;
   height: number;
 }
 
 export type Drawing = (
-  BasicDrawing<BasicTools> |
+  BasicDrawing<BasicDrawingTypes> |
   BetweenDrawing
 );
