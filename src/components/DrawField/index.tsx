@@ -32,6 +32,9 @@ interface State
 
   mouseX: number | null;
   mouseY: number | null;
+
+  startX: number | null;
+  startY: number | null;
 }
 
 class DrawField extends React.Component<Props, State>
@@ -50,7 +53,10 @@ class DrawField extends React.Component<Props, State>
       height: 100,
 
       mouseX: null,
-      mouseY: null
+      mouseY: null,
+
+      startX: null,
+      startY: null
     };
 
     this.drawFieldRef = null;
@@ -93,6 +99,7 @@ class DrawField extends React.Component<Props, State>
           ref={( ref ) => this.canvasRef = ref}
           width={this.state.width}
           height={this.state.height}
+          onMouseDown={this.onMouseDown}
           onClick={this.onClick}
         />
       </div>
@@ -145,12 +152,24 @@ class DrawField extends React.Component<Props, State>
     {
       if( this.props.tool === Tool.Between )
       {
-        this.drawDrawing( context, {
-          type: this.props.tool,
-          x: this.state.mouseX,
-          y: this.state.mouseY,
-          height: 50
-        } );
+        if( this.state.startY !== null && this.state.startX !== null )
+        {
+          this.drawDrawing( context, {
+            type: this.props.tool,
+            x: this.state.startX,
+            y: Math.min( this.state.mouseY, this.state.startY ),
+            height: Math.abs( this.state.mouseY - this.state.startY )
+          } );
+        }
+        else
+        {
+          this.drawDrawing( context, {
+            type: this.props.tool,
+            x: this.state.mouseX,
+            y: this.state.mouseY,
+            height: 0
+          } );
+        }
       }
       else
       {
@@ -190,18 +209,30 @@ class DrawField extends React.Component<Props, State>
     } );
   }
 
+  private onMouseDown = ( e: React.MouseEvent<HTMLCanvasElement> ) =>
+  {
+    this.setState( {
+      startX: e.clientX,
+      startY: e.clientY
+    } );
+  }
+
   private onClick = ( e: React.MouseEvent<HTMLCanvasElement> ) =>
   {
     if( this.props.tool )
     {
       if( this.props.tool === Tool.Between )
       {
-        this.props.addDrawing( {
-          type: this.props.tool!,
-          x: e.clientX,
-          y: e.clientY,
-          height: 50
-        } );
+        if( this.state.startY !== null && this.state.startX !== null )
+        {
+          let diff = Math.abs( e.clientY - this.state.startY );
+          this.props.addDrawing( {
+            type: this.props.tool,
+            x: this.state.startX,
+            y: Math.min( e.clientY, this.state.startY ),
+            height: diff
+          } );
+        }
       }
       else
       {
@@ -212,6 +243,11 @@ class DrawField extends React.Component<Props, State>
         } );
       }
     }
+
+    this.setState( {
+      startX: null,
+      startY: null
+    } );
   }
 }
 
