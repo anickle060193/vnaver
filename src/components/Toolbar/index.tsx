@@ -38,7 +38,7 @@ class Toolbar extends React.Component<Props>
         </ToolbarItem>
 
         <ToolbarItem
-          title="Above"
+          title="Above Constraint"
           active={this.props.tool === DrawingType.Above}
           onClick={() => this.props.setTool( DrawingType.Above )}
         >
@@ -46,7 +46,7 @@ class Toolbar extends React.Component<Props>
         </ToolbarItem>
 
         <ToolbarItem
-          title="At"
+          title="At Constraint"
           active={this.props.tool === DrawingType.At}
           onClick={() => this.props.setTool( DrawingType.At )}
         >
@@ -57,7 +57,7 @@ class Toolbar extends React.Component<Props>
         </ToolbarItem>
 
         <ToolbarItem
-          title="Below"
+          title="Below Constraint"
           active={this.props.tool === DrawingType.Below}
           onClick={() => this.props.setTool( DrawingType.Below )}
         >
@@ -65,7 +65,7 @@ class Toolbar extends React.Component<Props>
         </ToolbarItem>
 
         <ToolbarItem
-          title="Between"
+          title="Between Constraint"
           active={this.props.tool === DrawingType.Between}
           onClick={() => this.props.setTool( DrawingType.Between )}
         >
