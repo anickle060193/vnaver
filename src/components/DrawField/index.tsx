@@ -32,12 +32,15 @@ interface State
 
   originX: number;
   originY: number;
+  scale: number;
 
   mouseX: number | null;
   mouseY: number | null;
 
   startX: number | null;
   startY: number | null;
+
+  ctrlDown: boolean;
 }
 
 class DrawField extends React.Component<Props, State>
@@ -46,6 +49,8 @@ class DrawField extends React.Component<Props, State>
   canvasRef: HTMLCanvasElement | null;
   upArrowImage: ImageBitmap | null;
   downArrowImage: ImageBitmap | null;
+
+  moved: boolean;
 
   constructor( props: Props )
   {
@@ -57,16 +62,21 @@ class DrawField extends React.Component<Props, State>
 
       originX: 0,
       originY: 0,
+      scale: 1,
 
       mouseX: null,
       mouseY: null,
 
       startX: null,
-      startY: null
+      startY: null,
+
+      ctrlDown: false
     };
 
     this.drawFieldRef = null;
     this.canvasRef = null;
+
+    this.moved = false;
   }
 
   async componentDidMount()
@@ -74,6 +84,9 @@ class DrawField extends React.Component<Props, State>
     window.addEventListener( 'resize', this.onResize );
     document.addEventListener( 'mousemove', this.onMouseMove );
     document.addEventListener( 'mouseout', this.onMouseOut );
+    document.addEventListener( 'mousewheel', this.onMouseWheel );
+    document.addEventListener( 'keydown', this.onKeyUpDown );
+    document.addEventListener( 'keyup', this.onKeyUpDown );
 
     this.upArrowImage = await createBitmapFromSrc( upArrow );
     this.downArrowImage = await createBitmapFromSrc( downArrow );
@@ -92,6 +105,9 @@ class DrawField extends React.Component<Props, State>
     window.removeEventListener( 'resize', this.onResize );
     document.removeEventListener( 'mousemove', this.onMouseMove );
     document.removeEventListener( 'mouseout', this.onMouseOut );
+    document.removeEventListener( 'mousewheel', this.onMouseWheel );
+    document.removeEventListener( 'keydown', this.onKeyUpDown );
+    document.removeEventListener( 'keyup', this.onKeyUpDown );
   }
 
   render()
@@ -101,7 +117,7 @@ class DrawField extends React.Component<Props, State>
         ref={( ref ) => this.drawFieldRef = ref}
         className="draw-field"
         style={{
-          cursor: this.props.tool === Tool.Move ? 'move' : 'unset'
+          cursor: ( this.props.tool === Tool.Move || this.state.ctrlDown ) ? 'move' : 'unset'
         }}
       >
         <canvas
@@ -152,13 +168,18 @@ class DrawField extends React.Component<Props, State>
     context.clearRect( 0, 0, this.state.width, this.state.height );
     context.setTransform( 1, 0, 0, 1, 0.5, 0.5 );
     context.translate( this.state.originX, this.state.originY );
+    context.scale( this.state.scale, this.state.scale );
 
     for( let drawing of this.props.drawings )
     {
       this.drawDrawing( context, drawing );
     }
 
-    if( this.props.tool && this.state.mouseX !== null && this.state.mouseY !== null )
+    if( !this.state.ctrlDown
+      && this.props.tool
+      && this.props.tool !== Tool.Move
+      && this.state.mouseX !== null
+      && this.state.mouseY !== null )
     {
       if( this.props.tool === DrawingType.Between )
       {
@@ -205,20 +226,41 @@ class DrawField extends React.Component<Props, State>
     }
   }
 
+  private onKeyUpDown = ( e: KeyboardEvent ) =>
+  {
+    this.setState( { ctrlDown: e.ctrlKey } );
+  }
+
   private mouseToDrawing( e: { clientX: number, clientY: number } )
   {
     return {
-      x: e.clientX - this.state.originX,
-      y: e.clientY - this.state.originY
+      x: ( e.clientX - this.state.originX ) / this.state.scale,
+      y: ( e.clientY - this.state.originY ) / this.state.scale
     };
+  }
+
+  private onMouseWheel = ( e: MouseWheelEvent ) =>
+  {
+    e.preventDefault();
+
+    if( e.ctrlKey )
+    {
+      let scaleDiff = e.wheelDelta / 1000;
+      this.setState( ( { scale }: State ) => ( {
+        scale: scale + scaleDiff
+      } ) );
+    }
   }
 
   private onMouseMove = ( e: MouseEvent ) =>
   {
     if( ( e.buttons & 1 ) === 1 ) // tslint:disable-line no-bitwise
     {
-      if( this.props.tool === Tool.Move )
+      if( this.props.tool === Tool.Move ||
+        e.ctrlKey )
       {
+        this.moved = true;
+
         this.setState( ( prevState: State ) => ( {
           originX: prevState.originX + e.movementX,
           originY: prevState.originY + e.movementY
@@ -244,6 +286,7 @@ class DrawField extends React.Component<Props, State>
 
   private onMouseDown = ( e: React.MouseEvent<HTMLCanvasElement> ) =>
   {
+    this.moved = false;
     let { x, y } = this.mouseToDrawing( e );
     this.setState( {
       startX: x,
@@ -253,6 +296,11 @@ class DrawField extends React.Component<Props, State>
 
   private onClick = ( e: React.MouseEvent<HTMLCanvasElement> ) =>
   {
+    if( this.moved )
+    {
+      return;
+    }
+
     let { x, y } = this.mouseToDrawing( e );
 
     if( this.props.tool )
@@ -270,9 +318,9 @@ class DrawField extends React.Component<Props, State>
           } );
         }
       }
-      else if( this.props.tool === DrawingType.At ||
-        this.props.tool === DrawingType.Above ||
-        this.props.tool === DrawingType.Below )
+      else if( this.props.tool === DrawingType.At
+        || this.props.tool === DrawingType.Above
+        || this.props.tool === DrawingType.Below )
       {
         this.props.addDrawing( {
           type: this.props.tool!,
