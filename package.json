@@ -1,0 +1,52 @@
+{
+  "name": "vnaver",
+  "displayName": "VNAVer",
+  "version": "0.1.0",
+  "description": "A simple application to create VNAV diagrams.",
+  "author": {
+    "email": "anickle060193@gmail.com",
+    "name": "Adam Nickle"
+  },
+  "private": true,
+  "homepage": "./",
+  "main": "./src/main.js",
+  "build": {
+    "appId": "com.adamnickle.vnaver",
+    "productName": "VNAVer",
+    "win": {
+      "icon": "./build/icon.ico"
+    },
+    "directories": {
+      "buildResources": "public"
+    }
+  },
+  "scripts": {
+    "start": "concurrently -k -p \"[{name}]\" -n \"REACT,ELECTRON\" -c \"magenta.bold,blue.bold\"  \"yarn run react-start\" \"wait-on http-get://localhost:3000/ && yarn run electron-start\"",
+    "build": "react-scripts-ts build",
+    "test": "react-scripts-ts test --env=jsdom",
+    "eject": "react-scripts-ts eject",
+    "electron-start": "electron .",
+    "react-start": "react-scripts-ts start",
+    "pack": "yarn run build && electron-builder --dir",
+    "dist": "yarn run build && electron-builder",
+    "release": "yarn run build && env-cmd ./secret.env electron-builder --publish always",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "electron-updater": "^2.20.1",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-scripts-ts": "2.13.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^22.1.3",
+    "@types/node": "^9.4.6",
+    "@types/react": "^16.0.38",
+    "@types/react-dom": "^16.0.4",
+    "concurrently": "^3.5.1",
+    "electron": "^1.8.2",
+    "electron-builder": "^20.0.5",
+    "typescript": "^2.7.2",
+    "wait-on": "^2.1.0"
+  }
+}
