@@ -1,7 +1,11 @@
 import * as React from 'react';
 
-const App: React.SFC = () => (
-  <div />
-);
-
-export default App;
+export default class App extends React.Component
+{
+  render()
+  {
+    return (
+      <div />
+    );
+  }
+}

@@ -43,6 +43,7 @@
     "@types/node": "^9.4.6",
     "@types/react": "^16.0.38",
     "@types/react-dom": "^16.0.4",
+    "@types/webpack-env": "^1.13.5",
     "concurrently": "^3.5.1",
     "electron": "^1.8.2",
     "electron-builder": "^20.0.5",
