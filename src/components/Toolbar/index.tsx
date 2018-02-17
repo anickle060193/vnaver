@@ -2,21 +2,22 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import ToolbarItem from 'components/Toolbar/ToolbarItem';
-import { setCurrentAction } from 'store/reducers/current_action';
-import { DrawAction } from 'utils/draw_action';
+import { setTool } from 'store/reducers/drawing';
+import { Tool } from 'utils/draw';
 
 import './styles.css';
 
-const arrow = require( 'assets/arrow.svg' );
+const upArrow = require( 'assets/up_arrow.svg' );
+const downArrow = require( 'assets/down_arrow.svg' );
 
 interface PropsFromState
 {
-  currentAction: DrawAction | null;
+  tool: Tool | null;
 }
 
 interface PropsFromDispatch
 {
-  setCurrentAction: typeof setCurrentAction;
+  setTool: typeof setTool;
 }
 
 type Props = ( PropsFromState & PropsFromDispatch );
@@ -29,39 +30,39 @@ class Toolbar extends React.Component<Props>
       <div className="toolbar">
         <ToolbarItem
           title="Above"
-          active={this.props.currentAction === DrawAction.Above}
-          onClick={() => this.props.setCurrentAction( DrawAction.Above )}
+          active={this.props.tool === Tool.Above}
+          onClick={() => this.props.setTool( Tool.Above )}
         >
-          <img src={arrow} style={{ width: '2rem', height: '2rem', transform: 'rotate( 180deg )' }} />
+          <img src={upArrow} style={{ width: '2rem', height: '2rem' }} />
         </ToolbarItem>
 
         <ToolbarItem
           title="At"
-          active={this.props.currentAction === DrawAction.At}
-          onClick={() => this.props.setCurrentAction( DrawAction.At )}
+          active={this.props.tool === Tool.At}
+          onClick={() => this.props.setTool( Tool.At )}
         >
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <img src={arrow} style={{ width: '2rem', height: '2rem', marginBottom: '-20px' }} />
-            <img src={arrow} style={{ width: '2rem', height: '2rem', transform: 'rotate( 180deg )' }} />
+            <img src={downArrow} style={{ width: '2rem', height: '2rem', marginBottom: '-20px' }} />
+            <img src={upArrow} style={{ width: '2rem', height: '2rem' }} />
           </div>
         </ToolbarItem>
 
         <ToolbarItem
           title="Below"
-          active={this.props.currentAction === DrawAction.Below}
-          onClick={() => this.props.setCurrentAction( DrawAction.Below )}
+          active={this.props.tool === Tool.Below}
+          onClick={() => this.props.setTool( Tool.Below )}
         >
-          <img src={arrow} style={{ width: '2rem', height: '2rem' }} />
+          <img src={downArrow} style={{ width: '2rem', height: '2rem' }} />
         </ToolbarItem>
 
         <ToolbarItem
           title="Between"
-          active={this.props.currentAction === DrawAction.Between}
-          onClick={() => this.props.setCurrentAction( DrawAction.Between )}
+          active={this.props.tool === Tool.Between}
+          onClick={() => this.props.setTool( Tool.Between )}
         >
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <img src={arrow} style={{ width: '2rem', height: '2rem', marginBottom: '-8px' }} />
-            <img src={arrow} style={{ width: '2rem', height: '2rem', transform: 'rotate( 180deg )' }} />
+            <img src={downArrow} style={{ width: '2rem', height: '2rem', marginBottom: '-8px' }} />
+            <img src={upArrow} style={{ width: '2rem', height: '2rem' }} />
           </div>
         </ToolbarItem>
       </div>
@@ -71,9 +72,9 @@ class Toolbar extends React.Component<Props>
 
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   ( state ) => ( {
-    currentAction: state.currentAction.currentAction
+    tool: state.drawing.tool
   } ),
   {
-    setCurrentAction
+    setTool
   }
 )( Toolbar );
