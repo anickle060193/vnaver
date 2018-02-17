@@ -3,12 +3,13 @@ import { connect } from 'react-redux';
 
 import ToolbarItem from 'components/Toolbar/ToolbarItem';
 import { setTool } from 'store/reducers/drawing';
-import { DrawingType, DrawingTool } from 'utils/draw';
+import { DrawingType, Tool, DrawingTool } from 'utils/draw';
 
 import './styles.css';
 
 const upArrow = require( 'assets/up_arrow.svg' );
 const downArrow = require( 'assets/down_arrow.svg' );
+const move = require( 'assets/move.svg' );
 
 interface PropsFromState
 {
@@ -28,6 +29,14 @@ class Toolbar extends React.Component<Props>
   {
     return (
       <div className="toolbar">
+        <ToolbarItem
+          title="Move"
+          active={this.props.tool === Tool.Move}
+          onClick={() => this.props.setTool( Tool.Move )}
+        >
+          <img src={move} style={{ width: '2.5rem', height: '2.5rem' }} />
+        </ToolbarItem>
+
         <ToolbarItem
           title="Above"
           active={this.props.tool === DrawingType.Above}
