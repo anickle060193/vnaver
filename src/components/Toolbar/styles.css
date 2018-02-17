@@ -1,0 +1,17 @@
+.toolbar
+{
+  display: flex;
+  flex-direction: column;
+
+  padding: 1rem;
+  margin: 1rem;
+
+  background: rgb(78, 81, 255);
+  border-radius: 4px;
+  box-shadow: 1px 1px 5px 0px rgba(142, 142, 142, 0.664);
+}
+
+.toolbar > *:not( :last-child )
+{
+  margin-bottom: 1rem;
+}

@@ -1,0 +1,17 @@
+.layout
+{
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: row;
+}
+
+.toolbar-pane
+{
+}
+
+.main-content-pane
+{
+  flex: 1;
+}
