@@ -32,7 +32,7 @@ class Toolbar extends React.Component<Props>
         <ToolbarItem
           title="Move"
           active={this.props.tool === Tool.Move}
-          onClick={() => this.props.setTool( Tool.Move )}
+          onClick={() => this.onToolClick( Tool.Move )}
         >
           <img src={move} style={{ width: '2.5rem', height: '2.5rem' }} />
         </ToolbarItem>
@@ -40,7 +40,7 @@ class Toolbar extends React.Component<Props>
         <ToolbarItem
           title="Above Constraint"
           active={this.props.tool === DrawingType.Above}
-          onClick={() => this.props.setTool( DrawingType.Above )}
+          onClick={() => this.onToolClick( DrawingType.Above )}
         >
           <img src={upArrow} style={{ width: '2rem', height: '2rem' }} />
         </ToolbarItem>
@@ -48,7 +48,7 @@ class Toolbar extends React.Component<Props>
         <ToolbarItem
           title="At Constraint"
           active={this.props.tool === DrawingType.At}
-          onClick={() => this.props.setTool( DrawingType.At )}
+          onClick={() => this.onToolClick( DrawingType.At )}
         >
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <img src={downArrow} style={{ width: '2rem', height: '2rem', marginBottom: '-20px' }} />
@@ -59,7 +59,7 @@ class Toolbar extends React.Component<Props>
         <ToolbarItem
           title="Below Constraint"
           active={this.props.tool === DrawingType.Below}
-          onClick={() => this.props.setTool( DrawingType.Below )}
+          onClick={() => this.onToolClick( DrawingType.Below )}
         >
           <img src={downArrow} style={{ width: '2rem', height: '2rem' }} />
         </ToolbarItem>
@@ -67,7 +67,7 @@ class Toolbar extends React.Component<Props>
         <ToolbarItem
           title="Between Constraint"
           active={this.props.tool === DrawingType.Between}
-          onClick={() => this.props.setTool( DrawingType.Between )}
+          onClick={() => this.onToolClick( DrawingType.Between )}
         >
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <img src={downArrow} style={{ width: '2rem', height: '2rem', marginBottom: '-8px' }} />
@@ -76,6 +76,18 @@ class Toolbar extends React.Component<Props>
         </ToolbarItem>
       </div>
     );
+  }
+
+  private onToolClick = ( tool: DrawingTool ) =>
+  {
+    if( this.props.tool === tool )
+    {
+      this.props.setTool( null );
+    }
+    else
+    {
+      this.props.setTool( tool );
+    }
   }
 }
 
