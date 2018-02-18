@@ -120,6 +120,12 @@ class DrawField extends React.Component<Props, State>
           cursor: ( this.props.tool === Tool.Move || this.state.ctrlDown ) ? 'move' : 'unset'
         }}
       >
+        <div
+          className="drawing-scale"
+          onClick={this.onResetScale}
+        >
+          x{this.state.scale.toFixed( 2 )}
+        </div>
         <canvas
           ref={( ref ) => this.canvasRef = ref}
           width={this.state.width}
@@ -229,6 +235,11 @@ class DrawField extends React.Component<Props, State>
   private onKeyUpDown = ( e: KeyboardEvent ) =>
   {
     this.setState( { ctrlDown: e.ctrlKey } );
+  }
+
+  private onResetScale = () =>
+  {
+    this.setState( { scale: 1 } );
   }
 
   private mouseToDrawing( e: { clientX: number, clientY: number } )
