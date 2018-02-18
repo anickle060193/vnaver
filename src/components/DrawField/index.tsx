@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Stage, Path, Layer, Line, Rect } from 'react-konva';
+import * as uuid from 'uuid/v4';
 
 import { addDrawing, selectDrawing, deselectDrawing } from 'store/reducers/drawing';
 import
@@ -15,7 +16,9 @@ import
   drawingTypeColors,
   BasicDrawing,
   VerticalGridLineDrawing,
-  HorizontalGridLineDrawing
+  HorizontalGridLineDrawing,
+  DrawingMap,
+  mapToArray
 } from 'utils/draw';
 
 import './styles.css';
@@ -157,7 +160,7 @@ const drawingMap: {[ key in DrawingType ]: React.SFC<DrawingComponentProps<Drawi
 interface PropsFromState
 {
   tool: DrawingTool | null;
-  drawings: Drawing[];
+  drawings: DrawingMap;
 }
 
 interface PropsFromDispatch
@@ -260,6 +263,7 @@ class DrawField extends React.Component<Props, State>
           cursor = (
             <Between
               drawing={{
+                id: '',
                 type: this.props.tool,
                 x: this.state.startX,
                 y: Math.min( this.state.mouseY, this.state.startY ),
@@ -273,6 +277,7 @@ class DrawField extends React.Component<Props, State>
           cursor = (
             <Between
               drawing={{
+                id: '',
                 type: this.props.tool,
                 x: this.state.mouseX,
                 y: this.state.mouseY,
@@ -287,6 +292,7 @@ class DrawField extends React.Component<Props, State>
         cursor = (
           <VerticalGridLine
             drawing={{
+              id: '',
               type: this.props.tool,
               x: this.state.mouseX
             }}
@@ -298,6 +304,7 @@ class DrawField extends React.Component<Props, State>
         cursor = (
           <HorizontalGridLine
             drawing={{
+              id: '',
               type: this.props.tool,
               y: this.state.mouseY
             }}
@@ -312,6 +319,7 @@ class DrawField extends React.Component<Props, State>
         cursor = (
           <CursorComponent
             drawing={{
+              id: '',
               type: this.props.tool,
               x: this.state.mouseX,
               y: this.state.mouseY
@@ -321,7 +329,7 @@ class DrawField extends React.Component<Props, State>
       }
     }
 
-    let drawings = this.props.drawings.sort( ( d1, d2 ) =>
+    let drawings = mapToArray( this.props.drawings ).sort( ( d1, d2 ) =>
     {
       if( d1.type === d2.type )
       {
@@ -504,6 +512,7 @@ class DrawField extends React.Component<Props, State>
         {
           let diff = Math.abs( y - this.state.startY );
           this.props.addDrawing( {
+            id: uuid(),
             type: this.props.tool,
             x: this.state.startX,
             y: Math.min( y, this.state.startY ),
@@ -514,6 +523,7 @@ class DrawField extends React.Component<Props, State>
       else if( this.props.tool === DrawingType.VerticalGridLine )
       {
         this.props.addDrawing( {
+          id: uuid(),
           type: this.props.tool,
           x: x
         } );
@@ -521,6 +531,7 @@ class DrawField extends React.Component<Props, State>
       else if( this.props.tool === DrawingType.HorizontalGridLine )
       {
         this.props.addDrawing( {
+          id: uuid(),
           type: this.props.tool,
           y: y
         } );
@@ -530,6 +541,7 @@ class DrawField extends React.Component<Props, State>
         || this.props.tool === DrawingType.Below )
       {
         this.props.addDrawing( {
+          id: uuid(),
           type: this.props.tool!,
           x: x,
           y: y

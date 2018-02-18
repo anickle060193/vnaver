@@ -1,18 +1,18 @@
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
 import actionCreatorFactory from 'typescript-fsa';
 
-import { Drawing, DrawingTool } from 'utils/draw';
+import { Drawing, DrawingTool, DrawingMap } from 'utils/draw';
 
 export interface State
 {
   tool: DrawingTool | null;
-  drawings: Drawing[];
+  drawings: DrawingMap;
   selectedDrawing: Drawing | null;
 }
 
 const initialState: State = {
   tool: null,
-  drawings: [],
+  drawings: {},
   selectedDrawing: null
 };
 
@@ -32,7 +32,10 @@ export const reducer = reducerWithInitialState( initialState )
   .case( addDrawing, ( state, drawing ) =>
     ( {
       ...state,
-      drawings: state.drawings.concat( drawing )
+      drawings: {
+        ...state.drawings,
+        [ drawing.id ]: drawing
+      }
     } ) )
   .case( selectDrawing, ( state, drawing ) =>
     ( {
