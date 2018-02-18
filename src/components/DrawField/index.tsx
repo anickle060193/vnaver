@@ -1,16 +1,92 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { Stage, Image, Layer } from 'react-konva';
 
 import { addDrawing } from 'store/reducers/drawing';
-import { DrawingType, Drawing, DrawingTool, Tool } from 'utils/draw';
-import { createBitmapFromSrc } from 'utils/image';
+import { DrawingType, Drawing, DrawingTool, Tool, BetweenDrawing } from 'utils/draw';
 
 import './styles.css';
 
-const upArrow = require( 'assets/up_arrow.svg' );
-const downArrow = require( 'assets/down_arrow.svg' );
+const upArrowImage = document.createElement( 'img' );
+upArrowImage.src = require( 'assets/up_arrow.svg' );
+
+const downArrowImage = document.createElement( 'img' );
+downArrowImage.src = require( 'assets/down_arrow.svg' );
 
 const ARROW_SIZE = 30;
+
+const Above: React.SFC<{
+  drawing: Drawing;
+}> = ( { drawing } ) => (
+  <Image
+    x={drawing.x - ARROW_SIZE / 2}
+    y={drawing.y - ARROW_SIZE / 2}
+    width={ARROW_SIZE}
+    height={ARROW_SIZE}
+    image={upArrowImage}
+  />
+);
+
+const At: React.SFC<{
+  drawing: Drawing;
+}> = ( { drawing } ) => (
+  <>
+    <Image
+      x={drawing.x - ARROW_SIZE / 2}
+      y={drawing.y - ARROW_SIZE + 3}
+      width={ARROW_SIZE}
+      height={ARROW_SIZE}
+      image={downArrowImage}
+    />
+    <Image
+      x={drawing.x - ARROW_SIZE / 2}
+      y={drawing.y - 16}
+      width={ARROW_SIZE}
+      height={ARROW_SIZE}
+      image={upArrowImage}
+    />
+  </>
+);
+
+const Below: React.SFC<{
+  drawing: Drawing;
+}> = ( { drawing } ) => (
+  <Image
+    x={drawing.x - ARROW_SIZE / 2}
+    y={drawing.y - ARROW_SIZE + 8}
+    width={ARROW_SIZE}
+    height={ARROW_SIZE}
+    image={downArrowImage}
+  />
+);
+
+const Between: React.SFC<{
+  drawing: BetweenDrawing;
+}> = ( { drawing } ) => (
+  <>
+    <Image
+      x={drawing.x - ARROW_SIZE / 2}
+      y={drawing.y - ARROW_SIZE}
+      width={ARROW_SIZE}
+      height={ARROW_SIZE}
+      image={downArrowImage}
+    />
+    <Image
+      x={drawing.x - ARROW_SIZE / 2}
+      y={drawing.y + drawing.height}
+      width={ARROW_SIZE}
+      height={ARROW_SIZE}
+      image={upArrowImage}
+    />
+  </>
+);
+
+const drawingMap: {[ key in DrawingType ]: React.SFC<{ drawing: Drawing }> } = {
+  [ DrawingType.Above ]: Above,
+  [ DrawingType.At ]: At,
+  [ DrawingType.Below ]: Below,
+  [ DrawingType.Between ]: Between
+};
 
 interface PropsFromState
 {
@@ -46,9 +122,6 @@ interface State
 class DrawField extends React.Component<Props, State>
 {
   drawFieldRef: HTMLDivElement | null;
-  canvasRef: HTMLCanvasElement | null;
-  upArrowImage: ImageBitmap | null;
-  downArrowImage: ImageBitmap | null;
 
   moved: boolean;
 
@@ -74,7 +147,6 @@ class DrawField extends React.Component<Props, State>
     };
 
     this.drawFieldRef = null;
-    this.canvasRef = null;
 
     this.moved = false;
   }
@@ -88,16 +160,7 @@ class DrawField extends React.Component<Props, State>
     document.addEventListener( 'keydown', this.onKeyUpDown );
     document.addEventListener( 'keyup', this.onKeyUpDown );
 
-    this.upArrowImage = await createBitmapFromSrc( upArrow );
-    this.downArrowImage = await createBitmapFromSrc( downArrow );
-
     this.onResize();
-    this.draw();
-  }
-
-  componentDidUpdate()
-  {
-    this.draw();
   }
 
   componentWillUnmount()
@@ -112,6 +175,51 @@ class DrawField extends React.Component<Props, State>
 
   render()
   {
+    let CursorComponent: typeof drawingMap[ DrawingType ] | null = null;
+    let cursorDrawing: Drawing | null = null;
+
+    if( !this.state.ctrlDown
+      && this.props.tool
+      && this.props.tool !== Tool.Move
+      && this.state.mouseX !== null
+      && this.state.mouseY !== null )
+    {
+      if( this.props.tool === DrawingType.Between )
+      {
+        if( this.state.startY !== null && this.state.startX !== null )
+        {
+          CursorComponent = Between;
+          cursorDrawing = {
+            type: DrawingType.Between,
+            x: this.state.startX,
+            y: Math.min( this.state.mouseY, this.state.startY ),
+            height: Math.abs( this.state.mouseY - this.state.startY )
+          };
+        }
+        else
+        {
+          CursorComponent = Between;
+          cursorDrawing = {
+            type: DrawingType.Between,
+            x: this.state.mouseX,
+            y: this.state.mouseY,
+            height: 0
+          };
+        }
+      }
+      else if( this.props.tool === DrawingType.At ||
+        this.props.tool === DrawingType.Above ||
+        this.props.tool === DrawingType.Below )
+      {
+        CursorComponent = drawingMap[ this.props.tool ];
+        cursorDrawing = {
+          type: this.props.tool,
+          x: this.state.mouseX,
+          y: this.state.mouseY
+        };
+      }
+    }
+
     return (
       <div
         ref={( ref ) => this.drawFieldRef = ref}
@@ -126,99 +234,31 @@ class DrawField extends React.Component<Props, State>
         >
           x{this.state.scale.toFixed( 2 )}
         </div>
-        <canvas
-          ref={( ref ) => this.canvasRef = ref}
+        <Stage
           width={this.state.width}
           height={this.state.height}
-          onMouseDown={this.onMouseDown}
-          onClick={this.onClick}
-        />
+          scaleX={this.state.scale}
+          scaleY={this.state.scale}
+          x={this.state.originX}
+          y={this.state.originY}
+          onContentMouseDown={this.onMouseDown}
+          onContentClick={this.onClick}
+        >
+          <Layer>
+            {this.props.drawings.map( ( drawing, i ) =>
+            {
+              let DrawingComponent = drawingMap[ drawing.type ];
+              return (
+                <DrawingComponent key={i} drawing={drawing} />
+              );
+            } )}
+            {CursorComponent && cursorDrawing && (
+              <CursorComponent drawing={cursorDrawing} />
+            )}
+          </Layer>
+        </Stage>
       </div>
     );
-  }
-
-  private drawDrawing( context: CanvasRenderingContext2D, drawing: Drawing )
-  {
-    if( !this.upArrowImage || !this.downArrowImage )
-    {
-      return;
-    }
-
-    let { x, y } = drawing;
-
-    if( drawing.type === DrawingType.Above )
-    {
-      context.drawImage( this.upArrowImage, x - ARROW_SIZE / 2, y - ARROW_SIZE / 2, ARROW_SIZE, ARROW_SIZE );
-    }
-    else if( drawing.type === DrawingType.Below )
-    {
-      context.drawImage( this.downArrowImage, x - ARROW_SIZE / 2, y - ARROW_SIZE + 8, ARROW_SIZE, ARROW_SIZE );
-    }
-    else if( drawing.type === DrawingType.At )
-    {
-      context.drawImage( this.downArrowImage, x - ARROW_SIZE / 2, y - ARROW_SIZE + 3, ARROW_SIZE, ARROW_SIZE );
-      context.drawImage( this.upArrowImage, x - ARROW_SIZE / 2, y - 16, ARROW_SIZE, ARROW_SIZE );
-    }
-    else if( drawing.type === DrawingType.Between )
-    {
-      context.drawImage( this.downArrowImage, x - ARROW_SIZE / 2, y - ARROW_SIZE, ARROW_SIZE, ARROW_SIZE );
-      context.drawImage( this.upArrowImage, x - ARROW_SIZE / 2, y + drawing.height, ARROW_SIZE, ARROW_SIZE );
-    }
-  }
-
-  private draw()
-  {
-    let context = this.canvasRef!.getContext( '2d' )!;
-
-    context.setTransform( 1, 0, 0, 1, 0, 0 );
-    context.clearRect( 0, 0, this.state.width, this.state.height );
-    context.setTransform( 1, 0, 0, 1, 0.5, 0.5 );
-    context.translate( this.state.originX, this.state.originY );
-    context.scale( this.state.scale, this.state.scale );
-
-    for( let drawing of this.props.drawings )
-    {
-      this.drawDrawing( context, drawing );
-    }
-
-    if( !this.state.ctrlDown
-      && this.props.tool
-      && this.props.tool !== Tool.Move
-      && this.state.mouseX !== null
-      && this.state.mouseY !== null )
-    {
-      if( this.props.tool === DrawingType.Between )
-      {
-        if( this.state.startY !== null && this.state.startX !== null )
-        {
-          this.drawDrawing( context, {
-            type: this.props.tool,
-            x: this.state.startX,
-            y: Math.min( this.state.mouseY, this.state.startY ),
-            height: Math.abs( this.state.mouseY - this.state.startY )
-          } );
-        }
-        else
-        {
-          this.drawDrawing( context, {
-            type: this.props.tool,
-            x: this.state.mouseX,
-            y: this.state.mouseY,
-            height: 0
-          } );
-        }
-      }
-      else if( this.props.tool === DrawingType.At ||
-        this.props.tool === DrawingType.Above ||
-        this.props.tool === DrawingType.Below )
-      {
-        this.drawDrawing( context, {
-          type: this.props.tool,
-          x: this.state.mouseX,
-          y: this.state.mouseY
-        } );
-      }
-    }
   }
 
   private onResize = () =>
@@ -295,24 +335,27 @@ class DrawField extends React.Component<Props, State>
     } );
   }
 
-  private onMouseDown = ( e: React.MouseEvent<HTMLCanvasElement> ) =>
+  private onMouseDown = ( e: KonvaMouseEvent<{}> ) =>
   {
     this.moved = false;
-    let { x, y } = this.mouseToDrawing( e );
-    this.setState( {
-      startX: x,
-      startY: y
-    } );
+    if( this.props.tool === DrawingType.Between )
+    {
+      let { x, y } = this.mouseToDrawing( e.evt );
+      this.setState( {
+        startX: x,
+        startY: y
+      } );
+    }
   }
 
-  private onClick = ( e: React.MouseEvent<HTMLCanvasElement> ) =>
+  private onClick = ( e: KonvaMouseEvent<{}> ) =>
   {
     if( this.moved )
     {
       return;
     }
 
-    let { x, y } = this.mouseToDrawing( e );
+    let { x, y } = this.mouseToDrawing( e.evt );
 
     if( this.props.tool )
     {
