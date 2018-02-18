@@ -40,8 +40,8 @@ class Toolbar extends React.Component<Props>
           active={this.props.tool === DrawingType.Above}
           onClick={() => this.onToolClick( DrawingType.Above )}
         >
-          <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', fill: drawingTypeColors[ DrawingType.Above ] }}>
-            <path d={UP_ARROW_PATH} />
+          <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
+            <path d={UP_ARROW_PATH} fill={drawingTypeColors[ DrawingType.Above ]} />
           </svg>
         </ToolbarItem>
 
@@ -51,11 +51,11 @@ class Toolbar extends React.Component<Props>
           onClick={() => this.onToolClick( DrawingType.At )}
         >
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', marginBottom: '-20px', fill: drawingTypeColors[ DrawingType.At ] }}>
-              <path d={DOWN_ARROW_PATH} />
+            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', marginBottom: '-20px' }}>
+              <path d={DOWN_ARROW_PATH} fill={drawingTypeColors[ DrawingType.At ]} />
             </svg>
-            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', fill: drawingTypeColors[ DrawingType.At ] }}>
-              <path d={UP_ARROW_PATH} />
+            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
+              <path d={UP_ARROW_PATH} fill={drawingTypeColors[ DrawingType.At ]} />
             </svg>
           </div>
         </ToolbarItem>
@@ -65,8 +65,8 @@ class Toolbar extends React.Component<Props>
           active={this.props.tool === DrawingType.Below}
           onClick={() => this.onToolClick( DrawingType.Below )}
         >
-          <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', fill: drawingTypeColors[ DrawingType.Below ] }}>
-            <path d={DOWN_ARROW_PATH} />
+          <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
+            <path d={DOWN_ARROW_PATH} fill={drawingTypeColors[ DrawingType.Below ]} />
           </svg>
         </ToolbarItem>
 
@@ -76,13 +76,33 @@ class Toolbar extends React.Component<Props>
           onClick={() => this.onToolClick( DrawingType.Between )}
         >
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', marginBottom: '-8px', fill: drawingTypeColors[ DrawingType.Between ] }}>
-              <path d={DOWN_ARROW_PATH} />
+            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', marginBottom: '-8px' }}>
+              <path d={DOWN_ARROW_PATH} fill={drawingTypeColors[ DrawingType.Between ]} />
             </svg>
-            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', fill: drawingTypeColors[ DrawingType.Between ] }}>
-              <path d={UP_ARROW_PATH} />
+            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
+              <path d={UP_ARROW_PATH} fill={drawingTypeColors[ DrawingType.Between ]} />
             </svg>
           </div>
+        </ToolbarItem>
+
+        <ToolbarItem
+          title="Vertical Grid Line"
+          active={this.props.tool === DrawingType.VerticalGridLine}
+          onClick={() => this.onToolClick( DrawingType.VerticalGridLine )}
+        >
+          <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
+            <path d="M20 5 L20 95 M50 5 L50 95 M80 5 L80 95" stroke={drawingTypeColors[ DrawingType.VerticalGridLine ]} strokeWidth={6} />
+          </svg>
+        </ToolbarItem>
+
+        <ToolbarItem
+          title="Horizontal Grid Line"
+          active={this.props.tool === DrawingType.HorizontalGridLine}
+          onClick={() => this.onToolClick( DrawingType.HorizontalGridLine )}
+        >
+          <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
+            <path d="M5 20 L95 20 M5 50 L95 50 M5 80 L95 80" stroke={drawingTypeColors[ DrawingType.HorizontalGridLine ]} strokeWidth={6} />
+          </svg>
         </ToolbarItem>
       </div>
     );

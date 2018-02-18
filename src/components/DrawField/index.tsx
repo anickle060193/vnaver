@@ -1,9 +1,21 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Stage, Path, Layer } from 'react-konva';
+import { Stage, Path, Layer, Line } from 'react-konva';
 
 import { addDrawing } from 'store/reducers/drawing';
-import { DrawingType, Drawing, DrawingTool, Tool, BetweenDrawing, UP_ARROW_PATH, DOWN_ARROW_PATH, drawingTypeColors } from 'utils/draw';
+import
+{
+  DrawingType,
+  Drawing,
+  DrawingTool,
+  Tool,
+  BetweenDrawing,
+  UP_ARROW_PATH,
+  DOWN_ARROW_PATH,
+  drawingTypeColors,
+  BasicDrawing,
+  GridLineDrawing
+} from 'utils/draw';
 
 import './styles.css';
 
@@ -11,7 +23,7 @@ const ARROW_SIZE = 30;
 const ARROW_SCALE = ARROW_SIZE / 100;
 
 const Above: React.SFC<{
-  drawing: Drawing;
+  drawing: BasicDrawing<DrawingType.Above>;
 }> = ( { drawing } ) => (
   <Path
     x={drawing.x - ARROW_SIZE / 2}
@@ -19,13 +31,13 @@ const Above: React.SFC<{
     width={ARROW_SIZE}
     height={ARROW_SIZE}
     scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-    fill={drawingTypeColors[ DrawingType.Above ]}
+    fill={drawingTypeColors[ drawing.type ]}
     data={UP_ARROW_PATH}
   />
 );
 
 const At: React.SFC<{
-  drawing: Drawing;
+  drawing: BasicDrawing<DrawingType.At>;
 }> = ( { drawing } ) => (
   <>
     <Path
@@ -34,7 +46,7 @@ const At: React.SFC<{
       width={ARROW_SIZE}
       height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-      fill={drawingTypeColors[ DrawingType.At ]}
+      fill={drawingTypeColors[ drawing.type ]}
       data={DOWN_ARROW_PATH}
     />
     <Path
@@ -43,14 +55,14 @@ const At: React.SFC<{
       width={ARROW_SIZE}
       height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-      fill={drawingTypeColors[ DrawingType.At ]}
+      fill={drawingTypeColors[ drawing.type ]}
       data={UP_ARROW_PATH}
     />
   </>
 );
 
 const Below: React.SFC<{
-  drawing: Drawing;
+  drawing: BasicDrawing<DrawingType.Below>;
 }> = ( { drawing } ) => (
   <Path
     x={drawing.x - ARROW_SIZE / 2}
@@ -58,7 +70,7 @@ const Below: React.SFC<{
     width={ARROW_SIZE}
     height={ARROW_SIZE}
     scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-    fill={drawingTypeColors[ DrawingType.Below ]}
+    fill={drawingTypeColors[ drawing.type ]}
     data={DOWN_ARROW_PATH}
   />
 );
@@ -73,7 +85,7 @@ const Between: React.SFC<{
       width={ARROW_SIZE}
       height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-      fill={drawingTypeColors[ DrawingType.Between ]}
+      fill={drawingTypeColors[ drawing.type ]}
       data={DOWN_ARROW_PATH}
     />
     <Path
@@ -82,17 +94,33 @@ const Between: React.SFC<{
       width={ARROW_SIZE}
       height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-      fill={drawingTypeColors[ DrawingType.Between ]}
+      fill={drawingTypeColors[ drawing.type ]}
       data={UP_ARROW_PATH}
     />
   </>
+);
+
+const LINE_LENGTH = 10000;
+
+const GridLine: React.SFC<{
+  drawing: GridLineDrawing
+}> = ( { drawing } ) => (
+  <Line
+    points={drawing.type === DrawingType.VerticalGridLine ?
+      [ drawing.position, -LINE_LENGTH, drawing.position, LINE_LENGTH ] :
+      [ -LINE_LENGTH, drawing.position, LINE_LENGTH, drawing.position ]}
+    stroke={drawingTypeColors[ drawing.type ]}
+    strokeWidth={1}
+  />
 );
 
 const drawingMap: {[ key in DrawingType ]: React.SFC<{ drawing: Drawing }> } = {
   [ DrawingType.Above ]: Above,
   [ DrawingType.At ]: At,
   [ DrawingType.Below ]: Below,
-  [ DrawingType.Between ]: Between
+  [ DrawingType.Between ]: Between,
+  [ DrawingType.VerticalGridLine ]: GridLine,
+  [ DrawingType.HorizontalGridLine ]: GridLine,
 };
 
 interface PropsFromState
@@ -182,8 +210,7 @@ class DrawField extends React.Component<Props, State>
 
   render()
   {
-    let CursorComponent: typeof drawingMap[ DrawingType ] | null = null;
-    let cursorDrawing: Drawing | null = null;
+    let cursor: React.ReactNode | null = null;
 
     if( !this.state.ctrlDown
       && this.props.tool
@@ -195,37 +222,97 @@ class DrawField extends React.Component<Props, State>
       {
         if( this.state.startY !== null && this.state.startX !== null )
         {
-          CursorComponent = Between;
-          cursorDrawing = {
-            type: DrawingType.Between,
-            x: this.state.startX,
-            y: Math.min( this.state.mouseY, this.state.startY ),
-            height: Math.abs( this.state.mouseY - this.state.startY )
-          };
+          cursor = (
+            <Between
+              drawing={{
+                type: this.props.tool,
+                x: this.state.startX,
+                y: Math.min( this.state.mouseY, this.state.startY ),
+                height: Math.abs( this.state.mouseY - this.state.startY )
+              }}
+            />
+          );
         }
         else
         {
-          CursorComponent = Between;
-          cursorDrawing = {
-            type: DrawingType.Between,
-            x: this.state.mouseX,
-            y: this.state.mouseY,
-            height: 0
-          };
+          cursor = (
+            <Between
+              drawing={{
+                type: this.props.tool,
+                x: this.state.mouseX,
+                y: this.state.mouseY,
+                height: 0
+              }}
+            />
+          );
         }
+      }
+      else if( this.props.tool === DrawingType.VerticalGridLine )
+      {
+        cursor = (
+          <GridLine
+            drawing={{
+              type: this.props.tool,
+              position: this.state.mouseX
+            }}
+          />
+        );
+      }
+      else if( this.props.tool === DrawingType.HorizontalGridLine )
+      {
+        cursor = (
+          <GridLine
+            drawing={{
+              type: this.props.tool,
+              position: this.state.mouseY
+            }}
+          />
+        );
       }
       else if( this.props.tool === DrawingType.At ||
         this.props.tool === DrawingType.Above ||
         this.props.tool === DrawingType.Below )
       {
-        CursorComponent = drawingMap[ this.props.tool ];
-        cursorDrawing = {
-          type: this.props.tool,
-          x: this.state.mouseX,
-          y: this.state.mouseY
-        };
+        let CursorComponent = drawingMap[ this.props.tool ];
+        cursor = (
+          <CursorComponent
+            drawing={{
+              type: this.props.tool,
+              x: this.state.mouseX,
+              y: this.state.mouseY
+            }}
+          />
+        );
       }
     }
+
+    let drawings = this.props.drawings.sort( ( d1, d2 ) =>
+    {
+      if( d1.type === d2.type )
+      {
+        return 0;
+      }
+      else if( d1.type === DrawingType.HorizontalGridLine )
+      {
+        return -1;
+      }
+      else if( d2.type === DrawingType.HorizontalGridLine )
+      {
+        return 1;
+      }
+      else if( d1.type === DrawingType.VerticalGridLine )
+      {
+        return -1;
+      }
+      else if( d2.type === DrawingType.VerticalGridLine )
+      {
+        return 1;
+      }
+      else
+      {
+        return 0;
+      }
+    } );
 
     return (
       <div
@@ -252,16 +339,14 @@ class DrawField extends React.Component<Props, State>
           onContentClick={this.onClick}
         >
           <Layer>
-            {this.props.drawings.map( ( drawing, i ) =>
+            {drawings.map( ( drawing, i ) =>
             {
               let DrawingComponent = drawingMap[ drawing.type ];
               return (
                 <DrawingComponent key={i} drawing={drawing} />
               );
             } )}
-            {CursorComponent && cursorDrawing && (
-              <CursorComponent drawing={cursorDrawing} />
-            )}
+            {cursor}
           </Layer>
         </Stage>
       </div>
@@ -378,6 +463,20 @@ class DrawField extends React.Component<Props, State>
             height: diff
           } );
         }
+      }
+      else if( this.props.tool === DrawingType.VerticalGridLine )
+      {
+        this.props.addDrawing( {
+          type: this.props.tool,
+          position: x
+        } );
+      }
+      else if( this.props.tool === DrawingType.HorizontalGridLine )
+      {
+        this.props.addDrawing( {
+          type: this.props.tool,
+          position: y
+        } );
       }
       else if( this.props.tool === DrawingType.At
         || this.props.tool === DrawingType.Above

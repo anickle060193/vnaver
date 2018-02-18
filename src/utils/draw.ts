@@ -3,7 +3,9 @@ export const enum DrawingType
   Above = 'Above',
   At = 'At',
   Below = 'Below',
-  Between = 'Between'
+  Between = 'Between',
+  VerticalGridLine = 'VerticalGridLine',
+  HorizontalGridLine = 'HorizontalGridLine'
 }
 
 export const enum Tool
@@ -16,8 +18,6 @@ export type DrawingTool = DrawingType | Tool;
 export interface DrawingBase<T extends DrawingType>
 {
   type: T;
-  x: number;
-  y: number;
 }
 
 type BasicDrawingTypes = DrawingType.Above | DrawingType.At | DrawingType.Below;
@@ -27,6 +27,12 @@ export interface BasicDrawing<T extends BasicDrawingTypes> extends DrawingBase<T
   type: T;
   x: number;
   y: number;
+}
+
+export interface GridLineDrawing extends DrawingBase<DrawingType.VerticalGridLine | DrawingType.HorizontalGridLine>
+{
+  type: DrawingType.VerticalGridLine | DrawingType.HorizontalGridLine;
+  position: number;
 }
 
 export interface BetweenDrawing extends DrawingBase<DrawingType.Between>
@@ -39,7 +45,8 @@ export interface BetweenDrawing extends DrawingBase<DrawingType.Between>
 
 export type Drawing = (
   BasicDrawing<BasicDrawingTypes> |
-  BetweenDrawing
+  BetweenDrawing |
+  GridLineDrawing
 );
 
 export const UP_ARROW_PATH = 'M97.969 73.984l-47.969-47.969L2.031 73.984H97.969z';
@@ -53,5 +60,7 @@ export const drawingTypeColors: {[ key in DrawingType ]: string } = {
   [ DrawingType.Above ]: 'purple',
   [ DrawingType.At ]: 'green',
   [ DrawingType.Below ]: 'orange',
-  [ DrawingType.Between ]: 'blue'
+  [ DrawingType.Between ]: 'blue',
+  [ DrawingType.VerticalGridLine ]: 'red',
+  [ DrawingType.HorizontalGridLine ]: 'cyan',
 };
