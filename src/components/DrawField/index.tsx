@@ -1,29 +1,27 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Stage, Image, Layer } from 'react-konva';
+import { Stage, Path, Layer } from 'react-konva';
 
 import { addDrawing } from 'store/reducers/drawing';
-import { DrawingType, Drawing, DrawingTool, Tool, BetweenDrawing } from 'utils/draw';
+import { DrawingType, Drawing, DrawingTool, Tool, BetweenDrawing, UP_ARROW_PATH, DOWN_ARROW_PATH } from 'utils/draw';
 
 import './styles.css';
 
-const upArrowImage = document.createElement( 'img' );
-upArrowImage.src = require( 'assets/up_arrow.svg' );
-
-const downArrowImage = document.createElement( 'img' );
-downArrowImage.src = require( 'assets/down_arrow.svg' );
-
 const ARROW_SIZE = 30;
+const ARROW_SCALE = ARROW_SIZE / 100;
 
 const Above: React.SFC<{
   drawing: Drawing;
 }> = ( { drawing } ) => (
-  <Image
+  <Path
     x={drawing.x - ARROW_SIZE / 2}
     y={drawing.y - ARROW_SIZE / 2}
     width={ARROW_SIZE}
     height={ARROW_SIZE}
-    image={upArrowImage}
+    scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
+    fill="black"
+
+    data={UP_ARROW_PATH}
   />
 );
 
@@ -31,19 +29,23 @@ const At: React.SFC<{
   drawing: Drawing;
 }> = ( { drawing } ) => (
   <>
-    <Image
+    <Path
       x={drawing.x - ARROW_SIZE / 2}
       y={drawing.y - ARROW_SIZE + 3}
       width={ARROW_SIZE}
       height={ARROW_SIZE}
-      image={downArrowImage}
+      scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
+      fill="black"
+      data={DOWN_ARROW_PATH}
     />
-    <Image
+    <Path
       x={drawing.x - ARROW_SIZE / 2}
       y={drawing.y - 16}
       width={ARROW_SIZE}
       height={ARROW_SIZE}
-      image={upArrowImage}
+      scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
+      fill="black"
+      data={UP_ARROW_PATH}
     />
   </>
 );
@@ -51,12 +53,14 @@ const At: React.SFC<{
 const Below: React.SFC<{
   drawing: Drawing;
 }> = ( { drawing } ) => (
-  <Image
+  <Path
     x={drawing.x - ARROW_SIZE / 2}
     y={drawing.y - ARROW_SIZE + 8}
     width={ARROW_SIZE}
     height={ARROW_SIZE}
-    image={downArrowImage}
+    scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
+    fill="black"
+    data={DOWN_ARROW_PATH}
   />
 );
 
@@ -64,19 +68,23 @@ const Between: React.SFC<{
   drawing: BetweenDrawing;
 }> = ( { drawing } ) => (
   <>
-    <Image
+    <Path
       x={drawing.x - ARROW_SIZE / 2}
       y={drawing.y - ARROW_SIZE}
       width={ARROW_SIZE}
       height={ARROW_SIZE}
-      image={downArrowImage}
+      scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
+      fill="black"
+      data={DOWN_ARROW_PATH}
     />
-    <Image
+    <Path
       x={drawing.x - ARROW_SIZE / 2}
       y={drawing.y + drawing.height}
       width={ARROW_SIZE}
       height={ARROW_SIZE}
-      image={upArrowImage}
+      scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
+      fill="black"
+      data={UP_ARROW_PATH}
     />
   </>
 );

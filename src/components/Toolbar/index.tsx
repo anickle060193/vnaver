@@ -3,13 +3,9 @@ import { connect } from 'react-redux';
 
 import ToolbarItem from 'components/Toolbar/ToolbarItem';
 import { setTool } from 'store/reducers/drawing';
-import { DrawingType, Tool, DrawingTool } from 'utils/draw';
+import { DrawingType, Tool, DrawingTool, MOVE_PATH, UP_ARROW_PATH, DOWN_ARROW_PATH } from 'utils/draw';
 
 import './styles.css';
-
-const upArrow = require( 'assets/up_arrow.svg' );
-const downArrow = require( 'assets/down_arrow.svg' );
-const move = require( 'assets/move.svg' );
 
 interface PropsFromState
 {
@@ -34,7 +30,9 @@ class Toolbar extends React.Component<Props>
           active={this.props.tool === Tool.Move}
           onClick={() => this.onToolClick( Tool.Move )}
         >
-          <img src={move} style={{ width: '2.5rem', height: '2.5rem' }} />
+          <svg viewBox="0 0 100 100" style={{ width: '2.5rem', height: '2.5rem' }}>
+            <path d={MOVE_PATH} />
+          </svg>
         </ToolbarItem>
 
         <ToolbarItem
@@ -42,7 +40,9 @@ class Toolbar extends React.Component<Props>
           active={this.props.tool === DrawingType.Above}
           onClick={() => this.onToolClick( DrawingType.Above )}
         >
-          <img src={upArrow} style={{ width: '2rem', height: '2rem' }} />
+          <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
+            <path d={UP_ARROW_PATH} />
+          </svg>
         </ToolbarItem>
 
         <ToolbarItem
@@ -51,8 +51,12 @@ class Toolbar extends React.Component<Props>
           onClick={() => this.onToolClick( DrawingType.At )}
         >
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <img src={downArrow} style={{ width: '2rem', height: '2rem', marginBottom: '-20px' }} />
-            <img src={upArrow} style={{ width: '2rem', height: '2rem' }} />
+            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', marginBottom: '-20px' }}>
+              <path d={DOWN_ARROW_PATH} />
+            </svg>
+            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
+              <path d={UP_ARROW_PATH} />
+            </svg>
           </div>
         </ToolbarItem>
 
@@ -61,7 +65,9 @@ class Toolbar extends React.Component<Props>
           active={this.props.tool === DrawingType.Below}
           onClick={() => this.onToolClick( DrawingType.Below )}
         >
-          <img src={downArrow} style={{ width: '2rem', height: '2rem' }} />
+          <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
+            <path d={DOWN_ARROW_PATH} />
+          </svg>
         </ToolbarItem>
 
         <ToolbarItem
@@ -70,8 +76,12 @@ class Toolbar extends React.Component<Props>
           onClick={() => this.onToolClick( DrawingType.Between )}
         >
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <img src={downArrow} style={{ width: '2rem', height: '2rem', marginBottom: '-8px' }} />
-            <img src={upArrow} style={{ width: '2rem', height: '2rem' }} />
+            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', marginBottom: '-8px' }}>
+              <path d={DOWN_ARROW_PATH} />
+            </svg>
+            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
+              <path d={UP_ARROW_PATH} />
+            </svg>
           </div>
         </ToolbarItem>
       </div>
