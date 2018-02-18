@@ -29,10 +29,16 @@ export interface BasicDrawing<T extends BasicDrawingTypes> extends DrawingBase<T
   y: number;
 }
 
-export interface GridLineDrawing extends DrawingBase<DrawingType.VerticalGridLine | DrawingType.HorizontalGridLine>
+export interface VerticalGridLineDrawing extends DrawingBase<DrawingType.VerticalGridLine>
 {
-  type: DrawingType.VerticalGridLine | DrawingType.HorizontalGridLine;
-  position: number;
+  type: DrawingType.VerticalGridLine;
+  x: number;
+}
+
+export interface HorizontalGridLineDrawing extends DrawingBase<DrawingType.HorizontalGridLine>
+{
+  type: DrawingType.HorizontalGridLine;
+  y: number;
 }
 
 export interface BetweenDrawing extends DrawingBase<DrawingType.Between>
@@ -46,7 +52,8 @@ export interface BetweenDrawing extends DrawingBase<DrawingType.Between>
 export type Drawing = (
   BasicDrawing<BasicDrawingTypes> |
   BetweenDrawing |
-  GridLineDrawing
+  VerticalGridLineDrawing |
+  HorizontalGridLineDrawing
 );
 
 export const UP_ARROW_PATH = 'M97.969 73.984l-47.969-47.969L2.031 73.984H97.969z';

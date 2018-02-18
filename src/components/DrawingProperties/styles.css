@@ -1,0 +1,15 @@
+.drawing-properties
+{
+  visibility: hidden;
+
+  padding: 1rem;
+
+  background: white;
+  border-radius: 4px;
+  box-shadow: 1px 1px 5px 1px rgba(131, 131, 131, 0.774);
+}
+
+.drawing-properties.show
+{
+  visibility: visible;
+}

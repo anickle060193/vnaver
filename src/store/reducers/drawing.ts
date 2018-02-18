@@ -7,17 +7,21 @@ export interface State
 {
   tool: DrawingTool | null;
   drawings: Drawing[];
+  selectedDrawing: Drawing | null;
 }
 
 const initialState: State = {
   tool: null,
-  drawings: []
+  drawings: [],
+  selectedDrawing: null
 };
 
 const actionCreator = actionCreatorFactory();
 
 export const setTool = actionCreator<DrawingTool | null>( 'SET_TOOL' );
 export const addDrawing = actionCreator<Drawing>( 'ADD_DRAWING' );
+export const selectDrawing = actionCreator<Drawing>( 'SELECT_DRAWING' );
+export const deselectDrawing = actionCreator( 'DESELECT_DRAWING' );
 
 export const reducer = reducerWithInitialState( initialState )
   .case( setTool, ( state, tool ) =>
@@ -29,4 +33,14 @@ export const reducer = reducerWithInitialState( initialState )
     ( {
       ...state,
       drawings: state.drawings.concat( drawing )
+    } ) )
+  .case( selectDrawing, ( state, drawing ) =>
+    ( {
+      ...state,
+      selectedDrawing: drawing
+    } ) )
+  .case( deselectDrawing, ( state ) =>
+    ( {
+      ...state,
+      selectedDrawing: null
     } ) );

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Stage, Path, Layer, Line } from 'react-konva';
+import { Stage, Path, Layer, Line, Rect } from 'react-konva';
 
-import { addDrawing } from 'store/reducers/drawing';
+import { addDrawing, selectDrawing, deselectDrawing } from 'store/reducers/drawing';
 import
 {
   DrawingType,
@@ -14,17 +14,22 @@ import
   DOWN_ARROW_PATH,
   drawingTypeColors,
   BasicDrawing,
-  GridLineDrawing
+  VerticalGridLineDrawing,
+  HorizontalGridLineDrawing
 } from 'utils/draw';
 
 import './styles.css';
 
+interface DrawingComponentProps<D extends Drawing>
+{
+  drawing: D;
+  onClick?: ( e: KonvaMouseEvent<{}> ) => void;
+}
+
 const ARROW_SIZE = 30;
 const ARROW_SCALE = ARROW_SIZE / 100;
 
-const Above: React.SFC<{
-  drawing: BasicDrawing<DrawingType.Above>;
-}> = ( { drawing } ) => (
+const Above: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Above>>> = ( { drawing, onClick } ) => (
   <Path
     x={drawing.x - ARROW_SIZE / 2}
     y={drawing.y - ARROW_SIZE / 2}
@@ -33,12 +38,11 @@ const Above: React.SFC<{
     scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
     fill={drawingTypeColors[ drawing.type ]}
     data={UP_ARROW_PATH}
+    onClick={onClick}
   />
 );
 
-const At: React.SFC<{
-  drawing: BasicDrawing<DrawingType.At>;
-}> = ( { drawing } ) => (
+const At: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.At>>> = ( { drawing, onClick } ) => (
   <>
     <Path
       x={drawing.x - ARROW_SIZE / 2}
@@ -48,6 +52,7 @@ const At: React.SFC<{
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
       fill={drawingTypeColors[ drawing.type ]}
       data={DOWN_ARROW_PATH}
+      onClick={onClick}
     />
     <Path
       x={drawing.x - ARROW_SIZE / 2}
@@ -57,13 +62,12 @@ const At: React.SFC<{
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
       fill={drawingTypeColors[ drawing.type ]}
       data={UP_ARROW_PATH}
+      onClick={onClick}
     />
   </>
 );
 
-const Below: React.SFC<{
-  drawing: BasicDrawing<DrawingType.Below>;
-}> = ( { drawing } ) => (
+const Below: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Below>>> = ( { drawing, onClick } ) => (
   <Path
     x={drawing.x - ARROW_SIZE / 2}
     y={drawing.y - ARROW_SIZE + 8}
@@ -72,12 +76,11 @@ const Below: React.SFC<{
     scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
     fill={drawingTypeColors[ drawing.type ]}
     data={DOWN_ARROW_PATH}
+    onClick={onClick}
   />
 );
 
-const Between: React.SFC<{
-  drawing: BetweenDrawing;
-}> = ( { drawing } ) => (
+const Between: React.SFC<DrawingComponentProps<BetweenDrawing>> = ( { drawing, onClick } ) => (
   <>
     <Path
       x={drawing.x - ARROW_SIZE / 2}
@@ -87,6 +90,7 @@ const Between: React.SFC<{
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
       fill={drawingTypeColors[ drawing.type ]}
       data={DOWN_ARROW_PATH}
+      onClick={onClick}
     />
     <Path
       x={drawing.x - ARROW_SIZE / 2}
@@ -96,31 +100,58 @@ const Between: React.SFC<{
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
       fill={drawingTypeColors[ drawing.type ]}
       data={UP_ARROW_PATH}
+      onClick={onClick}
     />
   </>
 );
 
 const LINE_LENGTH = 10000;
+const LINE_WIDTH = 5;
 
-const GridLine: React.SFC<{
-  drawing: GridLineDrawing
-}> = ( { drawing } ) => (
-  <Line
-    points={drawing.type === DrawingType.VerticalGridLine ?
-      [ drawing.position, -LINE_LENGTH, drawing.position, LINE_LENGTH ] :
-      [ -LINE_LENGTH, drawing.position, LINE_LENGTH, drawing.position ]}
-    stroke={drawingTypeColors[ drawing.type ]}
-    strokeWidth={1}
-  />
+const VerticalGridLine: React.SFC<DrawingComponentProps<VerticalGridLineDrawing>> = ( { drawing, onClick } ) => (
+  <>
+    <Rect
+      x={drawing.x - LINE_WIDTH / 2}
+      width={LINE_WIDTH}
+      y={-LINE_LENGTH}
+      height={2 * LINE_LENGTH}
+      onClick={onClick}
+    />
+    <Line
+      points={[ drawing.x, -LINE_LENGTH, drawing.x, LINE_LENGTH ]}
+      stroke={drawingTypeColors[ drawing.type ]}
+      strokeWidth={1}
+      onClick={onClick}
+    />
+  </>
 );
 
-const drawingMap: {[ key in DrawingType ]: React.SFC<{ drawing: Drawing }> } = {
+const HorizontalGridLine: React.SFC<DrawingComponentProps<HorizontalGridLineDrawing>> = ( { drawing, onClick } ) => (
+  <>
+    <Rect
+      x={-LINE_LENGTH}
+      width={2 * LINE_LENGTH}
+      y={drawing.y - LINE_WIDTH / 2}
+      height={LINE_WIDTH}
+      onClick={onClick}
+    />
+    <Line
+      points={[ -LINE_LENGTH, drawing.y, LINE_LENGTH, drawing.y ]}
+      stroke={drawingTypeColors[ drawing.type ]}
+      strokeWidth={1}
+      onClick={onClick}
+      strokeHitEnabled={true}
+    />
+  </>
+);
+
+const drawingMap: {[ key in DrawingType ]: React.SFC<DrawingComponentProps<Drawing>> } = {
   [ DrawingType.Above ]: Above,
   [ DrawingType.At ]: At,
   [ DrawingType.Below ]: Below,
   [ DrawingType.Between ]: Between,
-  [ DrawingType.VerticalGridLine ]: GridLine,
-  [ DrawingType.HorizontalGridLine ]: GridLine,
+  [ DrawingType.VerticalGridLine ]: VerticalGridLine,
+  [ DrawingType.HorizontalGridLine ]: HorizontalGridLine,
 };
 
 interface PropsFromState
@@ -132,6 +163,8 @@ interface PropsFromState
 interface PropsFromDispatch
 {
   addDrawing: typeof addDrawing;
+  selectDrawing: typeof selectDrawing;
+  deselectDrawing: typeof deselectDrawing;
 }
 
 type Props = PropsFromState & PropsFromDispatch;
@@ -159,6 +192,7 @@ class DrawField extends React.Component<Props, State>
   drawFieldRef: HTMLDivElement | null;
 
   moved: boolean;
+  clickHandled: boolean;
 
   constructor( props: Props )
   {
@@ -184,6 +218,7 @@ class DrawField extends React.Component<Props, State>
     this.drawFieldRef = null;
 
     this.moved = false;
+    this.clickHandled = false;
   }
 
   async componentDidMount()
@@ -250,10 +285,10 @@ class DrawField extends React.Component<Props, State>
       else if( this.props.tool === DrawingType.VerticalGridLine )
       {
         cursor = (
-          <GridLine
+          <VerticalGridLine
             drawing={{
               type: this.props.tool,
-              position: this.state.mouseX
+              x: this.state.mouseX
             }}
           />
         );
@@ -261,10 +296,10 @@ class DrawField extends React.Component<Props, State>
       else if( this.props.tool === DrawingType.HorizontalGridLine )
       {
         cursor = (
-          <GridLine
+          <HorizontalGridLine
             drawing={{
               type: this.props.tool,
-              position: this.state.mouseY
+              y: this.state.mouseY
             }}
           />
         );
@@ -335,15 +370,19 @@ class DrawField extends React.Component<Props, State>
           scaleY={this.state.scale}
           x={this.state.originX}
           y={this.state.originY}
-          onContentMouseDown={this.onMouseDown}
-          onContentClick={this.onClick}
+          onContentMouseDown={this.onContentMouseDown}
+          onContentClick={this.onContentClick}
         >
           <Layer>
             {drawings.map( ( drawing, i ) =>
             {
               let DrawingComponent = drawingMap[ drawing.type ];
               return (
-                <DrawingComponent key={i} drawing={drawing} />
+                <DrawingComponent
+                  key={i}
+                  drawing={drawing}
+                  onClick={( e ) => this.onDrawingClick( drawing, e )}
+                />
               );
             } )}
             {cursor}
@@ -427,7 +466,7 @@ class DrawField extends React.Component<Props, State>
     } );
   }
 
-  private onMouseDown = ( e: KonvaMouseEvent<{}> ) =>
+  private onContentMouseDown = ( e: KonvaMouseEvent<{}> ) =>
   {
     this.moved = false;
     if( this.props.tool === DrawingType.Between )
@@ -440,12 +479,20 @@ class DrawField extends React.Component<Props, State>
     }
   }
 
-  private onClick = ( e: KonvaMouseEvent<{}> ) =>
+  private onContentClick = ( e: KonvaMouseEvent<{}> ) =>
   {
+    if( this.clickHandled )
+    {
+      this.clickHandled = false;
+      return;
+    }
+
     if( this.moved )
     {
       return;
     }
+
+    this.props.deselectDrawing();
 
     let { x, y } = this.mouseToDrawing( e.evt );
 
@@ -468,14 +515,14 @@ class DrawField extends React.Component<Props, State>
       {
         this.props.addDrawing( {
           type: this.props.tool,
-          position: x
+          x: x
         } );
       }
       else if( this.props.tool === DrawingType.HorizontalGridLine )
       {
         this.props.addDrawing( {
           type: this.props.tool,
-          position: y
+          y: y
         } );
       }
       else if( this.props.tool === DrawingType.At
@@ -495,6 +542,18 @@ class DrawField extends React.Component<Props, State>
       startY: null
     } );
   }
+
+  private onDrawingClick = ( drawing: Drawing, e: KonvaMouseEvent<{}> ) =>
+  {
+    if( this.moved )
+    {
+      return;
+    }
+
+    this.clickHandled = true;
+
+    this.props.selectDrawing( drawing );
+  }
 }
 
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
@@ -503,6 +562,8 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     drawings: state.drawing.drawings
   } ),
   {
-    addDrawing
+    addDrawing,
+    selectDrawing,
+    deselectDrawing
   }
 )( DrawField );
