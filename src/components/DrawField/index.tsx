@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Stage, Path, Layer } from 'react-konva';
 
 import { addDrawing } from 'store/reducers/drawing';
-import { DrawingType, Drawing, DrawingTool, Tool, BetweenDrawing, UP_ARROW_PATH, DOWN_ARROW_PATH } from 'utils/draw';
+import { DrawingType, Drawing, DrawingTool, Tool, BetweenDrawing, UP_ARROW_PATH, DOWN_ARROW_PATH, drawingTypeColors } from 'utils/draw';
 
 import './styles.css';
 
@@ -19,8 +19,7 @@ const Above: React.SFC<{
     width={ARROW_SIZE}
     height={ARROW_SIZE}
     scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-    fill="black"
-
+    fill={drawingTypeColors[ DrawingType.Above ]}
     data={UP_ARROW_PATH}
   />
 );
@@ -35,7 +34,7 @@ const At: React.SFC<{
       width={ARROW_SIZE}
       height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-      fill="black"
+      fill={drawingTypeColors[ DrawingType.At ]}
       data={DOWN_ARROW_PATH}
     />
     <Path
@@ -44,7 +43,7 @@ const At: React.SFC<{
       width={ARROW_SIZE}
       height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-      fill="black"
+      fill={drawingTypeColors[ DrawingType.At ]}
       data={UP_ARROW_PATH}
     />
   </>
@@ -59,7 +58,7 @@ const Below: React.SFC<{
     width={ARROW_SIZE}
     height={ARROW_SIZE}
     scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-    fill="black"
+    fill={drawingTypeColors[ DrawingType.Below ]}
     data={DOWN_ARROW_PATH}
   />
 );
@@ -74,7 +73,7 @@ const Between: React.SFC<{
       width={ARROW_SIZE}
       height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-      fill="black"
+      fill={drawingTypeColors[ DrawingType.Between ]}
       data={DOWN_ARROW_PATH}
     />
     <Path
@@ -83,7 +82,7 @@ const Between: React.SFC<{
       width={ARROW_SIZE}
       height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-      fill="black"
+      fill={drawingTypeColors[ DrawingType.Between ]}
       data={UP_ARROW_PATH}
     />
   </>

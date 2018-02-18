@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import ToolbarItem from 'components/Toolbar/ToolbarItem';
 import { setTool } from 'store/reducers/drawing';
-import { DrawingType, Tool, DrawingTool, MOVE_PATH, UP_ARROW_PATH, DOWN_ARROW_PATH } from 'utils/draw';
+import { DrawingType, Tool, DrawingTool, MOVE_PATH, UP_ARROW_PATH, DOWN_ARROW_PATH, drawingTypeColors } from 'utils/draw';
 
 import './styles.css';
 
@@ -40,7 +40,7 @@ class Toolbar extends React.Component<Props>
           active={this.props.tool === DrawingType.Above}
           onClick={() => this.onToolClick( DrawingType.Above )}
         >
-          <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
+          <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', fill: drawingTypeColors[ DrawingType.Above ] }}>
             <path d={UP_ARROW_PATH} />
           </svg>
         </ToolbarItem>
@@ -51,10 +51,10 @@ class Toolbar extends React.Component<Props>
           onClick={() => this.onToolClick( DrawingType.At )}
         >
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', marginBottom: '-20px' }}>
+            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', marginBottom: '-20px', fill: drawingTypeColors[ DrawingType.At ] }}>
               <path d={DOWN_ARROW_PATH} />
             </svg>
-            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
+            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', fill: drawingTypeColors[ DrawingType.At ] }}>
               <path d={UP_ARROW_PATH} />
             </svg>
           </div>
@@ -65,7 +65,7 @@ class Toolbar extends React.Component<Props>
           active={this.props.tool === DrawingType.Below}
           onClick={() => this.onToolClick( DrawingType.Below )}
         >
-          <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
+          <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', fill: drawingTypeColors[ DrawingType.Below ] }}>
             <path d={DOWN_ARROW_PATH} />
           </svg>
         </ToolbarItem>
@@ -76,10 +76,10 @@ class Toolbar extends React.Component<Props>
           onClick={() => this.onToolClick( DrawingType.Between )}
         >
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', marginBottom: '-8px' }}>
+            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', marginBottom: '-8px', fill: drawingTypeColors[ DrawingType.Between ] }}>
               <path d={DOWN_ARROW_PATH} />
             </svg>
-            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
+            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', fill: drawingTypeColors[ DrawingType.Between ] }}>
               <path d={UP_ARROW_PATH} />
             </svg>
           </div>

@@ -48,3 +48,10 @@ export const MOVE_PATH = `M21.915 71.415.5 49.999l21.414-21.415.001 16.49h23.16V
                           0L50.001.5l21.414 21.415-16.49 0v23.16h23.16l-.001-16.49L99.5
                           50.001l-21.415 21.414-.001-16.49h-23.16v23.16l16.49 0L49.999
                           99.5l-21.415-21.415 16.49 0V54.925H21.915L21.915 71.415z`;
+
+export const drawingTypeColors: {[ key in DrawingType ]: string } = {
+  [ DrawingType.Above ]: 'purple',
+  [ DrawingType.At ]: 'green',
+  [ DrawingType.Below ]: 'orange',
+  [ DrawingType.Between ]: 'blue'
+};
