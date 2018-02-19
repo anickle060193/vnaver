@@ -22,6 +22,7 @@ export const setTool = actionCreator<DrawingTool | null>( 'SET_TOOL' );
 export const addDrawing = actionCreator<Drawing>( 'ADD_DRAWING' );
 export const selectDrawing = actionCreator<Drawing>( 'SELECT_DRAWING' );
 export const deselectDrawing = actionCreator( 'DESELECT_DRAWING' );
+export const deleteDrawing = actionCreator<Drawing>( 'DELETE_DRAWING' );
 
 export const reducer = reducerWithInitialState( initialState )
   .case( setTool, ( state, tool ) =>
@@ -46,4 +47,18 @@ export const reducer = reducerWithInitialState( initialState )
     ( {
       ...state,
       selectedDrawing: null
-    } ) );
+    } ) )
+  .case( deleteDrawing, ( state, drawing ) =>
+  {
+    let { [ drawing.id ]: _, ...drawings } = state.drawings;
+    let selectedDrawing = state.selectedDrawing;
+    if( selectedDrawing && selectedDrawing.id === drawing.id )
+    {
+      selectedDrawing = null;
+    }
+    return {
+      ...state,
+      drawings,
+      selectedDrawing
+    };
+  } );

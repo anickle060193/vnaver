@@ -4,6 +4,8 @@ import * as ReactDOM from 'react-dom';
 import 'typeface-roboto';
 import 'typeface-roboto-mono';
 
+import 'bootstrap-css-only';
+
 import App from './App';
 
 import './index.css';

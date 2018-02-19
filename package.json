@@ -33,6 +33,7 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
+    "bootstrap-css-only": "^4.0.0",
     "electron-updater": "^2.20.1",
     "konva": "^1.7.6",
     "react": "^16.2.0",
