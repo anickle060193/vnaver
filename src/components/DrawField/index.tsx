@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Stage, Path, Layer, Line, Rect } from 'react-konva';
+import { Stage, Layer } from 'react-konva';
 import * as uuid from 'uuid/v4';
 
+import { drawingComponentMap, Between, VerticalGridLine, HorizontalGridLine } from 'components/DrawField/Drawings';
 import { addDrawing, selectDrawing, deselectDrawing } from 'store/reducers/drawing';
 import
 {
@@ -10,152 +11,11 @@ import
   Drawing,
   DrawingTool,
   Tool,
-  BetweenDrawing,
-  UP_ARROW_PATH,
-  DOWN_ARROW_PATH,
-  drawingTypeColors,
-  BasicDrawing,
-  VerticalGridLineDrawing,
-  HorizontalGridLineDrawing,
   DrawingMap,
   mapToArray
 } from 'utils/draw';
 
 import './styles.css';
-
-interface DrawingComponentProps<D extends Drawing>
-{
-  drawing: D;
-  onClick?: ( e: KonvaMouseEvent<{}> ) => void;
-}
-
-const ARROW_SIZE = 30;
-const ARROW_SCALE = ARROW_SIZE / 100;
-
-const Above: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Above>>> = ( { drawing, onClick } ) => (
-  <Path
-    x={drawing.x - ARROW_SIZE / 2}
-    y={drawing.y - ARROW_SIZE / 2}
-    width={ARROW_SIZE}
-    height={ARROW_SIZE}
-    scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-    fill={drawingTypeColors[ drawing.type ]}
-    data={UP_ARROW_PATH}
-    onClick={onClick}
-  />
-);
-
-const At: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.At>>> = ( { drawing, onClick } ) => (
-  <>
-    <Path
-      x={drawing.x - ARROW_SIZE / 2}
-      y={drawing.y - ARROW_SIZE + 3}
-      width={ARROW_SIZE}
-      height={ARROW_SIZE}
-      scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-      fill={drawingTypeColors[ drawing.type ]}
-      data={DOWN_ARROW_PATH}
-      onClick={onClick}
-    />
-    <Path
-      x={drawing.x - ARROW_SIZE / 2}
-      y={drawing.y - 16}
-      width={ARROW_SIZE}
-      height={ARROW_SIZE}
-      scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-      fill={drawingTypeColors[ drawing.type ]}
-      data={UP_ARROW_PATH}
-      onClick={onClick}
-    />
-  </>
-);
-
-const Below: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Below>>> = ( { drawing, onClick } ) => (
-  <Path
-    x={drawing.x - ARROW_SIZE / 2}
-    y={drawing.y - ARROW_SIZE + 8}
-    width={ARROW_SIZE}
-    height={ARROW_SIZE}
-    scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-    fill={drawingTypeColors[ drawing.type ]}
-    data={DOWN_ARROW_PATH}
-    onClick={onClick}
-  />
-);
-
-const Between: React.SFC<DrawingComponentProps<BetweenDrawing>> = ( { drawing, onClick } ) => (
-  <>
-    <Path
-      x={drawing.x - ARROW_SIZE / 2}
-      y={drawing.y - ARROW_SIZE}
-      width={ARROW_SIZE}
-      height={ARROW_SIZE}
-      scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-      fill={drawingTypeColors[ drawing.type ]}
-      data={DOWN_ARROW_PATH}
-      onClick={onClick}
-    />
-    <Path
-      x={drawing.x - ARROW_SIZE / 2}
-      y={drawing.y + drawing.height}
-      width={ARROW_SIZE}
-      height={ARROW_SIZE}
-      scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-      fill={drawingTypeColors[ drawing.type ]}
-      data={UP_ARROW_PATH}
-      onClick={onClick}
-    />
-  </>
-);
-
-const LINE_LENGTH = 10000;
-const LINE_WIDTH = 5;
-
-const VerticalGridLine: React.SFC<DrawingComponentProps<VerticalGridLineDrawing>> = ( { drawing, onClick } ) => (
-  <>
-    <Rect
-      x={drawing.x - LINE_WIDTH / 2}
-      width={LINE_WIDTH}
-      y={-LINE_LENGTH}
-      height={2 * LINE_LENGTH}
-      onClick={onClick}
-    />
-    <Line
-      points={[ drawing.x, -LINE_LENGTH, drawing.x, LINE_LENGTH ]}
-      stroke={drawingTypeColors[ drawing.type ]}
-      strokeWidth={1}
-      onClick={onClick}
-    />
-  </>
-);
-
-const HorizontalGridLine: React.SFC<DrawingComponentProps<HorizontalGridLineDrawing>> = ( { drawing, onClick } ) => (
-  <>
-    <Rect
-      x={-LINE_LENGTH}
-      width={2 * LINE_LENGTH}
-      y={drawing.y - LINE_WIDTH / 2}
-      height={LINE_WIDTH}
-      onClick={onClick}
-    />
-    <Line
-      points={[ -LINE_LENGTH, drawing.y, LINE_LENGTH, drawing.y ]}
-      stroke={drawingTypeColors[ drawing.type ]}
-      strokeWidth={1}
-      onClick={onClick}
-      strokeHitEnabled={true}
-    />
-  </>
-);
-
-const drawingMap: {[ key in DrawingType ]: React.SFC<DrawingComponentProps<Drawing>> } = {
-  [ DrawingType.Above ]: Above,
-  [ DrawingType.At ]: At,
-  [ DrawingType.Below ]: Below,
-  [ DrawingType.Between ]: Between,
-  [ DrawingType.VerticalGridLine ]: VerticalGridLine,
-  [ DrawingType.HorizontalGridLine ]: HorizontalGridLine,
-};
 
 interface PropsFromState
 {
@@ -315,7 +175,7 @@ class DrawField extends React.Component<Props, State>
         this.props.tool === DrawingType.Above ||
         this.props.tool === DrawingType.Below )
       {
-        let CursorComponent = drawingMap[ this.props.tool ];
+        let CursorComponent = drawingComponentMap[ this.props.tool ];
         cursor = (
           <CursorComponent
             drawing={{
@@ -384,7 +244,7 @@ class DrawField extends React.Component<Props, State>
           <Layer>
             {drawings.map( ( drawing, i ) =>
             {
-              let DrawingComponent = drawingMap[ drawing.type ];
+              let DrawingComponent = drawingComponentMap[ drawing.type ];
               return (
                 <DrawingComponent
                   key={i}
