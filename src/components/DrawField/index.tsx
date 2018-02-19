@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Stage, Layer } from 'react-konva';
 import * as uuid from 'uuid/v4';
 
-import { drawingComponentMap, Between, VerticalGridLine, HorizontalGridLine } from 'components/DrawField/Drawings';
+import { drawingComponentMap, Between, VerticalGridLine, HorizontalGridLine, ActiveIndication } from 'components/DrawField/Drawings';
 import { addDrawing, selectDrawing, deselectDrawing } from 'store/reducers/drawing';
 import
 {
@@ -11,9 +11,9 @@ import
   Drawing,
   DrawingTool,
   Tool,
-  DrawingMap,
-  mapToArray
+  DrawingMap
 } from 'utils/draw';
+import { mapToArray, assertNever } from 'utils/utils';
 
 import './styles.css';
 
@@ -21,6 +21,7 @@ interface PropsFromState
 {
   tool: DrawingTool | null;
   drawings: DrawingMap;
+  selectedDrawing: Drawing | null;
 }
 
 interface PropsFromDispatch
@@ -187,6 +188,10 @@ class DrawField extends React.Component<Props, State>
           />
         );
       }
+      else
+      {
+        throw assertNever( this.props.tool );
+      }
     }
 
     let drawings = mapToArray( this.props.drawings ).sort( ( d1, d2 ) =>
@@ -254,6 +259,14 @@ class DrawField extends React.Component<Props, State>
               );
             } )}
             {cursor}
+            <ActiveIndication
+              drawing={this.props.selectedDrawing}
+              originX={this.state.originX}
+              originY={this.state.originY}
+              scale={this.state.scale}
+              fieldWidth={this.state.width}
+              fieldHeight={this.state.height}
+            />
           </Layer>
         </Stage>
       </div>
@@ -364,7 +377,7 @@ class DrawField extends React.Component<Props, State>
 
     let { x, y } = this.mouseToDrawing( e.evt );
 
-    if( this.props.tool )
+    if( this.props.tool && this.props.tool !== Tool.Move )
     {
       if( this.props.tool === DrawingType.Between )
       {
@@ -407,6 +420,10 @@ class DrawField extends React.Component<Props, State>
           y: y
         } );
       }
+      else
+      {
+        throw assertNever( this.props.tool );
+      }
     }
 
     this.setState( {
@@ -431,7 +448,8 @@ class DrawField extends React.Component<Props, State>
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   ( state ) => ( {
     tool: state.drawing.tool,
-    drawings: state.drawing.drawings
+    drawings: state.drawing.drawings,
+    selectedDrawing: state.drawing.selectedDrawing
   } ),
   {
     addDrawing,

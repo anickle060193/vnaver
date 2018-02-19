@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Line, Rect, Path } from 'react-konva';
+import { Line, Rect, Path, Text, Label, Tag } from 'react-konva';
 
 import
 {
@@ -13,6 +13,7 @@ import
   UP_ARROW_PATH,
   DOWN_ARROW_PATH
 } from 'utils/draw';
+import { assertNever } from 'utils/utils';
 
 interface DrawingComponentProps<D extends Drawing>
 {
@@ -147,3 +148,78 @@ export const drawingComponentMap: {[ key in DrawingType ]: React.SFC<DrawingComp
   [ DrawingType.VerticalGridLine ]: VerticalGridLine,
   [ DrawingType.HorizontalGridLine ]: HorizontalGridLine,
 };
+
+export const ActiveIndication: React.SFC<{
+  drawing: Drawing | null;
+  originX: number;
+  originY: number;
+  scale: number;
+  fieldWidth: number;
+  fieldHeight: number;
+}> = ( { drawing, originX, originY, scale, fieldWidth, fieldHeight } ) =>
+  {
+    if( !drawing )
+    {
+      return null;
+    }
+
+    let x: number;
+    let y: number;
+    let arrowDirection = 'left';
+
+    if( drawing.type === DrawingType.Above )
+    {
+      x = drawing.x + ARROW_SIZE / 2 + 3;
+      y = drawing.y - 3;
+    }
+    else if( drawing.type === DrawingType.Below )
+    {
+      x = drawing.x + ARROW_SIZE / 2 + 3;
+      y = drawing.y - 6;
+    }
+    else if( drawing.type === DrawingType.At )
+    {
+      x = drawing.x + ARROW_SIZE / 2 + 3;
+      y = drawing.y - 7;
+    }
+    else if( drawing.type === DrawingType.Between )
+    {
+      x = drawing.x + ARROW_SIZE / 2 + 3;
+      y = drawing.y - 12;
+    }
+    else if( drawing.type === DrawingType.HorizontalGridLine )
+    {
+      arrowDirection = 'down';
+      x = ( -originX + fieldWidth / 2 ) / scale;
+      y = drawing.y - 4;
+    }
+    else if( drawing.type === DrawingType.VerticalGridLine )
+    {
+      x = drawing.x + 4;
+      y = ( -originY + fieldHeight / 2 ) / scale;
+    }
+    else
+    {
+      throw assertNever( drawing.type );
+    }
+
+    return (
+      <Label x={x} y={y}>
+        <Tag
+          fill="black"
+          cornerRadius={4}
+          pointerDirection={arrowDirection}
+          pointerWidth={10}
+          pointerHeight={10}
+          lineJoin="round"
+        />
+        <Text
+          text={drawing.id}
+          fill="white"
+          fontFamily="Roboto"
+          fontSize={15}
+          padding={4}
+        />
+      </Label>
+    );
+  };

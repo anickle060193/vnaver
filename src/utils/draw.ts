@@ -62,11 +62,6 @@ export interface DrawingMap
   [ id: string ]: Drawing;
 }
 
-export function mapToArray<T>( m: { [ key: string ]: T } )
-{
-  return Object.keys( m ).map( ( key ) => m[ key ] );
-}
-
 export const UP_ARROW_PATH = 'M97.969 73.984l-47.969-47.969L2.031 73.984H97.969z';
 export const DOWN_ARROW_PATH = 'M2.031 26.016l47.969 47.969L97.969 26.016H2.031z';
 
