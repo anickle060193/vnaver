@@ -11,7 +11,7 @@ export default class Layout extends React.Component
   render()
   {
     return (
-      <div className="layout">
+      <div className="main-layout">
         <div className="draw-field-container">
           <DrawField />
         </div>

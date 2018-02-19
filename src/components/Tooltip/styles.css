@@ -1,4 +1,4 @@
-.tooltip
+.tooltip-item
 {
   visibility: hidden;
 
@@ -21,7 +21,7 @@
   transition: transform 100ms;
 }
 
-.tooltip.show
+.tooltip-item.tooltip-show
 {
   visibility: visible;
   transform: scale( 1 ) translate( 0, -50% );

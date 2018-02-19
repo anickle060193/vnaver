@@ -40,8 +40,8 @@ export default class Tooltip extends React.Component<Props, State>
 
         <span
           className={[
-            'tooltip',
-            this.state.show ? 'show' : ''
+            'tooltip-item',
+            this.state.show ? 'tooltip-show' : ''
           ].join( ' ' )}
         >
           {title}

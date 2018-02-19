@@ -26,7 +26,7 @@ class DrawingProperties extends React.Component<Props>
       <div
         className={[
           'drawing-properties',
-          this.props.selectedDrawing ? 'show' : ''
+          this.props.selectedDrawing ? 'drawing-properties-show' : ''
         ].join( ' ' )}
       >
         <pre style={{ margin: 0, marginBottom: '1rem', fontFamily: 'Roboto Mono, monospace', fontSize: '10pt' }}>

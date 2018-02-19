@@ -19,7 +19,7 @@ export default class ToolbarItem extends React.Component<Props>
       <Tooltip
         className={[
           'toolbar-item',
-          this.props.active ? 'active' : ''
+          this.props.active ? 'toolbar-item-active' : ''
         ].join( ' ' )}
         title={this.props.title}
         onClick={this.props.onClick}
