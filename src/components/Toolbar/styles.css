@@ -1,3 +1,9 @@
+.toolbars
+{
+  display: flex;
+  flex-direction: column;
+}
+
 .toolbar
 {
   display: flex;
@@ -8,6 +14,11 @@
   background: rgb(78, 81, 255);
   border-radius: 4px;
   box-shadow: 1px 1px 5px 0px rgba(142, 142, 142, 0.664);
+}
+
+.toolbars > .toolbar:not( :first-child )
+{
+  margin-top: 0.5rem;
 }
 
 .toolbar > *:not( :last-child )

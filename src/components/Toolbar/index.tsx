@@ -3,9 +3,15 @@ import { connect } from 'react-redux';
 
 import ToolbarItem from 'components/Toolbar/ToolbarItem';
 import { setTool } from 'store/reducers/drawing';
-import { DrawingType, Tool, DrawingTool, MOVE_PATH, UP_ARROW_PATH, DOWN_ARROW_PATH, drawingTypeColors } from 'utils/draw';
+import { DrawingType, Tool, DrawingTool, UP_ARROW_PATH, DOWN_ARROW_PATH, drawingTypeColors } from 'utils/draw';
 
 import './styles.css';
+
+// const POINTER_PATH = 'M18 2l64 49.116-27.804 4.68 17.3 35.268-14.384 6.936-17.4-35.516-21.712 18.808z';
+const MOVE_PATH = `M21.915 71.415.5 49.999l21.414-21.415.001 16.49h23.16V21.915l-16.49
+                          0L50.001.5l21.414 21.415-16.49 0v23.16h23.16l-.001-16.49L99.5
+                          50.001l-21.415 21.414-.001-16.49h-23.16v23.16l16.49 0L49.999
+                          99.5l-21.415-21.415 16.49 0V54.925H21.915L21.915 71.415z`;
 
 interface PropsFromState
 {
@@ -24,86 +30,96 @@ class Toolbar extends React.Component<Props>
   render()
   {
     return (
-      <div className="toolbar">
-        <ToolbarItem
-          title="Move"
-          active={this.props.tool === Tool.Move}
-          onClick={() => this.onToolClick( Tool.Move )}
-        >
-          <svg viewBox="0 0 100 100" style={{ width: '2.5rem', height: '2.5rem' }}>
-            <path d={MOVE_PATH} />
-          </svg>
-        </ToolbarItem>
+      <div className="toolbars">
 
-        <ToolbarItem
-          title="Above Constraint"
-          active={this.props.tool === DrawingType.Above}
-          onClick={() => this.onToolClick( DrawingType.Above )}
-        >
-          <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
-            <path d={UP_ARROW_PATH} fill={drawingTypeColors[ DrawingType.Above ]} />
-          </svg>
-        </ToolbarItem>
+        <div className="toolbar">
 
-        <ToolbarItem
-          title="At Constraint"
-          active={this.props.tool === DrawingType.At}
-          onClick={() => this.onToolClick( DrawingType.At )}
-        >
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', marginBottom: '-20px' }}>
-              <path d={DOWN_ARROW_PATH} fill={drawingTypeColors[ DrawingType.At ]} />
+          <ToolbarItem
+            title="Move"
+            active={this.props.tool === Tool.Move}
+            onClick={() => this.onToolClick( Tool.Move )}
+          >
+            <svg viewBox="0 0 100 100" style={{ width: '2.5rem', height: '2.5rem' }}>
+              <path d={MOVE_PATH} />
             </svg>
+          </ToolbarItem>
+
+        </div>
+
+        <div className="toolbar">
+
+          <ToolbarItem
+            title="Above Constraint"
+            active={this.props.tool === DrawingType.Above}
+            onClick={() => this.onToolClick( DrawingType.Above )}
+          >
             <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
-              <path d={UP_ARROW_PATH} fill={drawingTypeColors[ DrawingType.At ]} />
+              <path d={UP_ARROW_PATH} fill={drawingTypeColors[ DrawingType.Above ]} />
             </svg>
-          </div>
-        </ToolbarItem>
+          </ToolbarItem>
 
-        <ToolbarItem
-          title="Below Constraint"
-          active={this.props.tool === DrawingType.Below}
-          onClick={() => this.onToolClick( DrawingType.Below )}
-        >
-          <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
-            <path d={DOWN_ARROW_PATH} fill={drawingTypeColors[ DrawingType.Below ]} />
-          </svg>
-        </ToolbarItem>
+          <ToolbarItem
+            title="At Constraint"
+            active={this.props.tool === DrawingType.At}
+            onClick={() => this.onToolClick( DrawingType.At )}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', marginBottom: '-20px' }}>
+                <path d={DOWN_ARROW_PATH} fill={drawingTypeColors[ DrawingType.At ]} />
+              </svg>
+              <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
+                <path d={UP_ARROW_PATH} fill={drawingTypeColors[ DrawingType.At ]} />
+              </svg>
+            </div>
+          </ToolbarItem>
 
-        <ToolbarItem
-          title="Between Constraint"
-          active={this.props.tool === DrawingType.Between}
-          onClick={() => this.onToolClick( DrawingType.Between )}
-        >
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', marginBottom: '-8px' }}>
-              <path d={DOWN_ARROW_PATH} fill={drawingTypeColors[ DrawingType.Between ]} />
-            </svg>
+          <ToolbarItem
+            title="Below Constraint"
+            active={this.props.tool === DrawingType.Below}
+            onClick={() => this.onToolClick( DrawingType.Below )}
+          >
             <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
-              <path d={UP_ARROW_PATH} fill={drawingTypeColors[ DrawingType.Between ]} />
+              <path d={DOWN_ARROW_PATH} fill={drawingTypeColors[ DrawingType.Below ]} />
             </svg>
-          </div>
-        </ToolbarItem>
+          </ToolbarItem>
 
-        <ToolbarItem
-          title="Vertical Grid Line"
-          active={this.props.tool === DrawingType.VerticalGridLine}
-          onClick={() => this.onToolClick( DrawingType.VerticalGridLine )}
-        >
-          <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
-            <path d="M20 5 L20 95 M50 5 L50 95 M80 5 L80 95" stroke={drawingTypeColors[ DrawingType.VerticalGridLine ]} strokeWidth={6} />
-          </svg>
-        </ToolbarItem>
+          <ToolbarItem
+            title="Between Constraint"
+            active={this.props.tool === DrawingType.Between}
+            onClick={() => this.onToolClick( DrawingType.Between )}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', marginBottom: '-8px' }}>
+                <path d={DOWN_ARROW_PATH} fill={drawingTypeColors[ DrawingType.Between ]} />
+              </svg>
+              <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
+                <path d={UP_ARROW_PATH} fill={drawingTypeColors[ DrawingType.Between ]} />
+              </svg>
+            </div>
+          </ToolbarItem>
 
-        <ToolbarItem
-          title="Horizontal Grid Line"
-          active={this.props.tool === DrawingType.HorizontalGridLine}
-          onClick={() => this.onToolClick( DrawingType.HorizontalGridLine )}
-        >
-          <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
-            <path d="M5 20 L95 20 M5 50 L95 50 M5 80 L95 80" stroke={drawingTypeColors[ DrawingType.HorizontalGridLine ]} strokeWidth={6} />
-          </svg>
-        </ToolbarItem>
+          <ToolbarItem
+            title="Vertical Grid Line"
+            active={this.props.tool === DrawingType.VerticalGridLine}
+            onClick={() => this.onToolClick( DrawingType.VerticalGridLine )}
+          >
+            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
+              <path d="M20 5 L20 95 M50 5 L50 95 M80 5 L80 95" stroke={drawingTypeColors[ DrawingType.VerticalGridLine ]} strokeWidth={6} />
+            </svg>
+          </ToolbarItem>
+
+          <ToolbarItem
+            title="Horizontal Grid Line"
+            active={this.props.tool === DrawingType.HorizontalGridLine}
+            onClick={() => this.onToolClick( DrawingType.HorizontalGridLine )}
+          >
+            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
+              <path d="M5 20 L95 20 M5 50 L95 50 M5 80 L95 80" stroke={drawingTypeColors[ DrawingType.HorizontalGridLine ]} strokeWidth={6} />
+            </svg>
+          </ToolbarItem>
+
+        </div>
+
       </div>
     );
   }
