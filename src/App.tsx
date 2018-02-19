@@ -1,8 +1,9 @@
 import * as React from 'react';
-import Layout from 'components/Layout';
-
-import store from 'store';
 import { Provider } from 'react-redux';
+
+import ShortcutManager from 'components/ShortcutManager';
+import Layout from 'components/Layout';
+import store from 'store';
 
 export default class App extends React.Component
 {
@@ -10,7 +11,9 @@ export default class App extends React.Component
   {
     return (
       <Provider store={store}>
-        <Layout />
+        <ShortcutManager>
+          <Layout />
+        </ShortcutManager>
       </Provider>
     );
   }

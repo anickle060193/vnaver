@@ -7,6 +7,7 @@ import './styles.css';
 interface Props
 {
   title: string;
+  shortcut: string | null;
   active: boolean;
   onClick: () => void;
 }
@@ -21,7 +22,7 @@ export default class ToolbarItem extends React.Component<Props>
           'toolbar-item',
           this.props.active ? 'toolbar-item-active' : ''
         ].join( ' ' )}
-        title={this.props.title}
+        title={this.props.title + ( this.props.shortcut ? ` (${this.props.shortcut})` : '' )}
         onClick={this.props.onClick}
       >
         {this.props.children}
