@@ -1,7 +1,7 @@
 // @ts-check
 
 const { app, BrowserWindow } = require( 'electron' );
-const { autoUpdater } = require( 'electron-updater' );
+// const { autoUpdater } = require( 'electron-updater' );
 const path = require( 'path' );
 const url = require( 'url' );
 
@@ -18,14 +18,14 @@ function createWindow()
   } );
 
   window.loadURL(
-    process.env.NODE_ENV === 'production' ?
+    process.env.NODE_ENV === 'development' ?
+      'http://localhost:3000'
+      :
       url.format( {
         pathname: path.join( __dirname, '/../build/index.html' ),
         protocol: 'file',
         slashes: true
       } )
-      :
-      'http://localhost:3000'
   );
 
   window.on( 'closed', () =>
@@ -44,7 +44,7 @@ function createWindow()
 
 app.on( 'ready', () =>
 {
-  autoUpdater.checkForUpdatesAndNotify();
+  // autoUpdater.checkForUpdatesAndNotify();
   createWindow();
 } );
 
