@@ -17,16 +17,16 @@ export default class ToolbarItem extends React.Component<Props>
   render()
   {
     return (
-      <Tooltip
+      <div
         className={[
           'toolbar-item',
           this.props.active ? 'toolbar-item-active' : ''
         ].join( ' ' )}
-        title={this.props.title + ( this.props.shortcut ? ` (${this.props.shortcut})` : '' )}
         onClick={this.props.onClick}
       >
+        <Tooltip align="right" title={this.props.title + ( this.props.shortcut ? ` (${this.props.shortcut})` : '' )} />
         {this.props.children}
-      </Tooltip>
+      </div>
     );
   }
 }

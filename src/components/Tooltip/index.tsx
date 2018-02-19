@@ -5,6 +5,7 @@ import './styles.css';
 interface Props extends React.HTMLProps<HTMLDivElement>
 {
   title: string;
+  align: 'left' | 'right';
 }
 
 interface State
@@ -25,22 +26,18 @@ export default class Tooltip extends React.Component<Props, State>
 
   render()
   {
-    let { title, style, ...props } = this.props;
+    let { title, align } = this.props;
+
     return (
       <div
-        {...props}
-        style={{
-          ...style,
-          position: 'relative'
-        }}
+        className="tooltip-container"
         onMouseEnter={this.onMouseEnter}
         onMouseLeave={this.onMouseLeave}
       >
-        {props.children}
-
         <span
           className={[
             'tooltip-item',
+            'tooltip-item-' + align,
             this.state.show ? 'tooltip-show' : ''
           ].join( ' ' )}
         >

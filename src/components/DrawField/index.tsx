@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Stage, Layer } from 'react-konva';
 import * as uuid from 'uuid/v4';
 
+import Tooltip from 'components/Tooltip';
 import { drawingComponentMap, Between, VerticalGridLine, HorizontalGridLine, ActiveIndication } from 'components/DrawField/Drawings';
 import { addDrawing, selectDrawing, deselectDrawing } from 'store/reducers/drawing';
 import
@@ -255,6 +256,7 @@ class DrawField extends React.Component<Props, State>
           ].join( ' ' )}
           onClick={this.onResetOrigin}
         >
+          <Tooltip align="left" title="Re-center" />
           <svg viewBox="0 0 100 100">
             <path d={centered ? CENTERED_POSITION_PATH : UNCENTERED_POSITION_PATH} />
           </svg>
