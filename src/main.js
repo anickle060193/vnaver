@@ -11,10 +11,10 @@ let window = null;
 function createWindow()
 {
   window = new BrowserWindow( {
-    width: 800,
-    height: 600,
+    width: 1000,
+    height: 800,
     minWidth: 600,
-    minHeight: 600,
+    minHeight: 750,
     show: false,
     backgroundColor: "#fff"
   } );
