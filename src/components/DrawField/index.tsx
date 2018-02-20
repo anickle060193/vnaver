@@ -341,80 +341,87 @@ class DrawField extends React.Component<Props, State>
   private onContentMouseDown = ( e: KonvaMouseEvent<{}> ) =>
   {
     this.moved = false;
-    if( this.props.tool === DrawingType.Between )
+
+    if( e.evt.button === 0 ) // tslint:disable-line no-bitwise
     {
-      let { x, y } = this.mouseToDrawing( e.evt );
-      this.setState( {
-        startX: x,
-        startY: y
-      } );
+      if( this.props.tool === DrawingType.Between )
+      {
+        let { x, y } = this.mouseToDrawing( e.evt );
+        this.setState( {
+          startX: x,
+          startY: y
+        } );
+      }
     }
   }
 
   private onContentClick = ( e: KonvaMouseEvent<{}> ) =>
   {
-    if( this.clickHandled )
+    if( e.evt.button === 0 )
     {
-      this.clickHandled = false;
-      return;
-    }
-
-    if( this.moved )
-    {
-      return;
-    }
-
-    this.props.deselectDrawing();
-
-    let { x, y } = this.mouseToDrawing( e.evt );
-
-    if( this.props.tool !== Tool.Cursor
-      && this.props.tool !== Tool.Move )
-    {
-      if( this.props.tool === DrawingType.Between )
+      if( this.clickHandled )
       {
-        if( this.state.startY !== null && this.state.startX !== null )
+        this.clickHandled = false;
+        return;
+      }
+
+      if( this.moved )
+      {
+        return;
+      }
+
+      this.props.deselectDrawing();
+
+      let { x, y } = this.mouseToDrawing( e.evt );
+
+      if( this.props.tool !== Tool.Cursor
+        && this.props.tool !== Tool.Move )
+      {
+        if( this.props.tool === DrawingType.Between )
         {
-          let diff = Math.abs( y - this.state.startY );
+          if( this.state.startY !== null && this.state.startX !== null )
+          {
+            let diff = Math.abs( y - this.state.startY );
+            this.props.addDrawing( {
+              id: uuid(),
+              type: this.props.tool,
+              x: this.state.startX,
+              y: Math.min( y, this.state.startY ),
+              height: diff
+            } );
+          }
+        }
+        else if( this.props.tool === DrawingType.VerticalGridLine )
+        {
           this.props.addDrawing( {
             id: uuid(),
             type: this.props.tool,
-            x: this.state.startX,
-            y: Math.min( y, this.state.startY ),
-            height: diff
+            x: x
           } );
         }
-      }
-      else if( this.props.tool === DrawingType.VerticalGridLine )
-      {
-        this.props.addDrawing( {
-          id: uuid(),
-          type: this.props.tool,
-          x: x
-        } );
-      }
-      else if( this.props.tool === DrawingType.HorizontalGridLine )
-      {
-        this.props.addDrawing( {
-          id: uuid(),
-          type: this.props.tool,
-          y: y
-        } );
-      }
-      else if( this.props.tool === DrawingType.At
-        || this.props.tool === DrawingType.Above
-        || this.props.tool === DrawingType.Below )
-      {
-        this.props.addDrawing( {
-          id: uuid(),
-          type: this.props.tool!,
-          x: x,
-          y: y
-        } );
-      }
-      else
-      {
-        throw assertNever( this.props.tool );
+        else if( this.props.tool === DrawingType.HorizontalGridLine )
+        {
+          this.props.addDrawing( {
+            id: uuid(),
+            type: this.props.tool,
+            y: y
+          } );
+        }
+        else if( this.props.tool === DrawingType.At
+          || this.props.tool === DrawingType.Above
+          || this.props.tool === DrawingType.Below )
+        {
+          this.props.addDrawing( {
+            id: uuid(),
+            type: this.props.tool!,
+            x: x,
+            y: y
+          } );
+        }
+        else
+        {
+          throw assertNever( this.props.tool );
+        }
       }
     }
 
@@ -426,14 +433,17 @@ class DrawField extends React.Component<Props, State>
 
   private onDrawingClick = ( drawing: Drawing, e: KonvaMouseEvent<{}> ) =>
   {
-    if( this.moved )
+    if( e.evt.button === 0 )
     {
-      return;
+      if( this.moved )
+      {
+        return;
+      }
+
+      this.clickHandled = true;
+
+      this.props.selectDrawing( drawing );
     }
-
-    this.clickHandled = true;
-
-    this.props.selectDrawing( drawing );
   }
 }
 
