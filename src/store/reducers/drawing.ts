@@ -1,17 +1,24 @@
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
 import actionCreatorFactory from 'typescript-fsa';
 
-import { Drawing, DrawingTool, DrawingMap } from 'utils/draw';
+import { Drawing, DrawingTool, DrawingMap, DEFAULT_SCALE_LEVEL, MAX_SCALE_LEVEL, MIN_SCALE_LEVEL } from 'utils/draw';
+import { limit } from 'utils/utils';
 
 export interface State
 {
   tool: DrawingTool | null;
+  scaleLevel: number;
+  originX: number;
+  originY: number;
   drawings: DrawingMap;
   selectedDrawing: Drawing | null;
 }
 
 const initialState: State = {
   tool: null,
+  scaleLevel: DEFAULT_SCALE_LEVEL,
+  originX: 0.0,
+  originY: 0.0,
   drawings: {},
   selectedDrawing: null
 };
@@ -19,6 +26,11 @@ const initialState: State = {
 const actionCreator = actionCreatorFactory();
 
 export const setTool = actionCreator<DrawingTool | null>( 'SET_TOOL' );
+export const incrementScaleLevel = actionCreator( 'INCREMENT_SCALE_LEVEL' );
+export const decrementScaleLevel = actionCreator( 'DECREMENT_SCALE_LEVEL' );
+export const resetScaleLevel = actionCreator( 'RESET_SCALE_LEVEL' );
+export const setOrigin = actionCreator<{ originX: number, originY: number }>( 'SET_ORIGIN' );
+export const resetOrigin = actionCreator( 'RESET_ORIGIN' );
 export const addDrawing = actionCreator<Drawing>( 'ADD_DRAWING' );
 export const selectDrawing = actionCreator<Drawing>( 'SELECT_DRAWING' );
 export const deselectDrawing = actionCreator( 'DESELECT_DRAWING' );
@@ -29,6 +41,33 @@ export const reducer = reducerWithInitialState( initialState )
     ( {
       ...state,
       tool
+    } ) )
+  .case( incrementScaleLevel, ( state ) =>
+    ( {
+      ...state,
+      scaleLevel: limit( state.scaleLevel + 1, MIN_SCALE_LEVEL, MAX_SCALE_LEVEL )
+    } ) )
+  .case( decrementScaleLevel, ( state ) =>
+    ( {
+      ...state,
+      scaleLevel: limit( state.scaleLevel - 1, MIN_SCALE_LEVEL, MAX_SCALE_LEVEL )
+    } ) )
+  .case( resetScaleLevel, ( state ) =>
+    ( {
+      ...state,
+      scaleLevel: DEFAULT_SCALE_LEVEL
+    } ) )
+  .case( setOrigin, ( state, { originX, originY } ) =>
+    ( {
+      ...state,
+      originX,
+      originY
+    } ) )
+  .case( resetOrigin, ( state ) =>
+    ( {
+      ...state,
+      originX: 0.0,
+      originY: 0.0
     } ) )
   .case( addDrawing, ( state, drawing ) =>
     ( {

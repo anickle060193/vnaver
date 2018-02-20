@@ -14,13 +14,23 @@
 .toolbar-container
 {
   position: absolute;
-  left: 2%;
-  top: 2%;
+  margin: 1rem;
+  left: 0%;
+  top: 0%;
 }
 
 .drawing-properties-container
 {
   position: absolute;
-  left: 2%;
-  bottom: 2%;
+  margin: 1rem;
+  left: 0%;
+  bottom: 0%;
+}
+
+.draw-field-controls
+{
+  position: absolute;
+  margin: 1rem;
+  right: 0%;
+  top: 0%;
 }

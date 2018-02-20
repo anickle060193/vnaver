@@ -3,40 +3,36 @@ import { connect } from 'react-redux';
 import { Stage, Layer } from 'react-konva';
 import * as uuid from 'uuid/v4';
 
-import Tooltip from 'components/Tooltip';
 import { drawingComponentMap, Between, VerticalGridLine, HorizontalGridLine, ActiveIndication } from 'components/DrawField/Drawings';
-import { addDrawing, selectDrawing, deselectDrawing } from 'store/reducers/drawing';
+import { addDrawing, selectDrawing, deselectDrawing, setOrigin, incrementScaleLevel, decrementScaleLevel } from 'store/reducers/drawing';
 import
 {
   DrawingType,
   Drawing,
   DrawingTool,
   Tool,
-  DrawingMap
+  DrawingMap,
+  getScale
 } from 'utils/draw';
 import { mapToArray, assertNever } from 'utils/utils';
 
 import './styles.css';
 
-const CENTERED_POSITION_PATH = `M50 34C41.16 34 34 41.16 34 50S41.16 66 50 66 66 58.84 66 50 58.84 34 50
-                                34ZM85.76 46C83.92 29.32 70.68 16.08 54 14.24V6H46V14.24C29.32 16.08 16.08 29.32 14.24
-                                46H6V54H14.24C16.08 70.68 29.32 83.92 46 85.76V94H54V85.76C70.68 83.92 83.92 70.68 85.76
-                                54H94V46H85.76ZM50 78C34.52 78 22 65.48 22 50S34.52 22 50 22 78 34.52 78 50 65.48 78 50 78Z`;
-
-const UNCENTERED_POSITION_PATH = `M85.76 46C83.92 29.32 70.68 16.08 54 14.24L54 6 46 6 46 14.24C29.32 16.08 16.08 29.32
-                                  14.24 46L6 46 6 54 14.24 54C16.08 70.68 29.32 83.92 46 85.76L46 94 54 94 54 85.76C70.68
-                                  83.92 83.92 70.68 85.76 54L94 54 94 46 85.76 46ZM50 78C34.52 78 22 65.48 22
-                                  50S34.52 22 50 22 78 34.52 78 50 65.48 78 50 78Z`;
-
 interface PropsFromState
 {
   tool: DrawingTool | null;
+  scale: number;
+  originX: number;
+  originY: number;
   drawings: DrawingMap;
   selectedDrawing: Drawing | null;
 }
 
 interface PropsFromDispatch
 {
+  incrementScaleLevel: typeof incrementScaleLevel;
+  decrementScaleLevel: typeof decrementScaleLevel;
+  setOrigin: typeof setOrigin;
   addDrawing: typeof addDrawing;
   selectDrawing: typeof selectDrawing;
   deselectDrawing: typeof deselectDrawing;
@@ -48,10 +44,6 @@ interface State
 {
   width: number;
   height: number;
-
-  originX: number;
-  originY: number;
-  scale: number;
 
   mouseX: number | null;
   mouseY: number | null;
@@ -76,10 +68,6 @@ class DrawField extends React.Component<Props, State>
     this.state = {
       width: 100,
       height: 100,
-
-      originX: 0,
-      originY: 0,
-      scale: 1,
 
       mouseX: null,
       mouseY: null,
@@ -233,8 +221,6 @@ class DrawField extends React.Component<Props, State>
       }
     } );
 
-    let centered = ( this.state.originX === 0 && this.state.originY === 0 );
-
     return (
       <div
         ref={( ref ) => this.drawFieldRef = ref}
@@ -243,31 +229,13 @@ class DrawField extends React.Component<Props, State>
           cursor: ( this.props.tool === Tool.Move || this.state.ctrlDown ) ? 'move' : 'unset'
         }}
       >
-        <div
-          className="drawing-scale"
-          onClick={this.onResetScale}
-        >
-          x{this.state.scale.toFixed( 2 )}
-        </div>
-        <div
-          className={[
-            'drawing-position',
-            centered ? 'drawing-position-centered' : ''
-          ].join( ' ' )}
-          onClick={this.onResetOrigin}
-        >
-          <Tooltip align="left" title="Re-center" />
-          <svg viewBox="0 0 100 100">
-            <path d={centered ? CENTERED_POSITION_PATH : UNCENTERED_POSITION_PATH} />
-          </svg>
-        </div>
         <Stage
           width={this.state.width}
           height={this.state.height}
-          scaleX={this.state.scale}
-          scaleY={this.state.scale}
-          x={this.state.originX}
-          y={this.state.originY}
+          scaleX={this.props.scale}
+          scaleY={this.props.scale}
+          x={this.props.originX}
+          y={this.props.originY}
           onContentMouseDown={this.onContentMouseDown}
           onContentClick={this.onContentClick}
         >
@@ -286,9 +254,9 @@ class DrawField extends React.Component<Props, State>
             {cursor}
             <ActiveIndication
               drawing={this.props.selectedDrawing}
-              originX={this.state.originX}
-              originY={this.state.originY}
-              scale={this.state.scale}
+              originX={this.props.originX}
+              originY={this.props.originY}
+              scale={this.props.scale}
               fieldWidth={this.state.width}
               fieldHeight={this.state.height}
             />
@@ -314,21 +282,11 @@ class DrawField extends React.Component<Props, State>
     this.setState( { ctrlDown: e.ctrlKey } );
   }
 
-  private onResetScale = () =>
-  {
-    this.setState( { scale: 1 } );
-  }
-
-  private onResetOrigin = () =>
-  {
-    this.setState( { originX: 0, originY: 0 } );
-  }
-
   private mouseToDrawing( e: { clientX: number, clientY: number } )
   {
     return {
-      x: ( e.clientX - this.state.originX ) / this.state.scale,
-      y: ( e.clientY - this.state.originY ) / this.state.scale
+      x: ( e.clientX - this.props.originX ) / this.props.scale,
+      y: ( e.clientY - this.props.originY ) / this.props.scale
     };
   }
 
@@ -338,10 +296,14 @@ class DrawField extends React.Component<Props, State>
 
     if( e.ctrlKey )
     {
-      let scaleDiff = e.wheelDelta / 1000;
-      this.setState( ( { scale }: State ) => ( {
-        scale: scale + scaleDiff
-      } ) );
+      if( e.wheelDelta < 0 )
+      {
+        this.props.decrementScaleLevel();
+      }
+      else
+      {
+        this.props.incrementScaleLevel();
+      }
     }
   }
 
@@ -354,10 +316,9 @@ class DrawField extends React.Component<Props, State>
       {
         this.moved = true;
 
-        this.setState( ( prevState: State ) => ( {
-          originX: prevState.originX + e.movementX,
-          originY: prevState.originY + e.movementY
-        } ) );
+        let originX = this.props.originX + e.movementX;
+        let originY = this.props.originY + e.movementY;
+        this.props.setOrigin( { originX, originY } );
       }
     }
 
@@ -478,10 +439,16 @@ class DrawField extends React.Component<Props, State>
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   ( state ) => ( {
     tool: state.drawing.tool,
+    scale: getScale( state.drawing.scaleLevel ),
+    originX: state.drawing.originX,
+    originY: state.drawing.originY,
     drawings: state.drawing.drawings,
     selectedDrawing: state.drawing.selectedDrawing
   } ),
   {
+    incrementScaleLevel,
+    decrementScaleLevel,
+    setOrigin,
     addDrawing,
     selectDrawing,
     deselectDrawing
