@@ -70,7 +70,7 @@ const HorizontalGuideLine: React.SFC<HorizontalGuideLineProps> = ( { y, color, s
       height={LINE_WIDTH}
     />
     <Line
-      points={[ -LINE_LENGTH, y, LINE_LENGTH, ]}
+      points={[ -LINE_LENGTH, y, LINE_LENGTH, y ]}
       stroke={color}
       strokeWidth={strokeWidth}
     />
