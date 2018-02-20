@@ -20,6 +20,7 @@ export interface DrawingBase<T extends DrawingType>
 {
   type: T;
   id: string;
+  color: string;
 }
 
 interface ContainsGuideLineDrawing<T extends DrawingType> extends DrawingBase<T>
@@ -72,12 +73,12 @@ export interface DrawingMap
 }
 
 export const drawingTypeColors: {[ key in DrawingType ]: string } = {
-  [ DrawingType.Above ]: 'purple',
-  [ DrawingType.At ]: 'green',
-  [ DrawingType.Below ]: 'orange',
-  [ DrawingType.Between ]: 'blue',
-  [ DrawingType.VerticalGridLine ]: 'red',
-  [ DrawingType.HorizontalGridLine ]: 'cyan',
+  [ DrawingType.Above ]: '#800080',
+  [ DrawingType.At ]: '#008000',
+  [ DrawingType.Below ]: '#ffa500',
+  [ DrawingType.Between ]: '#0000ff',
+  [ DrawingType.VerticalGridLine ]: '#ff0000',
+  [ DrawingType.HorizontalGridLine ]: '#00ffff',
 };
 
 export const UP_ARROW_PATH = 'M97.969 73.984l-47.969-47.969L2.031 73.984H97.969z';

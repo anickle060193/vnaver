@@ -1,7 +1,16 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
 
-import { BasicDrawing, DrawingType, DrawingBase, BetweenDrawing, VerticalGridLineDrawing, HorizontalGridLineDrawing, BasicDrawingTypes, Drawing } from 'utils/draw';
+import
+{
+  BasicDrawing,
+  DrawingType,
+  DrawingBase,
+  BetweenDrawing,
+  VerticalGridLineDrawing,
+  HorizontalGridLineDrawing,
+  BasicDrawingTypes,
+  Drawing
+} from 'utils/draw';
 
 interface DrawingPropertiesProps<S extends DrawingType, T extends DrawingBase<S>>
 {
@@ -9,46 +18,35 @@ interface DrawingPropertiesProps<S extends DrawingType, T extends DrawingBase<S>
   onChange: ( newDrawing: Drawing ) => void;
 }
 
-const connector = <T extends DrawingType, D extends DrawingBase<T>>( component: React.ComponentClass<DrawingPropertiesProps<T, D>> ) => ( connect<{}, {}, DrawingPropertiesProps<T, DrawingBase<T>>, RootState>(
-  ( state ) => ( {
-  } ),
-  {
-  }
-) )( component );
-
 const XInput: React.SFC<{
-  x: number,
-  onChange: React.ChangeEventHandler<HTMLInputElement>,
+  x: number;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
 }> = ( { x, onChange } ) => (
-  <>
-    <div className="form-group row">
-      <label className="col-sm-2 col-form-label">X:</label>
-      <div className="col-sm-10">
-        <input type="number" className="form-control" placeholder="X" value={x} onChange={onChange} />
-      </div>
+  <div className="form-group row">
+    <label className="col-sm-2 col-form-label">X:</label>
+    <div className="col-sm-10">
+      <input type="number" className="form-control" placeholder="X" value={x} onChange={onChange} />
     </div>
-  </>
+  </div>
 );
 
 const YInput: React.SFC<{
-  y: number,
-  onChange: React.ChangeEventHandler<HTMLInputElement>,
+  y: number;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
 }> = ( { y, onChange } ) => (
-  <>
-    <div className="form-group row">
-      <label className="col-sm-2 col-form-label">Y:</label>
-      <div className="col-sm-10">
-        <input type="number" className="form-control" placeholder="Y" value={y} onChange={onChange} />
-      </div>
+  <div className="form-group row">
+    <label className="col-sm-2 col-form-label">Y:</label>
+    <div className="col-sm-10">
+      <input type="number" className="form-control" placeholder="Y" value={y} onChange={onChange} />
     </div>
-  </>
+  </div>
 );
 
 const XyInputs: React.SFC<{
-  x: number,
-  y: number,
-  onXChange: React.ChangeEventHandler<HTMLInputElement>,
-  onYChange: React.ChangeEventHandler<HTMLInputElement>
+  x: number;
+  y: number;
+  onXChange: React.ChangeEventHandler<HTMLInputElement>;
+  onYChange: React.ChangeEventHandler<HTMLInputElement>;
 }> = ( { x, y, onXChange, onYChange } ) => (
   <>
     <XInput x={x} onChange={onXChange} />
@@ -56,7 +54,29 @@ const XyInputs: React.SFC<{
   </>
 );
 
-export const BasicDrawingProperties = connector( class extends React.Component<DrawingPropertiesProps<BasicDrawingTypes, BasicDrawing<BasicDrawingTypes>>>
+const GuideLineInputs: React.SFC<{
+  showGuideLine: boolean;
+  onShowGuideLineChange: React.ChangeEventHandler<HTMLInputElement>;
+}> = ( { showGuideLine, onShowGuideLineChange } ) => (
+  <div className="form-check form-check-inline">
+    <label className="col-form-label mr-2">Show Guide Line:</label>
+    <input type="checkbox" className="form-check-input" checked={showGuideLine} onChange={onShowGuideLineChange} />
+  </div>
+);
+
+const ColorInput: React.SFC<{
+  color: string;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
+}> = ( { color, onChange } ) => (
+  <div className="form-group row">
+    <label className="col-sm-2 col-form-label">Color:</label>
+    <div className="col-sm-10">
+      <input type="color" className="form-control" style={{ height: '2.5rem', padding: '0.2rem 0.3rem' }} value={color} onChange={onChange} />
+    </div>
+  </div>
+);
+
+export class BasicDrawingProperties extends React.Component<DrawingPropertiesProps<BasicDrawingTypes, BasicDrawing<BasicDrawingTypes>>>
 {
   render()
   {
@@ -68,6 +88,14 @@ export const BasicDrawingProperties = connector( class extends React.Component<D
           y={this.props.drawing.y}
           onXChange={this.onXChange}
           onYChange={this.onYChange}
+        />
+        <ColorInput
+          color={this.props.drawing.color}
+          onChange={this.onColorChange}
+        />
+        <GuideLineInputs
+          showGuideLine={this.props.drawing.showGuideLine}
+          onShowGuideLineChange={this.onShowGuideLineChange}
         />
       </form>
     );
@@ -88,9 +116,25 @@ export const BasicDrawingProperties = connector( class extends React.Component<D
       y: e.target.valueAsNumber || 0
     } );
   }
-} );
 
-export const BetweenDrawingProperties = connector( class extends React.Component<DrawingPropertiesProps<DrawingType.Between, BetweenDrawing>>
+  private onShowGuideLineChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
+  {
+    this.props.onChange( {
+      ...this.props.drawing,
+      showGuideLine: e.target.checked
+    } );
+  }
+
+  private onColorChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
+  {
+    this.props.onChange( {
+      ...this.props.drawing,
+      color: e.target.value
+    } );
+  }
+}
+
+export class BetweenDrawingProperties extends React.Component<DrawingPropertiesProps<DrawingType.Between, BetweenDrawing>>
 {
   render()
   {
@@ -115,6 +159,14 @@ export const BetweenDrawingProperties = connector( class extends React.Component
             />
           </div>
         </div>
+        <ColorInput
+          color={this.props.drawing.color}
+          onChange={this.onColorChange}
+        />
+        <GuideLineInputs
+          showGuideLine={this.props.drawing.showGuideLine}
+          onShowGuideLineChange={this.onShowGuideLineChange}
+        />
       </form>
     );
   }
@@ -142,9 +194,25 @@ export const BetweenDrawingProperties = connector( class extends React.Component
       height: e.target.valueAsNumber || 0
     } );
   }
-} );
 
-export const VerticalGridLineDrawingProperties = connector( class extends React.Component<DrawingPropertiesProps<DrawingType.VerticalGridLine, VerticalGridLineDrawing>>
+  private onShowGuideLineChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
+  {
+    this.props.onChange( {
+      ...this.props.drawing,
+      showGuideLine: e.target.checked
+    } );
+  }
+
+  private onColorChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
+  {
+    this.props.onChange( {
+      ...this.props.drawing,
+      color: e.target.value
+    } );
+  }
+}
+
+export class VerticalGridLineDrawingProperties extends React.Component<DrawingPropertiesProps<DrawingType.VerticalGridLine, VerticalGridLineDrawing>>
 {
   render()
   {
@@ -154,6 +222,10 @@ export const VerticalGridLineDrawingProperties = connector( class extends React.
         <XInput
           x={this.props.drawing.x}
           onChange={this.onXChange}
+        />
+        <ColorInput
+          color={this.props.drawing.color}
+          onChange={this.onColorChange}
         />
       </form>
     );
@@ -166,9 +238,17 @@ export const VerticalGridLineDrawingProperties = connector( class extends React.
       x: e.target.valueAsNumber || 0
     } );
   }
-} );
 
-export const HorizontalGridLineDrawingProperties = connector( class extends React.Component<DrawingPropertiesProps<DrawingType.HorizontalGridLine, HorizontalGridLineDrawing>>
+  private onColorChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
+  {
+    this.props.onChange( {
+      ...this.props.drawing,
+      color: e.target.value
+    } );
+  }
+}
+
+export class HorizontalGridLineDrawingProperties extends React.Component<DrawingPropertiesProps<DrawingType.HorizontalGridLine, HorizontalGridLineDrawing>>
 {
   render()
   {
@@ -178,6 +258,10 @@ export const HorizontalGridLineDrawingProperties = connector( class extends Reac
         <YInput
           y={this.props.drawing.y}
           onChange={this.onYChange}
+        />
+        <ColorInput
+          color={this.props.drawing.color}
+          onChange={this.onColorChange}
         />
       </form>
     );
@@ -190,4 +274,12 @@ export const HorizontalGridLineDrawingProperties = connector( class extends Reac
       y: e.target.valueAsNumber || 0
     } );
   }
-} );
+
+  private onColorChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
+  {
+    this.props.onChange( {
+      ...this.props.drawing,
+      color: e.target.value
+    } );
+  }
+}

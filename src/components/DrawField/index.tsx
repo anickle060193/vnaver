@@ -12,7 +12,8 @@ import
   DrawingTool,
   Tool,
   DrawingMap,
-  getScale
+  getScale,
+  drawingTypeColors
 } from 'utils/draw';
 import { mapToArray, assertNever } from 'utils/utils';
 
@@ -125,6 +126,7 @@ class DrawField extends React.Component<Props, State>
               drawing={{
                 id: '',
                 type: this.props.tool,
+                color: drawingTypeColors[ this.props.tool ],
                 x: this.state.startX,
                 y: Math.min( this.state.mouseY, this.state.startY ),
                 height: Math.abs( this.state.mouseY - this.state.startY ),
@@ -143,6 +145,7 @@ class DrawField extends React.Component<Props, State>
               drawing={{
                 id: '',
                 type: this.props.tool,
+                color: drawingTypeColors[ this.props.tool ],
                 x: this.state.mouseX,
                 y: this.state.mouseY,
                 height: 0,
@@ -162,6 +165,7 @@ class DrawField extends React.Component<Props, State>
             drawing={{
               id: '',
               type: this.props.tool,
+              color: drawingTypeColors[ this.props.tool ],
               x: this.state.mouseX
             }}
           />
@@ -174,6 +178,7 @@ class DrawField extends React.Component<Props, State>
             drawing={{
               id: '',
               type: this.props.tool,
+              color: drawingTypeColors[ this.props.tool ],
               y: this.state.mouseY
             }}
           />
@@ -189,6 +194,7 @@ class DrawField extends React.Component<Props, State>
             drawing={{
               id: '',
               type: this.props.tool,
+              color: drawingTypeColors[ this.props.tool ],
               x: this.state.mouseX,
               y: this.state.mouseY,
               showGuideLine: false,
@@ -397,6 +403,7 @@ class DrawField extends React.Component<Props, State>
             this.props.addDrawing( {
               id: uuid(),
               type: this.props.tool,
+              color: drawingTypeColors[ this.props.tool ],
               x: this.state.startX,
               y: Math.min( y, this.state.startY ),
               height: diff,
@@ -412,6 +419,7 @@ class DrawField extends React.Component<Props, State>
           this.props.addDrawing( {
             id: uuid(),
             type: this.props.tool,
+            color: drawingTypeColors[ this.props.tool ],
             x: x
           } );
         }
@@ -420,6 +428,7 @@ class DrawField extends React.Component<Props, State>
           this.props.addDrawing( {
             id: uuid(),
             type: this.props.tool,
+            color: drawingTypeColors[ this.props.tool ],
             y: y
           } );
         }
@@ -430,6 +439,7 @@ class DrawField extends React.Component<Props, State>
           this.props.addDrawing( {
             id: uuid(),
             type: this.props.tool!,
+            color: drawingTypeColors[ this.props.tool ],
             x: x,
             y: y,
             showGuideLine: true,

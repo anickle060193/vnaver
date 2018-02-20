@@ -9,7 +9,6 @@ import
   BetweenDrawing,
   VerticalGridLineDrawing,
   HorizontalGridLineDrawing,
-  drawingTypeColors,
   UP_ARROW_PATH,
   DOWN_ARROW_PATH
 } from 'utils/draw';
@@ -97,7 +96,7 @@ export const Above: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Abo
         x={drawing.x}
         y={drawing.y}
         vertical={drawing.guideLine.vertical}
-        color={drawingTypeColors[ drawing.type ]}
+        color={drawing.color}
         strokeWidth={GUIDE_LINE_WIDTH}
       />
     )}
@@ -107,7 +106,7 @@ export const Above: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Abo
       width={ARROW_SIZE}
       height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-      fill={drawingTypeColors[ drawing.type ]}
+      fill={drawing.color}
       data={UP_ARROW_PATH}
     />
   </Group>
@@ -120,7 +119,7 @@ export const At: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.At>>> 
         x={drawing.x}
         y={drawing.y}
         vertical={drawing.guideLine.vertical}
-        color={drawingTypeColors[ drawing.type ]}
+        color={drawing.color}
         strokeWidth={GUIDE_LINE_WIDTH}
       />
     )}
@@ -130,7 +129,7 @@ export const At: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.At>>> 
       width={ARROW_SIZE}
       height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-      fill={drawingTypeColors[ drawing.type ]}
+      fill={drawing.color}
       data={DOWN_ARROW_PATH}
     />
     <Path
@@ -139,7 +138,7 @@ export const At: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.At>>> 
       width={ARROW_SIZE}
       height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-      fill={drawingTypeColors[ drawing.type ]}
+      fill={drawing.color}
       data={UP_ARROW_PATH}
     />
   </Group>
@@ -152,7 +151,7 @@ export const Below: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Bel
         x={drawing.x}
         y={drawing.y}
         vertical={drawing.guideLine.vertical}
-        color={drawingTypeColors[ drawing.type ]}
+        color={drawing.color}
         strokeWidth={GUIDE_LINE_WIDTH}
       />
     )}
@@ -162,7 +161,7 @@ export const Below: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Bel
       width={ARROW_SIZE}
       height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-      fill={drawingTypeColors[ drawing.type ]}
+      fill={drawing.color}
       data={DOWN_ARROW_PATH}
     />
   </Group>
@@ -175,7 +174,7 @@ export const Between: React.SFC<DrawingComponentProps<BetweenDrawing>> = ( { dra
         x={drawing.x}
         y={drawing.y}
         vertical={drawing.guideLine.vertical}
-        color={drawingTypeColors[ drawing.type ]}
+        color={drawing.color}
         strokeWidth={GUIDE_LINE_WIDTH}
       />
     )}
@@ -185,7 +184,7 @@ export const Between: React.SFC<DrawingComponentProps<BetweenDrawing>> = ( { dra
       width={ARROW_SIZE}
       height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-      fill={drawingTypeColors[ drawing.type ]}
+      fill={drawing.color}
       data={DOWN_ARROW_PATH}
     />
     <Path
@@ -194,7 +193,7 @@ export const Between: React.SFC<DrawingComponentProps<BetweenDrawing>> = ( { dra
       width={ARROW_SIZE}
       height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-      fill={drawingTypeColors[ drawing.type ]}
+      fill={drawing.color}
       data={UP_ARROW_PATH}
     />
   </Group>
@@ -202,13 +201,13 @@ export const Between: React.SFC<DrawingComponentProps<BetweenDrawing>> = ( { dra
 
 export const VerticalGridLine: React.SFC<DrawingComponentProps<VerticalGridLineDrawing>> = ( { drawing, onClick } ) => (
   <Group onClick={onClick}>
-    <VerticalGuideLine x={drawing.x} color={drawingTypeColors[ drawing.type ]} strokeWidth={1} />
+    <VerticalGuideLine x={drawing.x} color={drawing.color} strokeWidth={1} />
   </Group>
 );
 
 export const HorizontalGridLine: React.SFC<DrawingComponentProps<HorizontalGridLineDrawing>> = ( { drawing, onClick } ) => (
   <Group onClick={onClick}>
-    <HorizontalGuideLine y={drawing.y} color={drawingTypeColors[ drawing.type ]} strokeWidth={1} />
+    <HorizontalGuideLine y={drawing.y} color={drawing.color} strokeWidth={1} />
   </Group>
 );
 
