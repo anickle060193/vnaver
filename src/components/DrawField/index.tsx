@@ -127,7 +127,11 @@ class DrawField extends React.Component<Props, State>
                 type: this.props.tool,
                 x: this.state.startX,
                 y: Math.min( this.state.mouseY, this.state.startY ),
-                height: Math.abs( this.state.mouseY - this.state.startY )
+                height: Math.abs( this.state.mouseY - this.state.startY ),
+                showGuideLine: false,
+                guideLine: {
+                  vertical: true
+                }
               }}
             />
           );
@@ -141,7 +145,11 @@ class DrawField extends React.Component<Props, State>
                 type: this.props.tool,
                 x: this.state.mouseX,
                 y: this.state.mouseY,
-                height: 0
+                height: 0,
+                showGuideLine: false,
+                guideLine: {
+                  vertical: true
+                }
               }}
             />
           );
@@ -182,7 +190,11 @@ class DrawField extends React.Component<Props, State>
               id: '',
               type: this.props.tool,
               x: this.state.mouseX,
-              y: this.state.mouseY
+              y: this.state.mouseY,
+              showGuideLine: false,
+              guideLine: {
+                vertical: true
+              }
             }}
           />
         );
@@ -387,7 +399,11 @@ class DrawField extends React.Component<Props, State>
               type: this.props.tool,
               x: this.state.startX,
               y: Math.min( y, this.state.startY ),
-              height: diff
+              height: diff,
+              showGuideLine: true,
+              guideLine: {
+                vertical: true
+              }
             } );
           }
         }
@@ -415,7 +431,11 @@ class DrawField extends React.Component<Props, State>
             id: uuid(),
             type: this.props.tool!,
             x: x,
-            y: y
+            y: y,
+            showGuideLine: true,
+            guideLine: {
+              vertical: true
+            }
           } );
         }
         else

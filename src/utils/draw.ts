@@ -22,13 +22,29 @@ export interface DrawingBase<T extends DrawingType>
   id: string;
 }
 
+interface ContainsGuideLineDrawing<T extends DrawingType> extends DrawingBase<T>
+{
+  showGuideLine: boolean;
+  guideLine: {
+    vertical: boolean;
+  };
+}
+
 type BasicDrawingTypes = DrawingType.Above | DrawingType.At | DrawingType.Below;
 
-export interface BasicDrawing<T extends BasicDrawingTypes> extends DrawingBase<T>
+export interface BasicDrawing<T extends BasicDrawingTypes> extends ContainsGuideLineDrawing<T>
 {
   type: T;
   x: number;
   y: number;
+}
+
+export interface BetweenDrawing extends ContainsGuideLineDrawing<DrawingType.Between>
+{
+  type: DrawingType.Between;
+  x: number;
+  y: number;
+  height: number;
 }
 
 export interface VerticalGridLineDrawing extends DrawingBase<DrawingType.VerticalGridLine>
@@ -41,14 +57,6 @@ export interface HorizontalGridLineDrawing extends DrawingBase<DrawingType.Horiz
 {
   type: DrawingType.HorizontalGridLine;
   y: number;
-}
-
-export interface BetweenDrawing extends DrawingBase<DrawingType.Between>
-{
-  type: DrawingType.Between;
-  x: number;
-  y: number;
-  height: number;
 }
 
 export type Drawing = (

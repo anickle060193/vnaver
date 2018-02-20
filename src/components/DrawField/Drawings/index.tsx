@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Line, Rect, Path, Text, Label, Tag } from 'react-konva';
+import { Line, Rect, Path, Text, Label, Tag, Group } from 'react-konva';
 
 import
 {
@@ -15,30 +15,115 @@ import
 } from 'utils/draw';
 import { assertNever } from 'utils/utils';
 
+const LINE_LENGTH = 10000;
+const LINE_WIDTH = 5;
+
+const GUIDE_LINE_WIDTH = 0.5;
+
+const ARROW_SIZE = 30;
+const ARROW_SCALE = ARROW_SIZE / 100;
+
 interface DrawingComponentProps<D extends Drawing>
 {
   drawing: D;
   onClick?: ( e: KonvaMouseEvent<{}> ) => void;
 }
 
-const ARROW_SIZE = 30;
-const ARROW_SCALE = ARROW_SIZE / 100;
+interface BasicGuideLineProps
+{
+  color: string;
+  strokeWidth: number;
+}
+
+interface VerticalGuideLineProps extends BasicGuideLineProps
+{
+  x: number;
+}
+
+interface HorizontalGuideLineProps extends BasicGuideLineProps
+{
+  y: number;
+}
+
+const VerticalGuideLine: React.SFC<VerticalGuideLineProps> = ( { x, color, strokeWidth } ) => (
+  <>
+    <Rect
+      x={x - LINE_WIDTH / 2}
+      width={LINE_WIDTH}
+      y={-LINE_LENGTH}
+      height={2 * LINE_LENGTH}
+    />
+    <Line
+      points={[ x, -LINE_LENGTH, x, LINE_LENGTH ]}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+  </>
+);
+
+const HorizontalGuideLine: React.SFC<HorizontalGuideLineProps> = ( { y, color, strokeWidth } ) => (
+  <>
+    <Rect
+      x={-LINE_LENGTH}
+      width={2 * LINE_LENGTH}
+      y={y - LINE_WIDTH / 2}
+      height={LINE_WIDTH}
+    />
+    <Line
+      points={[ -LINE_LENGTH, y, LINE_LENGTH, ]}
+      stroke={color}
+      strokeWidth={strokeWidth}
+    />
+  </>
+);
+
+interface GuideLineProps extends VerticalGuideLineProps, HorizontalGuideLineProps
+{
+  vertical: boolean;
+}
+
+const GuideLine: React.SFC<GuideLineProps> = ( { x, y, vertical, color, strokeWidth } ) => (
+  vertical ? (
+    <VerticalGuideLine x={x} color={color} strokeWidth={strokeWidth} />
+  ) : (
+      <HorizontalGuideLine y={y} color={color} strokeWidth={strokeWidth} />
+    )
+);
 
 export const Above: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Above>>> = ( { drawing, onClick } ) => (
-  <Path
-    x={drawing.x - ARROW_SIZE / 2}
-    y={drawing.y - ARROW_SIZE / 2}
-    width={ARROW_SIZE}
-    height={ARROW_SIZE}
-    scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-    fill={drawingTypeColors[ drawing.type ]}
-    data={UP_ARROW_PATH}
-    onClick={onClick}
-  />
+  <Group onClick={onClick}>
+    {drawing.showGuideLine && (
+      <GuideLine
+        x={drawing.x}
+        y={drawing.y}
+        vertical={drawing.guideLine.vertical}
+        color={drawingTypeColors[ drawing.type ]}
+        strokeWidth={GUIDE_LINE_WIDTH}
+      />
+    )}
+    <Path
+      x={drawing.x - ARROW_SIZE / 2}
+      y={drawing.y - ARROW_SIZE / 2}
+      width={ARROW_SIZE}
+      height={ARROW_SIZE}
+      scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
+      fill={drawingTypeColors[ drawing.type ]}
+      data={UP_ARROW_PATH}
+    />
+  </Group>
 );
 
 export const At: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.At>>> = ( { drawing, onClick } ) => (
-  <>
+  <Group onClick={onClick}>
+    {drawing.showGuideLine && (
+      <GuideLine
+        x={drawing.x}
+        y={drawing.y}
+        vertical={drawing.guideLine.vertical}
+        color={drawingTypeColors[ drawing.type ]}
+        strokeWidth={GUIDE_LINE_WIDTH}
+      />
+    )}
     <Path
       x={drawing.x - ARROW_SIZE / 2}
       y={drawing.y - ARROW_SIZE + 3}
@@ -47,7 +132,6 @@ export const At: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.At>>> 
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
       fill={drawingTypeColors[ drawing.type ]}
       data={DOWN_ARROW_PATH}
-      onClick={onClick}
     />
     <Path
       x={drawing.x - ARROW_SIZE / 2}
@@ -57,26 +141,44 @@ export const At: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.At>>> 
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
       fill={drawingTypeColors[ drawing.type ]}
       data={UP_ARROW_PATH}
-      onClick={onClick}
     />
-  </>
+  </Group>
 );
 
 export const Below: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Below>>> = ( { drawing, onClick } ) => (
-  <Path
-    x={drawing.x - ARROW_SIZE / 2}
-    y={drawing.y - ARROW_SIZE + 8}
-    width={ARROW_SIZE}
-    height={ARROW_SIZE}
-    scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
-    fill={drawingTypeColors[ drawing.type ]}
-    data={DOWN_ARROW_PATH}
-    onClick={onClick}
-  />
+  <Group onClick={onClick}>
+    {drawing.showGuideLine && (
+      <GuideLine
+        x={drawing.x}
+        y={drawing.y}
+        vertical={drawing.guideLine.vertical}
+        color={drawingTypeColors[ drawing.type ]}
+        strokeWidth={GUIDE_LINE_WIDTH}
+      />
+    )}
+    <Path
+      x={drawing.x - ARROW_SIZE / 2}
+      y={drawing.y - ARROW_SIZE + 8}
+      width={ARROW_SIZE}
+      height={ARROW_SIZE}
+      scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
+      fill={drawingTypeColors[ drawing.type ]}
+      data={DOWN_ARROW_PATH}
+    />
+  </Group>
 );
 
 export const Between: React.SFC<DrawingComponentProps<BetweenDrawing>> = ( { drawing, onClick } ) => (
-  <>
+  <Group onClick={onClick}>
+    {drawing.showGuideLine && (
+      <GuideLine
+        x={drawing.x}
+        y={drawing.y}
+        vertical={drawing.guideLine.vertical}
+        color={drawingTypeColors[ drawing.type ]}
+        strokeWidth={GUIDE_LINE_WIDTH}
+      />
+    )}
     <Path
       x={drawing.x - ARROW_SIZE / 2}
       y={drawing.y - ARROW_SIZE}
@@ -85,7 +187,6 @@ export const Between: React.SFC<DrawingComponentProps<BetweenDrawing>> = ( { dra
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
       fill={drawingTypeColors[ drawing.type ]}
       data={DOWN_ARROW_PATH}
-      onClick={onClick}
     />
     <Path
       x={drawing.x - ARROW_SIZE / 2}
@@ -95,49 +196,20 @@ export const Between: React.SFC<DrawingComponentProps<BetweenDrawing>> = ( { dra
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
       fill={drawingTypeColors[ drawing.type ]}
       data={UP_ARROW_PATH}
-      onClick={onClick}
     />
-  </>
+  </Group>
 );
 
-const LINE_LENGTH = 10000;
-const LINE_WIDTH = 5;
-
 export const VerticalGridLine: React.SFC<DrawingComponentProps<VerticalGridLineDrawing>> = ( { drawing, onClick } ) => (
-  <>
-    <Rect
-      x={drawing.x - LINE_WIDTH / 2}
-      width={LINE_WIDTH}
-      y={-LINE_LENGTH}
-      height={2 * LINE_LENGTH}
-      onClick={onClick}
-    />
-    <Line
-      points={[ drawing.x, -LINE_LENGTH, drawing.x, LINE_LENGTH ]}
-      stroke={drawingTypeColors[ drawing.type ]}
-      strokeWidth={1}
-      onClick={onClick}
-    />
-  </>
+  <Group onClick={onClick}>
+    <VerticalGuideLine x={drawing.x} color={drawingTypeColors[ drawing.type ]} strokeWidth={1} />
+  </Group>
 );
 
 export const HorizontalGridLine: React.SFC<DrawingComponentProps<HorizontalGridLineDrawing>> = ( { drawing, onClick } ) => (
-  <>
-    <Rect
-      x={-LINE_LENGTH}
-      width={2 * LINE_LENGTH}
-      y={drawing.y - LINE_WIDTH / 2}
-      height={LINE_WIDTH}
-      onClick={onClick}
-    />
-    <Line
-      points={[ -LINE_LENGTH, drawing.y, LINE_LENGTH, drawing.y ]}
-      stroke={drawingTypeColors[ drawing.type ]}
-      strokeWidth={1}
-      onClick={onClick}
-      strokeHitEnabled={true}
-    />
-  </>
+  <Group onClick={onClick}>
+    <HorizontalGuideLine y={drawing.y} color={drawingTypeColors[ drawing.type ]} strokeWidth={1} />
+  </Group>
 );
 
 export const drawingComponentMap: {[ key in DrawingType ]: React.SFC<DrawingComponentProps<Drawing>> } = {
