@@ -1,7 +1,7 @@
 // @ts-check
 
 const { app, BrowserWindow } = require( 'electron' );
-// const { autoUpdater } = require( 'electron-updater' );
+const { autoUpdater } = require( 'electron-updater' );
 const path = require( 'path' );
 const url = require( 'url' );
 
@@ -46,7 +46,7 @@ function createWindow()
 
 app.on( 'ready', () =>
 {
-  // autoUpdater.checkForUpdatesAndNotify();
+  autoUpdater.checkForUpdatesAndNotify();
   createWindow();
 } );
 

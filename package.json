@@ -14,7 +14,8 @@
     "appId": "com.adamnickle.vnaver",
     "productName": "VNAVer",
     "win": {
-      "icon": "./build/icon.ico"
+      "icon": "./build/icon.ico",
+      "publish": "github"
     },
     "directories": {
       "buildResources": "public"
@@ -63,6 +64,7 @@
     "cross-env": "^5.1.3",
     "electron": "^1.8.2",
     "electron-builder": "^20.0.5",
+    "env-cmd": "^7.0.0",
     "typescript": "^2.7.2",
     "wait-on": "^2.1.0"
   }
