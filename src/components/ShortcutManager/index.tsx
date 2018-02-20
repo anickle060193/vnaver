@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import { deleteDrawing, setTool } from 'store/reducers/drawing';
-import { Drawing, DrawingTool } from 'utils/draw';
+import { Drawing, DrawingTool, Tool } from 'utils/draw';
 import { shortcuts } from 'utils/settings';
 
 interface PropsFromState
@@ -46,7 +46,7 @@ class ShortcutManager extends React.Component<Props>
     }
     else if( e.key === 'Escape' )
     {
-      this.props.setTool( null );
+      this.props.setTool( Tool.Cursor );
     }
     else
     {

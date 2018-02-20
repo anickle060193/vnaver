@@ -1,12 +1,12 @@
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
 import actionCreatorFactory from 'typescript-fsa';
 
-import { Drawing, DrawingTool, DrawingMap, DEFAULT_SCALE_LEVEL, MAX_SCALE_LEVEL, MIN_SCALE_LEVEL } from 'utils/draw';
+import { Drawing, Tool, DrawingTool, DrawingMap, DEFAULT_SCALE_LEVEL, MAX_SCALE_LEVEL, MIN_SCALE_LEVEL } from 'utils/draw';
 import { limit } from 'utils/utils';
 
 export interface State
 {
-  tool: DrawingTool | null;
+  tool: DrawingTool;
   scaleLevel: number;
   originX: number;
   originY: number;
@@ -15,7 +15,7 @@ export interface State
 }
 
 const initialState: State = {
-  tool: null,
+  tool: Tool.Cursor,
   scaleLevel: DEFAULT_SCALE_LEVEL,
   originX: 0.0,
   originY: 0.0,
@@ -25,7 +25,7 @@ const initialState: State = {
 
 const actionCreator = actionCreatorFactory();
 
-export const setTool = actionCreator<DrawingTool | null>( 'SET_TOOL' );
+export const setTool = actionCreator<DrawingTool>( 'SET_TOOL' );
 export const incrementScaleLevel = actionCreator( 'INCREMENT_SCALE_LEVEL' );
 export const decrementScaleLevel = actionCreator( 'DECREMENT_SCALE_LEVEL' );
 export const resetScaleLevel = actionCreator( 'RESET_SCALE_LEVEL' );
@@ -40,7 +40,7 @@ export const reducer = reducerWithInitialState( initialState )
   .case( setTool, ( state, tool ) =>
     ( {
       ...state,
-      tool
+      tool: tool
     } ) )
   .case( incrementScaleLevel, ( state ) =>
     ( {

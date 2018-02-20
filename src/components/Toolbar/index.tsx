@@ -8,7 +8,7 @@ import { shortcuts } from 'utils/settings';
 
 import './styles.css';
 
-// const POINTER_PATH = 'M18 2l64 49.116-27.804 4.68 17.3 35.268-14.384 6.936-17.4-35.516-21.712 18.808z';
+const CURSOR_PATH = 'M18 2l64 49.116-27.804 4.68 17.3 35.268-14.384 6.936-17.4-35.516-21.712 18.808z';
 const MOVE_PATH = `M21.915 71.415.5 49.999l21.414-21.415.001 16.49h23.16V21.915l-16.49
                           0L50.001.5l21.414 21.415-16.49 0v23.16h23.16l-.001-16.49L99.5
                           50.001l-21.415 21.414-.001-16.49h-23.16v23.16l16.49 0L49.999
@@ -34,6 +34,17 @@ class Toolbar extends React.Component<Props>
       <div className="toolbars">
 
         <div className="toolbar">
+
+          <ToolbarItem
+            title="Cursor"
+            shortcut={shortcuts[ Tool.Cursor ]}
+            active={this.props.tool === Tool.Cursor}
+            onClick={() => this.onToolClick( Tool.Cursor )}
+          >
+            <svg viewBox="0 0 100 100" style={{ width: '2.5rem', height: '2.5rem' }}>
+              <path d={CURSOR_PATH} />
+            </svg>
+          </ToolbarItem>
 
           <ToolbarItem
             title="Move"
@@ -134,9 +145,10 @@ class Toolbar extends React.Component<Props>
 
   private onToolClick = ( tool: DrawingTool ) =>
   {
-    if( this.props.tool === tool )
+    if( this.props.tool === tool
+      && this.props.tool !== Tool.Cursor )
     {
-      this.props.setTool( null );
+      this.props.setTool( Tool.Cursor );
     }
     else
     {

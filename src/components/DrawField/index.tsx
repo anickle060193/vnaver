@@ -20,7 +20,7 @@ import './styles.css';
 
 interface PropsFromState
 {
-  tool: DrawingTool | null;
+  tool: DrawingTool;
   scale: number;
   originX: number;
   originY: number;
@@ -111,7 +111,7 @@ class DrawField extends React.Component<Props, State>
     let cursor: React.ReactNode | null = null;
 
     if( !this.state.ctrlDown
-      && this.props.tool
+      && this.props.tool !== Tool.Cursor
       && this.props.tool !== Tool.Move
       && this.state.mouseX !== null
       && this.state.mouseY !== null )
@@ -368,7 +368,8 @@ class DrawField extends React.Component<Props, State>
 
     let { x, y } = this.mouseToDrawing( e.evt );
 
-    if( this.props.tool && this.props.tool !== Tool.Move )
+    if( this.props.tool !== Tool.Cursor
+      && this.props.tool !== Tool.Move )
     {
       if( this.props.tool === DrawingType.Between )
       {
