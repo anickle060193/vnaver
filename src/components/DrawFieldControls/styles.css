@@ -7,8 +7,11 @@
 
 .drawing-scale
 {
-  min-width: 4.5rem;
-  text-align: right;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  min-width: 8rem;
 
   padding: 0.3rem 0.75rem;
   font-size: 14pt;
@@ -16,9 +19,17 @@
   background: white;
   border-radius: 4px;
 
-  cursor: pointer;
-
   box-shadow: 1px 1px 5px 0px rgba(142, 142, 142, 0.664);
+}
+
+.drawing-scale .material-icons
+{
+  cursor: pointer;
+}
+
+.drawing-scale-percentage
+{
+  cursor: pointer;
 }
 
 .drawing-position

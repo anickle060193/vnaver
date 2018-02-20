@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import Tooltip from 'components/Tooltip';
-import { resetScaleLevel, resetOrigin } from 'store/reducers/drawing';
+import { resetScaleLevel, resetOrigin, incrementScaleLevel, decrementScaleLevel } from 'store/reducers/drawing';
 
 import './styles.css';
 import { getScale } from 'utils/draw';
@@ -26,6 +26,8 @@ interface PropsFromState
 
 interface PropsFromDispatch
 {
+  incrementScaleLevel: typeof incrementScaleLevel;
+  decrementScaleLevel: typeof decrementScaleLevel;
   resetScaleLevel: typeof resetScaleLevel;
   resetOrigin: typeof resetOrigin;
 }
@@ -42,9 +44,27 @@ class DrawFieldControls extends React.Component<Props>
       <div className="draw-controls">
         <div
           className="drawing-scale"
-          onClick={this.onResetScale}
         >
-          {( this.props.scale * 100 ).toFixed( 0 )}%
+          <span
+            className="material-icons"
+            onClick={this.onZoomOutClick}
+          >
+            remove
+          </span>
+
+          <span
+            className="drawing-scale-percentage"
+            onClick={this.onResetScale}
+          >
+            {( this.props.scale * 100 ).toFixed( 0 )}%
+          </span>
+
+          <span
+            className="material-icons"
+            onClick={this.onZoomInClick}
+          >
+            add
+          </span>
         </div>
         <div
           className={[
@@ -60,6 +80,20 @@ class DrawFieldControls extends React.Component<Props>
         </div>
       </div>
     );
+  }
+
+  private onZoomOutClick = ( e: React.MouseEvent<{}> ) =>
+  {
+    e.stopPropagation();
+
+    this.props.decrementScaleLevel();
+  }
+
+  private onZoomInClick = ( e: React.MouseEvent<{}> ) =>
+  {
+    e.stopPropagation();
+
+    this.props.incrementScaleLevel();
   }
 
   private onResetScale = () =>
@@ -80,6 +114,8 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     scale: getScale( state.drawing.scaleLevel )
   } ),
   {
+    incrementScaleLevel,
+    decrementScaleLevel,
     resetScaleLevel,
     resetOrigin
   }
