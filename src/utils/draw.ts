@@ -30,7 +30,7 @@ interface ContainsGuideLineDrawing<T extends DrawingType> extends DrawingBase<T>
   };
 }
 
-type BasicDrawingTypes = DrawingType.Above | DrawingType.At | DrawingType.Below;
+export type BasicDrawingTypes = DrawingType.Above | DrawingType.At | DrawingType.Below;
 
 export interface BasicDrawing<T extends BasicDrawingTypes> extends ContainsGuideLineDrawing<T>
 {

@@ -25,7 +25,7 @@ interface PropsFromState
   originX: number;
   originY: number;
   drawings: DrawingMap;
-  selectedDrawing: Drawing | null;
+  selectedDrawingId: string | null;
 }
 
 interface PropsFromDispatch
@@ -265,7 +265,7 @@ class DrawField extends React.Component<Props, State>
             } )}
             {cursor}
             <ActiveIndication
-              drawing={this.props.selectedDrawing}
+              drawing={this.props.drawings[ this.props.selectedDrawingId! ]}
               originX={this.props.originX}
               originY={this.props.originY}
               scale={this.props.scale}
@@ -462,7 +462,7 @@ class DrawField extends React.Component<Props, State>
 
       this.clickHandled = true;
 
-      this.props.selectDrawing( drawing );
+      this.props.selectDrawing( drawing.id );
     }
   }
 }
@@ -474,7 +474,7 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     originX: state.drawing.originX,
     originY: state.drawing.originY,
     drawings: state.drawing.drawings,
-    selectedDrawing: state.drawing.selectedDrawing
+    selectedDrawingId: state.drawing.selectedDrawingId
   } ),
   {
     incrementScaleLevel,

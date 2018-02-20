@@ -11,7 +11,7 @@ export interface State
   originX: number;
   originY: number;
   drawings: DrawingMap;
-  selectedDrawing: Drawing | null;
+  selectedDrawingId: string | null;
 }
 
 const initialState: State = {
@@ -20,7 +20,7 @@ const initialState: State = {
   originX: 0.0,
   originY: 0.0,
   drawings: {},
-  selectedDrawing: null
+  selectedDrawingId: null
 };
 
 const actionCreator = actionCreatorFactory();
@@ -32,9 +32,10 @@ export const resetScaleLevel = actionCreator( 'RESET_SCALE_LEVEL' );
 export const setOrigin = actionCreator<{ originX: number, originY: number }>( 'SET_ORIGIN' );
 export const resetOrigin = actionCreator( 'RESET_ORIGIN' );
 export const addDrawing = actionCreator<Drawing>( 'ADD_DRAWING' );
-export const selectDrawing = actionCreator<Drawing>( 'SELECT_DRAWING' );
+export const selectDrawing = actionCreator<string>( 'SELECT_DRAWING' );
 export const deselectDrawing = actionCreator( 'DESELECT_DRAWING' );
-export const deleteDrawing = actionCreator<Drawing>( 'DELETE_DRAWING' );
+export const updateDrawing = actionCreator<Drawing>( 'UPDATE_DRAWING' );
+export const deleteDrawing = actionCreator<string>( 'DELETE_DRAWING' );
 
 export const reducer = reducerWithInitialState( initialState )
   .case( setTool, ( state, tool ) =>
@@ -77,27 +78,35 @@ export const reducer = reducerWithInitialState( initialState )
         [ drawing.id ]: drawing
       }
     } ) )
-  .case( selectDrawing, ( state, drawing ) =>
+  .case( selectDrawing, ( state, drawingId ) =>
     ( {
       ...state,
-      selectedDrawing: drawing
+      selectedDrawingId: drawingId
     } ) )
   .case( deselectDrawing, ( state ) =>
     ( {
       ...state,
-      selectedDrawing: null
+      selectedDrawingId: null
     } ) )
-  .case( deleteDrawing, ( state, drawing ) =>
+  .case( deleteDrawing, ( state, drawingId ) =>
   {
-    let { [ drawing.id ]: _, ...drawings } = state.drawings;
-    let selectedDrawing = state.selectedDrawing;
-    if( selectedDrawing && selectedDrawing.id === drawing.id )
+    let { [ drawingId ]: _, ...drawings } = state.drawings;
+    let selectedDrawingId = state.selectedDrawingId;
+    if( selectedDrawingId === drawingId )
     {
-      selectedDrawing = null;
+      selectedDrawingId = null;
     }
     return {
       ...state,
       drawings,
-      selectedDrawing
+      selectedDrawingId
     };
-  } );
+  } )
+  .case( updateDrawing, ( state, drawing ) =>
+    ( {
+      ...state,
+      drawings: {
+        ...state.drawings,
+        [ drawing.id ]: drawing
+      }
+    } ) );
