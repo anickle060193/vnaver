@@ -216,11 +216,17 @@ class DrawField extends React.Component<Props, State>
                   x: this.state.startX,
                   y: this.state.startY,
                 },
-                end: {
-                  connected: false,
-                  x: NaN,
-                  y: NaN
-                }
+                end: result ?
+                  {
+                    connected: true,
+                    anchorId: result.anchor.id,
+                    topOfBetween: result.topOfBetween
+                  } :
+                  {
+                    connected: false,
+                    x: this.state.mouseX,
+                    y: this.state.mouseY,
+                  }
               }}
             />
           );
