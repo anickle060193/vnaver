@@ -1,8 +1,8 @@
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
 import actionCreatorFactory from 'typescript-fsa';
 
-import { Drawing, Tool, DrawingTool, DrawingMap, DEFAULT_SCALE_LEVEL, MAX_SCALE_LEVEL, MIN_SCALE_LEVEL } from 'utils/draw';
-import { limit } from 'utils/utils';
+import { Drawing, Tool, DrawingTool, DrawingMap, DEFAULT_SCALE_LEVEL, MAX_SCALE_LEVEL, MIN_SCALE_LEVEL, DrawingType } from 'utils/draw';
+import { limit, mapToArray, arrayToMap } from 'utils/utils';
 
 export interface State
 {
@@ -90,12 +90,30 @@ export const reducer = reducerWithInitialState( initialState )
     } ) )
   .case( deleteDrawing, ( state, drawingId ) =>
   {
-    let { [ drawingId ]: _, ...drawings } = state.drawings;
     let selectedDrawingId = state.selectedDrawingId;
     if( selectedDrawingId === drawingId )
     {
       selectedDrawingId = null;
     }
+    let drawings = arrayToMap( mapToArray( state.drawings ).filter( ( drawing ) =>
+    {
+      if( drawing.id === drawingId )
+      {
+        return false;
+      }
+      if( drawing.type === DrawingType.PathLine )
+      {
+        if( drawing.start.connected && drawing.start.anchorId === drawingId )
+        {
+          return false;
+        }
+        else if( drawing.end.connected && drawing.end.anchorId === drawingId )
+        {
+          return false;
+        }
+      }
+      return true;
+    } ) );
     return {
       ...state,
       drawings,
