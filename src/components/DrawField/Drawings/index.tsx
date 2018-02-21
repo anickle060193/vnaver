@@ -100,7 +100,7 @@ export const Above: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Abo
     )}
     <Path
       x={drawing.x - ARROW_SIZE / 2}
-      y={drawing.y - ARROW_SIZE / 2}
+      y={drawing.y - ARROW_SIZE / 2 + 5}
       width={ARROW_SIZE}
       height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
@@ -123,7 +123,7 @@ export const At: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.At>>> 
     )}
     <Path
       x={drawing.x - ARROW_SIZE / 2}
-      y={drawing.y - ARROW_SIZE + 3}
+      y={drawing.y - ARROW_SIZE * 3 / 4 + 2}
       width={ARROW_SIZE}
       height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
@@ -132,7 +132,7 @@ export const At: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.At>>> 
     />
     <Path
       x={drawing.x - ARROW_SIZE / 2}
-      y={drawing.y - 16}
+      y={drawing.y - ARROW_SIZE / 4 - 2}
       width={ARROW_SIZE}
       height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
@@ -155,7 +155,7 @@ export const Below: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Bel
     )}
     <Path
       x={drawing.x - ARROW_SIZE / 2}
-      y={drawing.y - ARROW_SIZE + 8}
+      y={drawing.y - ARROW_SIZE + 9}
       width={ARROW_SIZE}
       height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
@@ -178,7 +178,7 @@ export const Between: React.SFC<DrawingComponentProps<BetweenDrawing>> = ( { dra
     )}
     <Path
       x={drawing.x - ARROW_SIZE / 2}
-      y={drawing.y - ARROW_SIZE}
+      y={drawing.y - ARROW_SIZE * 2 / 3}
       width={ARROW_SIZE}
       height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
@@ -187,7 +187,7 @@ export const Between: React.SFC<DrawingComponentProps<BetweenDrawing>> = ( { dra
     />
     <Path
       x={drawing.x - ARROW_SIZE / 2}
-      y={drawing.y + drawing.height}
+      y={drawing.y - ARROW_SIZE / 3 + drawing.height}
       width={ARROW_SIZE}
       height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
