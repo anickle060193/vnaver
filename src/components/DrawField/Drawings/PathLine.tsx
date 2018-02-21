@@ -5,6 +5,9 @@ import { Line, Group, Circle } from 'react-konva';
 import { DrawingComponentProps } from './DrawingComponent';
 import { PathLineDrawing, DrawingMap, getEndPointPosition } from 'utils/draw';
 
+const OUTER_CIRCLE_RADIUS = 4;
+const INNER_CIRCLE_RADIUS = 2;
+
 interface PropsFromState
 {
   drawings: DrawingMap;
@@ -14,7 +17,7 @@ type OwnProps = DrawingComponentProps<PathLineDrawing>;
 
 type Props = PropsFromState & OwnProps;
 
-const PathLine: React.SFC<Props> = ( { drawing, onClick, drawings } ) =>
+const PathLine: React.SFC<Props> = ( { drawing, onClick, drawings, cursor = false } ) =>
 {
   let start = getEndPointPosition( drawing.start, drawings );
   if( !start )
@@ -38,20 +41,42 @@ const PathLine: React.SFC<Props> = ( { drawing, onClick, drawings } ) =>
       <Line
         points={[ start.x, start.y, end.x, end.y ]}
         stroke={drawing.color}
-        strokeWidth={1}
+        strokeWidth={2}
       />
-      <Circle
-        x={end.x}
-        y={end.y}
-        radius={3}
-        fill={drawing.color}
-      />
-      <Circle
-        x={start.x}
-        y={start.y}
-        radius={3}
-        fill={drawing.color}
-      />
+      {cursor && (
+        <>
+          {!isNaN( end.x ) && !isNaN( end.y ) && (
+            <Circle
+              x={end.x}
+              y={end.y}
+              radius={OUTER_CIRCLE_RADIUS}
+              fill={drawing.color}
+            /> )}
+          {!drawing.end.connected && (
+            <Circle
+              x={end.x}
+              y={end.y}
+              radius={INNER_CIRCLE_RADIUS}
+              fill="white"
+            />
+          )}
+          {!isNaN( start.x ) && !isNaN( start.y ) &&
+            <Circle
+              x={start.x}
+              y={start.y}
+              radius={OUTER_CIRCLE_RADIUS}
+              fill={drawing.color}
+            />}
+          {!drawing.start.connected && (
+            <Circle
+              x={start.x}
+              y={start.y}
+              radius={INNER_CIRCLE_RADIUS}
+              fill="white"
+            />
+          )}
+        </>
+      )}
     </Group>
   );
 };

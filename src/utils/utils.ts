@@ -23,3 +23,10 @@ export function limit( val: number, min: number, max: number )
     return val;
   }
 }
+
+export function distance( x1: number, y1: number, x2: number, y2: number )
+{
+  let xDiff = x1 - x2;
+  let yDiff = y1 - y2;
+  return Math.sqrt( xDiff * xDiff + yDiff * yDiff );
+}

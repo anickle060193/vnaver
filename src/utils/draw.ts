@@ -55,6 +55,7 @@ interface ConnectedPathLineEndPoint
 {
   connected: true;
   anchorId: string;
+  topOfBetween: boolean;
 }
 
 interface FloatingPathLineEndPoint
@@ -93,6 +94,11 @@ export type Drawing = (
   HorizontalGridLineDrawing
 );
 
+export type AnchorDrawing = (
+  BasicDrawing<BasicDrawingTypes> |
+  BetweenDrawing
+);
+
 export interface DrawingMap
 {
   [ id: string ]: Drawing;
@@ -121,6 +127,17 @@ export function getScale( scaleLevel: number )
   return SCALE_LEVELS[ scaleLevel ] || 1.0;
 }
 
+export function isValidAnchor( drawing: Drawing | null ): drawing is AnchorDrawing
+{
+  return (
+    !!drawing
+    && ( drawing.type === DrawingType.At
+      || drawing.type === DrawingType.Above
+      || drawing.type === DrawingType.Below
+      || drawing.type === DrawingType.Between )
+  );
+}
+
 export const getEndPointPosition = ( endPoint: EndPoint, drawings: DrawingMap ) =>
 {
   if( !endPoint.connected )
@@ -134,10 +151,7 @@ export const getEndPointPosition = ( endPoint: EndPoint, drawings: DrawingMap ) 
   {
     let anchor = drawings[ endPoint.anchorId ];
 
-    if( !anchor
-      || anchor.type === DrawingType.HorizontalGridLine
-      || anchor.type === DrawingType.VerticalGridLine
-      || anchor.type === DrawingType.PathLine )
+    if( !isValidAnchor( anchor ) )
     {
       console.error( 'Invalid anchor - ID:', endPoint.anchorId, anchor );
       return null;
@@ -153,10 +167,20 @@ export const getEndPointPosition = ( endPoint: EndPoint, drawings: DrawingMap ) 
     }
     else if( anchor.type === DrawingType.Between )
     {
-      return {
-        x: anchor.y,
-        y: anchor.y
-      };
+      if( endPoint.topOfBetween )
+      {
+        return {
+          x: anchor.x,
+          y: anchor.y
+        };
+      }
+      else
+      {
+        return {
+          x: anchor.x,
+          y: anchor.y + anchor.height
+        };
+      }
     }
     else
     {
