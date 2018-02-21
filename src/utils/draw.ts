@@ -1,9 +1,12 @@
+import { assertNever } from 'utils/utils';
+
 export const enum DrawingType
 {
   Above = 'Above',
   At = 'At',
   Below = 'Below',
   Between = 'Between',
+  PathLine = 'PathLine',
   VerticalGridLine = 'VerticalGridLine',
   HorizontalGridLine = 'HorizontalGridLine'
 }
@@ -48,6 +51,28 @@ export interface BetweenDrawing extends ContainsGuideLineDrawing<DrawingType.Bet
   height: number;
 }
 
+interface ConnectedPathLineEndPoint
+{
+  connected: true;
+  anchorId: string;
+}
+
+interface FloatingPathLineEndPoint
+{
+  connected: false;
+  x: number;
+  y: number;
+}
+
+type EndPoint = ConnectedPathLineEndPoint | FloatingPathLineEndPoint;
+
+export interface PathLineDrawing extends DrawingBase<DrawingType.PathLine>
+{
+  type: DrawingType.PathLine;
+  start: EndPoint;
+  end: EndPoint;
+}
+
 export interface VerticalGridLineDrawing extends DrawingBase<DrawingType.VerticalGridLine>
 {
   type: DrawingType.VerticalGridLine;
@@ -63,6 +88,7 @@ export interface HorizontalGridLineDrawing extends DrawingBase<DrawingType.Horiz
 export type Drawing = (
   BasicDrawing<BasicDrawingTypes> |
   BetweenDrawing |
+  PathLineDrawing |
   VerticalGridLineDrawing |
   HorizontalGridLineDrawing
 );
@@ -77,6 +103,7 @@ export const drawingTypeColors: {[ key in DrawingType ]: string } = {
   [ DrawingType.At ]: '#008000',
   [ DrawingType.Below ]: '#ffa500',
   [ DrawingType.Between ]: '#0000ff',
+  [ DrawingType.PathLine ]: '#ff0000',
   [ DrawingType.VerticalGridLine ]: '#ff0000',
   [ DrawingType.HorizontalGridLine ]: '#00ffff',
 };
@@ -93,3 +120,47 @@ export function getScale( scaleLevel: number )
 {
   return SCALE_LEVELS[ scaleLevel ] || 1.0;
 }
+
+export const getEndPointPosition = ( endPoint: EndPoint, drawings: DrawingMap ) =>
+{
+  if( !endPoint.connected )
+  {
+    return {
+      x: endPoint.x,
+      y: endPoint.y
+    };
+  }
+  else
+  {
+    let anchor = drawings[ endPoint.anchorId ];
+
+    if( !anchor
+      || anchor.type === DrawingType.HorizontalGridLine
+      || anchor.type === DrawingType.VerticalGridLine
+      || anchor.type === DrawingType.PathLine )
+    {
+      console.error( 'Invalid anchor - ID:', endPoint.anchorId, anchor );
+      return null;
+    }
+    else if( anchor.type === DrawingType.Above
+      || anchor.type === DrawingType.At
+      || anchor.type === DrawingType.Below )
+    {
+      return {
+        x: anchor.x,
+        y: anchor.y
+      };
+    }
+    else if( anchor.type === DrawingType.Between )
+    {
+      return {
+        x: anchor.y,
+        y: anchor.y
+      };
+    }
+    else
+    {
+      throw assertNever( anchor.type );
+    }
+  }
+};

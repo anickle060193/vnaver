@@ -116,6 +116,21 @@ class Toolbar extends React.Component<Props>
           </ToolbarItem>
 
           <ToolbarItem
+            title="Path Line"
+            shortcut={shortcuts[ DrawingType.PathLine ]}
+            active={this.props.tool === DrawingType.PathLine}
+            onClick={() => this.onToolClick( DrawingType.PathLine )}
+          >
+            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
+              <line x1={10} y1={10} x2={80} y2={80} stroke={drawingTypeColors[ DrawingType.PathLine ]} strokeWidth={6} />
+              <circle cx={10} cy={10} r={10} fill={drawingTypeColors[ DrawingType.PathLine ]} />
+              <circle cx={10} cy={10} r={6} fill="white" />
+              <circle cx={80} cy={80} r={10} fill={drawingTypeColors[ DrawingType.PathLine ]} />
+              <circle cx={80} cy={80} r={6} fill="white" />
+            </svg>
+          </ToolbarItem>
+
+          <ToolbarItem
             title="Vertical Grid Line"
             shortcut={shortcuts[ DrawingType.VerticalGridLine ]}
             active={this.props.tool === DrawingType.VerticalGridLine}

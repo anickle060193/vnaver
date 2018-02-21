@@ -63,6 +63,12 @@ class DrawingProperties extends React.Component<Props>
         );
         break;
 
+      case DrawingType.PathLine:
+        drawingProperties = (
+          null
+        );
+        break;
+
       case DrawingType.VerticalGridLine:
         drawingProperties = (
           <VerticalGridLineDrawingProperties

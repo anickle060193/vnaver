@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { Line, Rect, Path, Text, Label, Tag, Group } from 'react-konva';
 
+import { DrawingComponentProps } from './DrawingComponent';
+import PathLine from './PathLine';
 import
 {
   DrawingType,
@@ -10,7 +12,9 @@ import
   VerticalGridLineDrawing,
   HorizontalGridLineDrawing,
   UP_ARROW_PATH,
-  DOWN_ARROW_PATH
+  DOWN_ARROW_PATH,
+  DrawingMap,
+  getEndPointPosition
 } from 'utils/draw';
 import { assertNever } from 'utils/utils';
 
@@ -21,12 +25,6 @@ const GUIDE_LINE_WIDTH = 0.5;
 
 const ARROW_SIZE = 30;
 const ARROW_SCALE = ARROW_SIZE / 100;
-
-interface DrawingComponentProps<D extends Drawing>
-{
-  drawing: D;
-  onClick?: ( e: KonvaMouseEvent<{}> ) => void;
-}
 
 interface BasicGuideLineProps
 {
@@ -211,23 +209,25 @@ export const HorizontalGridLine: React.SFC<DrawingComponentProps<HorizontalGridL
   </Group>
 );
 
-export const drawingComponentMap: {[ key in DrawingType ]: React.SFC<DrawingComponentProps<Drawing>> } = {
+export const drawingComponentMap: {[ key in DrawingType ]: React.SFC<DrawingComponentProps<Drawing>> | React.ComponentClass<DrawingComponentProps<Drawing>> } = {
   [ DrawingType.Above ]: Above,
   [ DrawingType.At ]: At,
   [ DrawingType.Below ]: Below,
   [ DrawingType.Between ]: Between,
+  [ DrawingType.PathLine ]: PathLine,
   [ DrawingType.VerticalGridLine ]: VerticalGridLine,
   [ DrawingType.HorizontalGridLine ]: HorizontalGridLine,
 };
 
 export const ActiveIndication: React.SFC<{
+  drawings: DrawingMap;
   drawing: Drawing | null;
   originX: number;
   originY: number;
   scale: number;
   fieldWidth: number;
   fieldHeight: number;
-}> = ( { drawing, originX, originY, scale, fieldWidth, fieldHeight } ) =>
+}> = ( { drawings, drawing, originX, originY, scale, fieldWidth, fieldHeight } ) =>
   {
     if( !drawing )
     {
@@ -257,6 +257,23 @@ export const ActiveIndication: React.SFC<{
     {
       x = drawing.x + ARROW_SIZE / 2 + 3;
       y = drawing.y - 12;
+    }
+    else if( drawing.type === DrawingType.PathLine )
+    {
+      let start = getEndPointPosition( drawing.start, drawings );
+      if( !start )
+      {
+        return null;
+      }
+      let end = getEndPointPosition( drawing.end, drawings );
+      if( !end )
+      {
+        return null;
+      }
+
+      arrowDirection = 'down';
+      x = ( start.x + end.x ) / 2;
+      y = ( start.y + end.y ) / 2;
     }
     else if( drawing.type === DrawingType.HorizontalGridLine )
     {

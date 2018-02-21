@@ -4,6 +4,7 @@ import { Stage, Layer } from 'react-konva';
 import * as uuid from 'uuid/v4';
 
 import { drawingComponentMap, Between, VerticalGridLine, HorizontalGridLine, ActiveIndication } from 'components/DrawField/Drawings';
+import PathLine from 'components/DrawField/Drawings/PathLine';
 import { addDrawing, selectDrawing, deselectDrawing, setOrigin, incrementScaleLevel, decrementScaleLevel } from 'store/reducers/drawing';
 import
 {
@@ -158,6 +159,54 @@ class DrawField extends React.Component<Props, State>
           );
         }
       }
+      else if( this.props.tool === DrawingType.PathLine )
+      {
+        if( this.state.startY !== null
+          && this.state.startX !== null )
+        {
+          cursor = (
+            <PathLine
+              drawing={{
+                id: uuid(),
+                type: this.props.tool,
+                color: drawingTypeColors[ this.props.tool ],
+                start: {
+                  connected: false,
+                  x: this.state.startX,
+                  y: this.state.startY,
+                },
+                end: {
+                  connected: false,
+                  x: this.state.mouseX,
+                  y: this.state.mouseY
+                }
+              }}
+            />
+          );
+        }
+        else
+        {
+          cursor = (
+            <PathLine
+              drawing={{
+                id: uuid(),
+                type: this.props.tool,
+                color: drawingTypeColors[ this.props.tool ],
+                start: {
+                  connected: false,
+                  x: this.state.mouseX,
+                  y: this.state.mouseY,
+                },
+                end: {
+                  connected: false,
+                  x: this.state.mouseX,
+                  y: this.state.mouseY
+                }
+              }}
+            />
+          );
+        }
+      }
       else if( this.props.tool === DrawingType.VerticalGridLine )
       {
         cursor = (
@@ -271,6 +320,7 @@ class DrawField extends React.Component<Props, State>
             } )}
             {cursor}
             <ActiveIndication
+              drawings={this.props.drawings}
               drawing={this.props.drawings[ this.props.selectedDrawingId! ]}
               originX={this.props.originX}
               originY={this.props.originY}
@@ -362,7 +412,8 @@ class DrawField extends React.Component<Props, State>
 
     if( e.evt.button === 0 ) // tslint:disable-line no-bitwise
     {
-      if( this.props.tool === DrawingType.Between )
+      if( this.props.tool === DrawingType.Between
+        || this.props.tool === DrawingType.PathLine )
       {
         let { x, y } = this.mouseToDrawing( e.evt );
         this.setState( {
@@ -410,6 +461,28 @@ class DrawField extends React.Component<Props, State>
               showGuideLine: true,
               guideLine: {
                 vertical: true
+              }
+            } );
+          }
+        }
+        else if( this.props.tool === DrawingType.PathLine )
+        {
+          if( this.state.startY !== null
+            && this.state.startX !== null )
+          {
+            this.props.addDrawing( {
+              id: uuid(),
+              type: this.props.tool,
+              color: drawingTypeColors[ this.props.tool ],
+              start: {
+                connected: false,
+                x: this.state.startX,
+                y: this.state.startY,
+              },
+              end: {
+                connected: false,
+                x: x,
+                y: y
               }
             } );
           }

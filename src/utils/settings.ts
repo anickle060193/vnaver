@@ -7,6 +7,7 @@ export const shortcuts: {[ key in DrawingTool ]: string } = {
   [ DrawingType.At ]: 'a',
   [ DrawingType.Below ]: 'd',
   [ DrawingType.Between ]: 'b',
+  [ DrawingType.PathLine ]: 'p',
   [ DrawingType.VerticalGridLine ]: 'v',
   [ DrawingType.HorizontalGridLine ]: 'h',
 };
