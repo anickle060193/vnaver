@@ -23,7 +23,6 @@ class UpdateNotification extends React.Component<Props>
 {
   render()
   {
-    console.log( 'RENDER:', this.props );
     let notification: React.ReactNode = null;
     let show: boolean;
 
@@ -33,7 +32,6 @@ class UpdateNotification extends React.Component<Props>
     }
     else if( this.props.updaterState === UpdaterState.CheckingForUpdate )
     {
-      console.log( 'CHECKING' );
       show = true;
       notification = (
         'Checking for update...'
