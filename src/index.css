@@ -10,4 +10,6 @@ body,
   font-family: 'Roboto', sans-serif;
   cursor: default;
   user-select: none;
+
+  overflow: hidden;
 }

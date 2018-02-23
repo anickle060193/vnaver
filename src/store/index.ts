@@ -15,7 +15,7 @@ if( process.env.NODE_ENV === 'development' )
   } ) );
 }
 
-const store = createStore( rootReducer, applyMiddleware( ...middleWares ) );
+const store = createStore<RootState>( rootReducer, applyMiddleware( ...middleWares ) );
 
 if( process.env.NODE_ENV === 'development' )
 {

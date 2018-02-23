@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "bootstrap-css-only": "^4.0.0",
+    "electron-log": "^2.2.14",
     "electron-updater": "^2.20.1",
     "konva": "^1.7.6",
     "material-design-icons": "^3.0.1",

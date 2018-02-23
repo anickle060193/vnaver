@@ -1,12 +1,79 @@
 // @ts-check
 
-const { app, BrowserWindow } = require( 'electron' );
+const { app, BrowserWindow, ipcMain } = require( 'electron' );
+const log = require( 'electron-log' );
 const { autoUpdater } = require( 'electron-updater' );
 const path = require( 'path' );
 const url = require( 'url' );
 
 /** @type {BrowserWindow | null} */
 let window = null;
+
+log.transports.file.level = 'info';
+
+log.info( 'App starting...' );
+
+function setupAutoUpdater()
+{
+  autoUpdater.logger = log;
+
+  autoUpdater.autoInstallOnAppQuit = true;
+
+  autoUpdater.on( 'checking-for-update', () =>
+  {
+    if( window )
+    {
+      window.webContents.send( 'checking-for-update' );
+    }
+  } );
+
+  autoUpdater.on( 'update-available', ( updateInfo ) =>
+  {
+    if( window )
+    {
+      window.webContents.send( 'update-available', updateInfo );
+    }
+  } );
+
+  autoUpdater.on( 'update-not-available', ( updateInfo ) =>
+  {
+    if( window )
+    {
+      window.webContents.send( 'update-not-available', updateInfo );
+    }
+  } );
+
+  autoUpdater.on( 'error', ( error ) =>
+  {
+    if( window )
+    {
+      window.webContents.send( 'error', error );
+    }
+  } );
+
+  autoUpdater.on( 'download-progress', ( progress ) =>
+  {
+    if( window )
+    {
+      window.webContents.send( 'download-progress', progress );
+    }
+  } );
+
+  autoUpdater.on( 'update-downloaded', ( updateInfo ) =>
+  {
+    if( window )
+    {
+      window.webContents.send( 'update-downloaded', updateInfo );
+    }
+  } );
+
+  ipcMain.on( 'quit-and-install', () =>
+  {
+    log.info( 'QUIT AND INSTALL' );
+
+    autoUpdater.quitAndInstall();
+  } );
+}
 
 function createWindow()
 {
@@ -40,14 +107,20 @@ function createWindow()
     if( window )
     {
       window.show();
+
+      if( process.env.NODE_ENV !== 'development' )
+      {
+        setTimeout( () => autoUpdater.checkForUpdates(), 2000 );
+      }
     }
   } );
 }
 
 app.on( 'ready', () =>
 {
-  autoUpdater.checkForUpdatesAndNotify();
   createWindow();
+
+  setupAutoUpdater();
 } );
 
 app.on( 'window-all-closed', () =>
