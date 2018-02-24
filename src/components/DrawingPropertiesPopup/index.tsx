@@ -10,7 +10,8 @@ import
   BasicDrawingProperties,
   BetweenDrawingProperties,
   VerticalGridLineDrawingProperties,
-  HorizontalGridLineDrawingProperties
+  HorizontalGridLineDrawingProperties,
+  PlaneDrawingProperties
 } from './DrawingProperties';
 import { assertNever } from 'utils/utils';
 
@@ -41,54 +42,67 @@ class DrawingProperties extends React.Component<Props>
 
     let drawingProperties: React.ReactNode;
 
-    switch( selectedDrawing.type )
+    if( selectedDrawing.type === DrawingType.Above
+      || selectedDrawing.type === DrawingType.At
+      || selectedDrawing.type === DrawingType.Below )
     {
-      case DrawingType.Above:
-      case DrawingType.At:
-      case DrawingType.Below:
-        drawingProperties = (
-          <BasicDrawingProperties
-            drawing={selectedDrawing}
-            onChange={this.onDrawingChange}
-          />
-        );
-        break;
-
-      case DrawingType.Between:
-        drawingProperties = (
-          <BetweenDrawingProperties
-            drawing={selectedDrawing}
-            onChange={this.onDrawingChange}
-          />
-        );
-        break;
-
-      case DrawingType.PathLine:
-        drawingProperties = (
-          null
-        );
-        break;
-
-      case DrawingType.VerticalGridLine:
-        drawingProperties = (
-          <VerticalGridLineDrawingProperties
-            drawing={selectedDrawing}
-            onChange={this.onDrawingChange}
-          />
-        );
-        break;
-
-      case DrawingType.HorizontalGridLine:
-        drawingProperties = (
-          <HorizontalGridLineDrawingProperties
-            drawing={selectedDrawing}
-            onChange={this.onDrawingChange}
-          />
-        );
-        break;
-
-      default:
-        throw assertNever( selectedDrawing );
+      drawingProperties = (
+        <BasicDrawingProperties
+          drawing={selectedDrawing}
+          onChange={this.onDrawingChange}
+          onColorChange={( color ) => this.onColorChange( selectedDrawing, color )}
+        />
+      );
+    }
+    else if( selectedDrawing.type === DrawingType.Between )
+    {
+      drawingProperties = (
+        <BetweenDrawingProperties
+          drawing={selectedDrawing}
+          onChange={this.onDrawingChange}
+          onColorChange={( color ) => this.onColorChange( selectedDrawing, color )}
+        />
+      );
+    }
+    else if( selectedDrawing.type === DrawingType.PathLine )
+    {
+      drawingProperties = (
+        null
+      );
+    }
+    else if( selectedDrawing.type === DrawingType.VerticalGridLine )
+    {
+      drawingProperties = (
+        <VerticalGridLineDrawingProperties
+          drawing={selectedDrawing}
+          onChange={this.onDrawingChange}
+          onColorChange={( color ) => this.onColorChange( selectedDrawing, color )}
+        />
+      );
+    }
+    else if( selectedDrawing.type === DrawingType.HorizontalGridLine )
+    {
+      drawingProperties = (
+        <HorizontalGridLineDrawingProperties
+          drawing={selectedDrawing}
+          onChange={this.onDrawingChange}
+          onColorChange={( color ) => this.onColorChange( selectedDrawing, color )}
+        />
+      );
+    }
+    else if( selectedDrawing.type === DrawingType.Plane )
+    {
+      drawingProperties = (
+        <PlaneDrawingProperties
+          drawing={selectedDrawing}
+          onChange={this.onDrawingChange}
+          onColorChange={( color ) => this.onColorChange( selectedDrawing, color )}
+        />
+      );
+    }
+    else
+    {
+      throw assertNever( selectedDrawing.type );
     }
 
     return (
@@ -110,6 +124,14 @@ class DrawingProperties extends React.Component<Props>
   private onDrawingChange = ( drawing: Drawing ) =>
   {
     this.props.updateDrawing( drawing );
+  }
+
+  private onColorChange = ( drawing: Drawing, color: string ) =>
+  {
+    this.props.updateDrawing( {
+      ...drawing,
+      color
+    } );
   }
 
   private onDeleteClick = () =>

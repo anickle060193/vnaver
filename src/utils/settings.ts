@@ -33,14 +33,15 @@ export function getShortcut( tool: DrawingTool )
 export function getAllShortcuts(): {[ key in DrawingTool ]: string }
 {
   return {
-    [ Tool.Cursor ]: getItem( k( SHORTCUT_PREFIX, Tool.Cursor ), '' ),
-    [ DrawingType.Above ]: getItem( k( SHORTCUT_PREFIX, DrawingType.Above ), '' ),
-    [ DrawingType.At ]: getItem( k( SHORTCUT_PREFIX, DrawingType.At ), '' ),
-    [ DrawingType.Below ]: getItem( k( SHORTCUT_PREFIX, DrawingType.Below ), '' ),
-    [ DrawingType.Between ]: getItem( k( SHORTCUT_PREFIX, DrawingType.Between ), '' ),
-    [ DrawingType.PathLine ]: getItem( k( SHORTCUT_PREFIX, DrawingType.PathLine ), '' ),
-    [ DrawingType.VerticalGridLine ]: getItem( k( SHORTCUT_PREFIX, DrawingType.VerticalGridLine ), '' ),
-    [ DrawingType.HorizontalGridLine ]: getItem( k( SHORTCUT_PREFIX, DrawingType.HorizontalGridLine ), '' )
+    [ Tool.Cursor ]: getShortcut( Tool.Cursor ),
+    [ DrawingType.Above ]: getShortcut( DrawingType.Above ),
+    [ DrawingType.At ]: getShortcut( DrawingType.At ),
+    [ DrawingType.Below ]: getShortcut( DrawingType.Below ),
+    [ DrawingType.Between ]: getShortcut( DrawingType.Between ),
+    [ DrawingType.PathLine ]: getShortcut( DrawingType.PathLine ),
+    [ DrawingType.VerticalGridLine ]: getShortcut( DrawingType.VerticalGridLine ),
+    [ DrawingType.HorizontalGridLine ]: getShortcut( DrawingType.HorizontalGridLine ),
+    [ DrawingType.Plane ]: getShortcut( DrawingType.Plane )
   };
 }
 

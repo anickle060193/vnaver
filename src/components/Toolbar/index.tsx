@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import ToolbarItem from 'components/Toolbar/ToolbarItem';
 import { setTool } from 'store/reducers/drawing';
-import { DrawingType, Tool, DrawingTool, UP_ARROW_PATH, DOWN_ARROW_PATH, drawingTypeColors } from 'utils/draw';
+import { DrawingType, Tool, DrawingTool, UP_ARROW_PATH, DOWN_ARROW_PATH, drawingTypeColors, PLANE_PATH } from 'utils/draw';
 import { getShortcut } from 'utils/settings';
 
 import './styles.css';
@@ -45,6 +45,17 @@ class Toolbar extends React.Component<Props>
         </div>
 
         <div className="toolbar">
+
+          <ToolbarItem
+            title="Plane"
+            shortcut={getShortcut( DrawingType.Plane )}
+            active={this.props.tool === DrawingType.Plane}
+            onClick={() => this.onToolClick( DrawingType.Plane )}
+          >
+            <svg viewBox="-50 -50 100 100" style={{ width: '2rem', height: '2rem' }}>
+              <path d={PLANE_PATH} fill={drawingTypeColors[ DrawingType.Plane ]} />
+            </svg>
+          </ToolbarItem>
 
           <ToolbarItem
             title="Above Constraint"

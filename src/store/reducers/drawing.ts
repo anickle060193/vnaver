@@ -184,6 +184,14 @@ export const reducer = reducerWithInitialState( initialState )
     {
       return state;
     }
+    else if( drawing.type === DrawingType.Plane )
+    {
+      return setDrawingInState( state, {
+        ...drawing,
+        x: drawing.x + deltaX,
+        y: drawing.y + deltaY
+      } );
+    }
     else
     {
       throw assertNever( drawing.type );

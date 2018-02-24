@@ -14,7 +14,9 @@ import
   UP_ARROW_PATH,
   DOWN_ARROW_PATH,
   DrawingMap,
-  getEndPointPosition
+  getEndPointPosition,
+  PlaneDrawing,
+  PLANE_PATH
 } from 'utils/draw';
 import { assertNever } from 'utils/utils';
 
@@ -101,8 +103,6 @@ export const Above: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Abo
     <Path
       x={drawing.x - ARROW_SIZE / 2}
       y={drawing.y - ARROW_SIZE / 2 + 5}
-      width={ARROW_SIZE}
-      height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
       fill={drawing.color}
       data={UP_ARROW_PATH}
@@ -124,8 +124,6 @@ export const At: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.At>>> 
     <Path
       x={drawing.x - ARROW_SIZE / 2}
       y={drawing.y - ARROW_SIZE * 3 / 4 + 2}
-      width={ARROW_SIZE}
-      height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
       fill={drawing.color}
       data={DOWN_ARROW_PATH}
@@ -133,8 +131,6 @@ export const At: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.At>>> 
     <Path
       x={drawing.x - ARROW_SIZE / 2}
       y={drawing.y - ARROW_SIZE / 4 - 2}
-      width={ARROW_SIZE}
-      height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
       fill={drawing.color}
       data={UP_ARROW_PATH}
@@ -156,8 +152,6 @@ export const Below: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Bel
     <Path
       x={drawing.x - ARROW_SIZE / 2}
       y={drawing.y - ARROW_SIZE + 9}
-      width={ARROW_SIZE}
-      height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
       fill={drawing.color}
       data={DOWN_ARROW_PATH}
@@ -179,8 +173,6 @@ export const Between: React.SFC<DrawingComponentProps<BetweenDrawing>> = ( { dra
     <Path
       x={drawing.x - ARROW_SIZE / 2}
       y={drawing.y - ARROW_SIZE * 2 / 3}
-      width={ARROW_SIZE}
-      height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
       fill={drawing.color}
       data={DOWN_ARROW_PATH}
@@ -188,8 +180,6 @@ export const Between: React.SFC<DrawingComponentProps<BetweenDrawing>> = ( { dra
     <Path
       x={drawing.x - ARROW_SIZE / 2}
       y={drawing.y - ARROW_SIZE / 3 + drawing.height}
-      width={ARROW_SIZE}
-      height={ARROW_SIZE}
       scale={{ x: ARROW_SCALE, y: ARROW_SCALE }}
       fill={drawing.color}
       data={UP_ARROW_PATH}
@@ -209,6 +199,21 @@ export const HorizontalGridLine: React.SFC<DrawingComponentProps<HorizontalGridL
   </Group>
 );
 
+const PLANE_PATH_SIZE = 100;
+
+export const Plane: React.SFC<DrawingComponentProps<PlaneDrawing>> = ( { drawing, onClick, onMouseDown } ) => (
+  <Path
+    onClick={onClick}
+    onMouseDown={onMouseDown}
+    x={drawing.x}
+    y={drawing.y}
+    scale={{ x: drawing.size / PLANE_PATH_SIZE, y: drawing.size / PLANE_PATH_SIZE }}
+    rotation={drawing.rotation}
+    data={PLANE_PATH}
+    fill={drawing.color}
+  />
+);
+
 export const drawingComponentMap: {[ key in DrawingType ]: React.SFC<DrawingComponentProps<Drawing>> | React.ComponentClass<DrawingComponentProps<Drawing>> } = {
   [ DrawingType.Above ]: Above,
   [ DrawingType.At ]: At,
@@ -217,6 +222,7 @@ export const drawingComponentMap: {[ key in DrawingType ]: React.SFC<DrawingComp
   [ DrawingType.PathLine ]: PathLine,
   [ DrawingType.VerticalGridLine ]: VerticalGridLine,
   [ DrawingType.HorizontalGridLine ]: HorizontalGridLine,
+  [ DrawingType.Plane ]: Plane
 };
 
 export const ActiveIndication: React.SFC<{
@@ -285,6 +291,11 @@ export const ActiveIndication: React.SFC<{
     {
       x = drawing.x + 4;
       y = ( -originY + fieldHeight / 2 ) / scale;
+    }
+    else if( drawing.type === DrawingType.Plane )
+    {
+      x = drawing.x + drawing.size / 2 + 5;
+      y = drawing.y;
     }
     else
     {

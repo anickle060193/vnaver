@@ -8,7 +8,8 @@ export const enum DrawingType
   Between = 'Between',
   PathLine = 'PathLine',
   VerticalGridLine = 'VerticalGridLine',
-  HorizontalGridLine = 'HorizontalGridLine'
+  HorizontalGridLine = 'HorizontalGridLine',
+  Plane = 'Plane'
 }
 
 export const enum Tool
@@ -37,14 +38,12 @@ export type BasicDrawingTypes = DrawingType.Above | DrawingType.At | DrawingType
 
 export interface BasicDrawing<T extends BasicDrawingTypes> extends ContainsGuideLineDrawing<T>
 {
-  type: T;
   x: number;
   y: number;
 }
 
 export interface BetweenDrawing extends ContainsGuideLineDrawing<DrawingType.Between>
 {
-  type: DrawingType.Between;
   x: number;
   y: number;
   height: number;
@@ -68,21 +67,26 @@ type EndPoint = ConnectedPathLineEndPoint | FloatingPathLineEndPoint;
 
 export interface PathLineDrawing extends DrawingBase<DrawingType.PathLine>
 {
-  type: DrawingType.PathLine;
   start: EndPoint;
   end: EndPoint;
 }
 
 export interface VerticalGridLineDrawing extends DrawingBase<DrawingType.VerticalGridLine>
 {
-  type: DrawingType.VerticalGridLine;
   x: number;
 }
 
 export interface HorizontalGridLineDrawing extends DrawingBase<DrawingType.HorizontalGridLine>
 {
-  type: DrawingType.HorizontalGridLine;
   y: number;
+}
+
+export interface PlaneDrawing extends DrawingBase<DrawingType.Plane>
+{
+  x: number;
+  y: number;
+  size: number;
+  rotation: number;
 }
 
 export type Drawing = (
@@ -90,7 +94,8 @@ export type Drawing = (
   BetweenDrawing |
   PathLineDrawing |
   VerticalGridLineDrawing |
-  HorizontalGridLineDrawing
+  HorizontalGridLineDrawing |
+  PlaneDrawing
 );
 
 export type AnchorDrawing = (
@@ -111,10 +116,12 @@ export const drawingTypeColors: {[ key in DrawingType ]: string } = {
   [ DrawingType.PathLine ]: '#ff0000',
   [ DrawingType.VerticalGridLine ]: '#ff0000',
   [ DrawingType.HorizontalGridLine ]: '#00ffff',
+  [ DrawingType.Plane ]: '#000000'
 };
 
 export const UP_ARROW_PATH = 'M97.969 73.984l-47.969-47.969L2.031 73.984H97.969z';
 export const DOWN_ARROW_PATH = 'M2.031 26.016l47.969 47.969L97.969 26.016H2.031z';
+export const PLANE_PATH = `m-20.64 45.98 9.68 0 24.2-38.72 26.62 0c4.017 0 7.26-3.243 7.26-7.26s-3.243-7.26-7.26-7.26l-26.62 0-24.2-38.72-9.68 0 12.1 38.72-26.62 0-7.26-9.68-7.26 0 4.84 16.94-4.84 16.94 7.26 0 7.26-9.68 26.62 0-12.1 38.72z`;
 
 const SCALE_LEVELS = [ 0.25, 1 / 3, 0.5, 2 / 3, 0.75, 0.8, 0.9, 1.0, 1.1, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0, 4.0, 5.0 ];
 export const MIN_SCALE_LEVEL = 0;

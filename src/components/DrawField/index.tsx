@@ -4,7 +4,7 @@ import { Stage, Layer } from 'react-konva';
 import * as uuid from 'uuid/v4';
 
 import Grid from 'components/DrawField/Grid';
-import { drawingComponentMap, Between, VerticalGridLine, HorizontalGridLine, ActiveIndication } from 'components/DrawField/Drawings';
+import { drawingComponentMap, Between, VerticalGridLine, HorizontalGridLine, ActiveIndication, Plane } from 'components/DrawField/Drawings';
 import PathLine from 'components/DrawField/Drawings/PathLine';
 import { addDrawing, selectDrawing, deselectDrawing, setOrigin, incrementScaleLevel, decrementScaleLevel, moveDrawing } from 'store/reducers/drawing';
 import
@@ -301,6 +301,22 @@ class DrawField extends React.Component<Props, State>
           />
         );
       }
+      else if( this.props.tool === DrawingType.Plane )
+      {
+        cursor = (
+          <Plane
+            drawing={{
+              id: '',
+              type: this.props.tool,
+              color: drawingTypeColors[ this.props.tool ],
+              x: this.state.mouseX,
+              y: this.state.mouseY,
+              size: 65,
+              rotation: 0
+            }}
+          />
+        );
+      }
       else if( this.props.tool === DrawingType.At ||
         this.props.tool === DrawingType.Above ||
         this.props.tool === DrawingType.Below )
@@ -401,35 +417,19 @@ class DrawField extends React.Component<Props, State>
 
   private sortedDrawings()
   {
-    const sortOrder = [
-      DrawingType.HorizontalGridLine,
-      DrawingType.VerticalGridLine,
-      DrawingType.PathLine
-    ];
+    const sortOrderMap: {[ key in DrawingType ]: number } = {
+      [ DrawingType.VerticalGridLine ]: 0,
+      [ DrawingType.HorizontalGridLine ]: 1,
+      [ DrawingType.PathLine ]: 2,
+      [ DrawingType.Above ]: 3,
+      [ DrawingType.At ]: 4,
+      [ DrawingType.Below ]: 5,
+      [ DrawingType.Between ]: 6,
+      [ DrawingType.Plane ]: 7
+    };
     return mapToArray( this.props.drawings ).sort( ( d1, d2 ) =>
     {
-      if( d1.type === d2.type )
-      {
-        return 0;
-      }
-
-      let d1Index = sortOrder.indexOf( d1.type );
-      let d2Index = sortOrder.indexOf( d2.type );
-
-      if( d1Index !== -1
-        && d2Index === -1 )
-      {
-        return -1;
-      }
-      else if( d1Index === -1
-        && d2Index !== -1 )
-      {
-        return 1;
-      }
-      else
-      {
-        return d1Index - d2Index;
-      }
+      return sortOrderMap[ d1.type ] - sortOrderMap[ d2.type ];
     } );
   }
 
@@ -698,6 +698,18 @@ class DrawField extends React.Component<Props, State>
             type: this.props.tool,
             color: drawingTypeColors[ this.props.tool ],
             y: y
+          } );
+        }
+        else if( this.props.tool === DrawingType.Plane )
+        {
+          this.props.addDrawing( {
+            id: uuid(),
+            type: this.props.tool,
+            color: drawingTypeColors[ this.props.tool ],
+            x: x,
+            y: y,
+            size: 65,
+            rotation: 0
           } );
         }
         else if( this.props.tool === DrawingType.At

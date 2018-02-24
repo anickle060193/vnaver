@@ -3,50 +3,63 @@ import * as React from 'react';
 import
 {
   BasicDrawing,
-  DrawingType,
-  DrawingBase,
   BetweenDrawing,
   VerticalGridLineDrawing,
   HorizontalGridLineDrawing,
   BasicDrawingTypes,
-  Drawing
+  Drawing,
+  PlaneDrawing
 } from 'utils/draw';
 
-interface DrawingPropertiesProps<S extends DrawingType, T extends DrawingBase<S>>
+interface Props<D extends Drawing>
 {
-  drawing: T;
-  onChange: ( newDrawing: Drawing ) => void;
+  drawing: D;
+  onColorChange: ( newColor: string ) => void;
+  onChange: ( newDrawing: D ) => void;
 }
 
-const XInput: React.SFC<{
-  x: number;
-  onChange: React.ChangeEventHandler<HTMLInputElement>;
-}> = ( { x, onChange } ) => (
+class DrawingPropertiesComponent<D extends Drawing> extends React.Component<Props<D>> { }
+
+type NumberInputChangeHandler = ( value: number ) => void;
+
+const NumberInput: React.SFC<{
+  val: number;
+  label: string;
+  onChange: NumberInputChangeHandler;
+}> = ( { val, label, onChange } ) => (
   <div className="form-group row">
-    <label className="col-sm-2 col-form-label">X:</label>
+    <label className="col-sm-2 col-form-label">{label}:</label>
     <div className="col-sm-10">
-      <input type="number" className="form-control" placeholder="X" value={x} onChange={onChange} />
+      <input
+        type="number"
+        className="form-control"
+        placeholder={label}
+        value={val}
+        onChange={( e ) => onChange( e.target.valueAsNumber || 0 )}
+      />
     </div>
   </div>
 );
 
+const XInput: React.SFC<{
+  x: number;
+  onChange: NumberInputChangeHandler;
+}> = ( { x, onChange } ) => (
+  <NumberInput val={x} label="X" onChange={onChange} />
+);
+
 const YInput: React.SFC<{
   y: number;
-  onChange: React.ChangeEventHandler<HTMLInputElement>;
+  onChange: NumberInputChangeHandler;
 }> = ( { y, onChange } ) => (
-  <div className="form-group row">
-    <label className="col-sm-2 col-form-label">Y:</label>
-    <div className="col-sm-10">
-      <input type="number" className="form-control" placeholder="Y" value={y} onChange={onChange} />
-    </div>
-  </div>
+  <NumberInput val={y} label="Y" onChange={onChange} />
 );
 
 const XyInputs: React.SFC<{
   x: number;
   y: number;
-  onXChange: React.ChangeEventHandler<HTMLInputElement>;
-  onYChange: React.ChangeEventHandler<HTMLInputElement>;
+  onXChange: NumberInputChangeHandler;
+  onYChange: NumberInputChangeHandler;
 }> = ( { x, y, onXChange, onYChange } ) => (
   <>
     <XInput x={x} onChange={onXChange} />
@@ -56,27 +69,38 @@ const XyInputs: React.SFC<{
 
 const GuideLineInputs: React.SFC<{
   showGuideLine: boolean;
-  onShowGuideLineChange: React.ChangeEventHandler<HTMLInputElement>;
+  onShowGuideLineChange: ( showGuideLine: boolean ) => void;
 }> = ( { showGuideLine, onShowGuideLineChange } ) => (
   <div className="form-check form-check-inline">
     <label className="col-form-label mr-2">Show Guide Line:</label>
-    <input type="checkbox" className="form-check-input" checked={showGuideLine} onChange={onShowGuideLineChange} />
+    <input
+      type="checkbox"
+      className="form-check-input"
+      checked={showGuideLine}
+      onChange={( e ) => onShowGuideLineChange( e.target.checked )}
+    />
   </div>
 );
 
 const ColorInput: React.SFC<{
   color: string;
-  onChange: React.ChangeEventHandler<HTMLInputElement>;
+  onChange: ( color: string ) => void;
 }> = ( { color, onChange } ) => (
   <div className="form-group row">
     <label className="col-sm-2 col-form-label">Color:</label>
     <div className="col-sm-10">
-      <input type="color" className="form-control" style={{ height: '2.5rem', padding: '0.2rem 0.3rem' }} value={color} onChange={onChange} />
+      <input
+        type="color"
+        className="form-control"
+        style={{ height: '2.5rem', padding: '0.2rem 0.3rem' }}
+        value={color}
+        onChange={( e ) => onChange( e.target.value )}
+      />
     </div>
   </div>
 );
 
-export class BasicDrawingProperties extends React.Component<DrawingPropertiesProps<BasicDrawingTypes, BasicDrawing<BasicDrawingTypes>>>
+export class BasicDrawingProperties extends DrawingPropertiesComponent<BasicDrawing<BasicDrawingTypes>>
 {
   render()
   {
@@ -91,7 +115,7 @@ export class BasicDrawingProperties extends React.Component<DrawingPropertiesPro
         />
         <ColorInput
           color={this.props.drawing.color}
-          onChange={this.onColorChange}
+          onChange={this.props.onColorChange}
         />
         <GuideLineInputs
           showGuideLine={this.props.drawing.showGuideLine}
@@ -101,40 +125,32 @@ export class BasicDrawingProperties extends React.Component<DrawingPropertiesPro
     );
   }
 
-  private onXChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
+  private onXChange = ( x: number ) =>
   {
     this.props.onChange( {
       ...this.props.drawing,
-      x: e.target.valueAsNumber || 0
+      x
     } );
   }
 
-  private onYChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
+  private onYChange = ( y: number ) =>
   {
     this.props.onChange( {
       ...this.props.drawing,
-      y: e.target.valueAsNumber || 0
+      y
     } );
   }
 
-  private onShowGuideLineChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
+  private onShowGuideLineChange = ( showGuideLine: boolean ) =>
   {
     this.props.onChange( {
       ...this.props.drawing,
-      showGuideLine: e.target.checked
-    } );
-  }
-
-  private onColorChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
-  {
-    this.props.onChange( {
-      ...this.props.drawing,
-      color: e.target.value
+      showGuideLine
     } );
   }
 }
 
-export class BetweenDrawingProperties extends React.Component<DrawingPropertiesProps<DrawingType.Between, BetweenDrawing>>
+export class BetweenDrawingProperties extends DrawingPropertiesComponent<BetweenDrawing>
 {
   render()
   {
@@ -147,21 +163,14 @@ export class BetweenDrawingProperties extends React.Component<DrawingPropertiesP
           onXChange={this.onXChange}
           onYChange={this.onYChange}
         />
-        <div className="form-group row">
-          <label className="col-sm-2 col-form-label">Height:</label>
-          <div className="col-sm-10">
-            <input
-              type="number"
-              className="form-control"
-              placeholder="Height"
-              value={this.props.drawing.height}
-              onChange={this.onHeightChange}
-            />
-          </div>
-        </div>
+        <NumberInput
+          val={this.props.drawing.height}
+          label="Height"
+          onChange={this.onHeightChange}
+        />
         <ColorInput
           color={this.props.drawing.color}
-          onChange={this.onColorChange}
+          onChange={this.props.onColorChange}
         />
         <GuideLineInputs
           showGuideLine={this.props.drawing.showGuideLine}
@@ -171,48 +180,40 @@ export class BetweenDrawingProperties extends React.Component<DrawingPropertiesP
     );
   }
 
-  private onXChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
+  private onXChange = ( x: number ) =>
   {
     this.props.onChange( {
       ...this.props.drawing,
-      x: e.target.valueAsNumber || 0
+      x
     } );
   }
 
-  private onYChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
+  private onYChange = ( y: number ) =>
   {
     this.props.onChange( {
       ...this.props.drawing,
-      y: e.target.valueAsNumber || 0
+      y
     } );
   }
 
-  private onHeightChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
+  private onHeightChange = ( height: number ) =>
   {
     this.props.onChange( {
       ...this.props.drawing,
-      height: e.target.valueAsNumber || 0
+      height
     } );
   }
 
-  private onShowGuideLineChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
+  private onShowGuideLineChange = ( showGuideLine: boolean ) =>
   {
     this.props.onChange( {
       ...this.props.drawing,
-      showGuideLine: e.target.checked
-    } );
-  }
-
-  private onColorChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
-  {
-    this.props.onChange( {
-      ...this.props.drawing,
-      color: e.target.value
+      showGuideLine
     } );
   }
 }
 
-export class VerticalGridLineDrawingProperties extends React.Component<DrawingPropertiesProps<DrawingType.VerticalGridLine, VerticalGridLineDrawing>>
+export class VerticalGridLineDrawingProperties extends DrawingPropertiesComponent<VerticalGridLineDrawing>
 {
   render()
   {
@@ -225,30 +226,22 @@ export class VerticalGridLineDrawingProperties extends React.Component<DrawingPr
         />
         <ColorInput
           color={this.props.drawing.color}
-          onChange={this.onColorChange}
+          onChange={this.props.onColorChange}
         />
       </form>
     );
   }
 
-  private onXChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
+  private onXChange = ( x: number ) =>
   {
     this.props.onChange( {
       ...this.props.drawing,
-      x: e.target.valueAsNumber || 0
-    } );
-  }
-
-  private onColorChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
-  {
-    this.props.onChange( {
-      ...this.props.drawing,
-      color: e.target.value
+      x
     } );
   }
 }
 
-export class HorizontalGridLineDrawingProperties extends React.Component<DrawingPropertiesProps<DrawingType.HorizontalGridLine, HorizontalGridLineDrawing>>
+export class HorizontalGridLineDrawingProperties extends DrawingPropertiesComponent<HorizontalGridLineDrawing>
 {
   render()
   {
@@ -261,25 +254,83 @@ export class HorizontalGridLineDrawingProperties extends React.Component<Drawing
         />
         <ColorInput
           color={this.props.drawing.color}
-          onChange={this.onColorChange}
+          onChange={this.props.onColorChange}
         />
       </form>
     );
   }
 
-  private onYChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
+  private onYChange = ( y: number ) =>
   {
     this.props.onChange( {
       ...this.props.drawing,
-      y: e.target.valueAsNumber || 0
+      y
+    } );
+  }
+}
+
+export class PlaneDrawingProperties extends DrawingPropertiesComponent<PlaneDrawing>
+{
+  render()
+  {
+    return (
+      <form>
+        <b>Plane</b>
+        <XInput
+          x={this.props.drawing.x}
+          onChange={this.onXChange}
+        />
+        <YInput
+          y={this.props.drawing.y}
+          onChange={this.onYChange}
+        />
+        <NumberInput
+          val={this.props.drawing.size}
+          label="Size"
+          onChange={this.onSizeChange}
+        />
+        <NumberInput
+          val={this.props.drawing.rotation}
+          label="Rotation"
+          onChange={this.onRotationChange}
+        />
+        <ColorInput
+          color={this.props.drawing.color}
+          onChange={this.props.onColorChange}
+        />
+      </form>
+    );
+  }
+
+  private onSizeChange = ( size: number ) =>
+  {
+    this.props.onChange( {
+      ...this.props.drawing,
+      size
     } );
   }
 
-  private onColorChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
+  private onRotationChange = ( rotation: number ) =>
   {
     this.props.onChange( {
       ...this.props.drawing,
-      color: e.target.value
+      rotation
+    } );
+  }
+
+  private onXChange = ( x: number ) =>
+  {
+    this.props.onChange( {
+      ...this.props.drawing,
+      x
+    } );
+  }
+
+  private onYChange = ( y: number ) =>
+  {
+    this.props.onChange( {
+      ...this.props.drawing,
+      y
     } );
   }
 }
