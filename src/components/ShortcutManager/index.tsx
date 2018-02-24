@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { deleteDrawing, setTool } from 'store/reducers/drawing';
 import { DrawingTool, Tool } from 'utils/draw';
-import { shortcuts } from 'utils/settings';
+import { getAllShortcuts } from 'utils/settings';
 
 interface PropsFromState
 {
@@ -56,7 +56,7 @@ class ShortcutManager extends React.Component<Props>
     }
     else
     {
-      for( let [ tool, shortcut ] of Object.entries( shortcuts ) )
+      for( let [ tool, shortcut ] of Object.entries( getAllShortcuts() ) )
       {
         if( shortcut === e.key )
         {

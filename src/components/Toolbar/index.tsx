@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import ToolbarItem from 'components/Toolbar/ToolbarItem';
 import { setTool } from 'store/reducers/drawing';
 import { DrawingType, Tool, DrawingTool, UP_ARROW_PATH, DOWN_ARROW_PATH, drawingTypeColors } from 'utils/draw';
-import { shortcuts } from 'utils/settings';
+import { getShortcut } from 'utils/settings';
 
 import './styles.css';
 
@@ -33,7 +33,7 @@ class Toolbar extends React.Component<Props>
 
           <ToolbarItem
             title="Cursor"
-            shortcut={shortcuts[ Tool.Cursor ]}
+            shortcut={getShortcut( Tool.Cursor )}
             active={this.props.tool === Tool.Cursor}
             onClick={() => this.onToolClick( Tool.Cursor )}
           >
@@ -48,7 +48,7 @@ class Toolbar extends React.Component<Props>
 
           <ToolbarItem
             title="Above Constraint"
-            shortcut={shortcuts[ DrawingType.Above ]}
+            shortcut={getShortcut( DrawingType.Above )}
             active={this.props.tool === DrawingType.Above}
             onClick={() => this.onToolClick( DrawingType.Above )}
           >
@@ -59,7 +59,7 @@ class Toolbar extends React.Component<Props>
 
           <ToolbarItem
             title="At Constraint"
-            shortcut={shortcuts[ DrawingType.At ]}
+            shortcut={getShortcut( DrawingType.At )}
             active={this.props.tool === DrawingType.At}
             onClick={() => this.onToolClick( DrawingType.At )}
           >
@@ -75,7 +75,7 @@ class Toolbar extends React.Component<Props>
 
           <ToolbarItem
             title="Below Constraint"
-            shortcut={shortcuts[ DrawingType.Below ]}
+            shortcut={getShortcut( DrawingType.Below )}
             active={this.props.tool === DrawingType.Below}
             onClick={() => this.onToolClick( DrawingType.Below )}
           >
@@ -86,7 +86,7 @@ class Toolbar extends React.Component<Props>
 
           <ToolbarItem
             title="Between Constraint"
-            shortcut={shortcuts[ DrawingType.Between ]}
+            shortcut={getShortcut( DrawingType.Between )}
             active={this.props.tool === DrawingType.Between}
             onClick={() => this.onToolClick( DrawingType.Between )}
           >
@@ -102,7 +102,7 @@ class Toolbar extends React.Component<Props>
 
           <ToolbarItem
             title="Path Line"
-            shortcut={shortcuts[ DrawingType.PathLine ]}
+            shortcut={getShortcut( DrawingType.PathLine )}
             active={this.props.tool === DrawingType.PathLine}
             onClick={() => this.onToolClick( DrawingType.PathLine )}
           >
@@ -117,7 +117,7 @@ class Toolbar extends React.Component<Props>
 
           <ToolbarItem
             title="Vertical Grid Line"
-            shortcut={shortcuts[ DrawingType.VerticalGridLine ]}
+            shortcut={getShortcut( DrawingType.VerticalGridLine )}
             active={this.props.tool === DrawingType.VerticalGridLine}
             onClick={() => this.onToolClick( DrawingType.VerticalGridLine )}
           >
@@ -128,7 +128,7 @@ class Toolbar extends React.Component<Props>
 
           <ToolbarItem
             title="Horizontal Grid Line"
-            shortcut={shortcuts[ DrawingType.HorizontalGridLine ]}
+            shortcut={getShortcut( DrawingType.HorizontalGridLine )}
             active={this.props.tool === DrawingType.HorizontalGridLine}
             onClick={() => this.onToolClick( DrawingType.HorizontalGridLine )}
           >
