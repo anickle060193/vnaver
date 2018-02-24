@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Stage, Layer } from 'react-konva';
 import * as uuid from 'uuid/v4';
 
+import Grid from 'components/DrawField/Grid';
 import { drawingComponentMap, Between, VerticalGridLine, HorizontalGridLine, ActiveIndication } from 'components/DrawField/Drawings';
 import PathLine from 'components/DrawField/Drawings/PathLine';
 import { addDrawing, selectDrawing, deselectDrawing, setOrigin, incrementScaleLevel, decrementScaleLevel, moveDrawing } from 'store/reducers/drawing';
@@ -28,6 +29,7 @@ interface PropsFromState
   scale: number;
   originX: number;
   originY: number;
+  gridOn: boolean;
   drawings: DrawingMap;
   selectedDrawingId: string | null;
 }
@@ -359,6 +361,16 @@ class DrawField extends React.Component<Props, State>
           onContentMouseUp={this.onContentMouseUp}
         >
           <Layer>
+            {this.props.gridOn &&
+              <Grid
+                width={this.state.width}
+                height={this.state.height}
+                originX={this.props.originX}
+                originY={this.props.originY}
+                scale={this.props.scale}
+                verticalInterval={50}
+                horizontalInterval={50}
+              />}
             {this.sortedDrawings().map( ( drawing, i ) =>
             {
               let DrawingComponent = drawingComponentMap[ drawing.type ];
@@ -762,6 +774,7 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     scale: getScale( state.drawing.scaleLevel ),
     originX: state.drawing.originX,
     originY: state.drawing.originY,
+    gridOn: state.drawing.gridOn,
     drawings: state.drawing.drawings,
     selectedDrawingId: state.drawing.selectedDrawingId
   } ),

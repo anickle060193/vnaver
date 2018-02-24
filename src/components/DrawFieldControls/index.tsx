@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import Tooltip from 'components/Tooltip';
-import { resetScaleLevel, resetOrigin, incrementScaleLevel, decrementScaleLevel } from 'store/reducers/drawing';
+import { resetScaleLevel, resetOrigin, incrementScaleLevel, decrementScaleLevel, setGridOn } from 'store/reducers/drawing';
 
 import './styles.css';
 import { getScale } from 'utils/draw';
@@ -22,6 +22,7 @@ interface PropsFromState
   originX: number;
   originY: number;
   scale: number;
+  gridOn: boolean;
 }
 
 interface PropsFromDispatch
@@ -30,6 +31,7 @@ interface PropsFromDispatch
   decrementScaleLevel: typeof decrementScaleLevel;
   resetScaleLevel: typeof resetScaleLevel;
   resetOrigin: typeof resetOrigin;
+  setGridOn: typeof setGridOn;
 }
 
 type Props = PropsFromState & PropsFromDispatch;
@@ -66,6 +68,7 @@ class DrawFieldControls extends React.Component<Props>
             add
           </span>
         </div>
+
         <div
           className={[
             'drawing-position',
@@ -77,6 +80,16 @@ class DrawFieldControls extends React.Component<Props>
           <svg viewBox="0 0 100 100">
             <path d={centered ? CENTERED_POSITION_PATH : UNCENTERED_POSITION_PATH} />
           </svg>
+        </div>
+
+        <div
+          className="drawing-grid"
+          onClick={this.onToggleGridOn}
+        >
+          <Tooltip align="left" title={this.props.gridOn ? 'Hide Grid' : 'Display Grid'} />
+          <span className="material-icons">
+            {!this.props.gridOn ? 'grid_off' : 'grid_on'}
+          </span>
         </div>
       </div>
     );
@@ -105,18 +118,25 @@ class DrawFieldControls extends React.Component<Props>
   {
     this.props.resetOrigin();
   }
+
+  private onToggleGridOn = () =>
+  {
+    this.props.setGridOn( !this.props.gridOn );
+  }
 }
 
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   ( state ) => ( {
     originX: state.drawing.originX,
     originY: state.drawing.originY,
-    scale: getScale( state.drawing.scaleLevel )
+    scale: getScale( state.drawing.scaleLevel ),
+    gridOn: state.drawing.gridOn
   } ),
   {
     incrementScaleLevel,
     decrementScaleLevel,
     resetScaleLevel,
-    resetOrigin
+    resetOrigin,
+    setGridOn
   }
 )( DrawFieldControls );

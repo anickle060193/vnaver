@@ -40,3 +40,13 @@ export function distance( x1: number, y1: number, x2: number, y2: number )
   let yDiff = y1 - y2;
   return Math.sqrt( xDiff * xDiff + yDiff * yDiff );
 }
+
+export function floorToNearest( val: number, multiple: number )
+{
+  return Math.floor( val / multiple ) * multiple;
+}
+
+export function ceilingToNearest( val: number, multiple: number )
+{
+  return Math.ceil( val / multiple ) * multiple;
+}
