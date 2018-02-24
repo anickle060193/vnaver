@@ -28,8 +28,8 @@ const NumberInput: React.SFC<{
   onChange: NumberInputChangeHandler;
 }> = ( { val, label, onChange } ) => (
   <div className="form-group row">
-    <label className="col-sm-2 col-form-label">{label}:</label>
-    <div className="col-sm-10">
+    <label className="col-sm-3 col-form-label">{label}:</label>
+    <div className="col-sm-9">
       <input
         type="number"
         className="form-control"
@@ -72,7 +72,7 @@ const GuideLineInputs: React.SFC<{
   onShowGuideLineChange: ( showGuideLine: boolean ) => void;
 }> = ( { showGuideLine, onShowGuideLineChange } ) => (
   <div className="form-check form-check-inline">
-    <label className="col-form-label mr-2">Show Guide Line:</label>
+    <label className="col-form-label mr-2 mb-2">Show Guide Line:</label>
     <input
       type="checkbox"
       className="form-check-input"
@@ -87,8 +87,8 @@ const ColorInput: React.SFC<{
   onChange: ( color: string ) => void;
 }> = ( { color, onChange } ) => (
   <div className="form-group row">
-    <label className="col-sm-2 col-form-label">Color:</label>
-    <div className="col-sm-10">
+    <label className="col-sm-3 col-form-label">Color:</label>
+    <div className="col-sm-9">
       <input
         type="color"
         className="form-control"
