@@ -100,7 +100,10 @@ export const reducer = reducerWithInitialState( initialState )
       ...state,
       gridOn
     } ) )
-  .case( addDrawing, setDrawingInState )
+  .case( addDrawing, ( state, drawing ) => ( {
+    ...setDrawingInState( state, drawing ),
+    selectedDrawingId: drawing.id
+  } ) )
   .case( selectDrawing, ( state, drawingId ) =>
     ( {
       ...state,
