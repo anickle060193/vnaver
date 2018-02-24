@@ -525,8 +525,8 @@ class DrawField extends React.Component<Props, State>
           this.props.moveDrawing( {
             drawingId: this.state.mouseDownDrawing.id,
             drawingType: this.state.mouseDownDrawing.type,
-            deltaX: e.movementX,
-            deltaY: e.movementY
+            deltaX: e.movementX / this.props.scale,
+            deltaY: e.movementY / this.props.scale
           } );
         }
       }
