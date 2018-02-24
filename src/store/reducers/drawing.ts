@@ -1,8 +1,20 @@
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
 import actionCreatorFactory from 'typescript-fsa';
 
-import { Drawing, Tool, DrawingTool, DrawingMap, DEFAULT_SCALE_LEVEL, MAX_SCALE_LEVEL, MIN_SCALE_LEVEL, DrawingType } from 'utils/draw';
-import { limit, mapToArray, arrayToMap } from 'utils/utils';
+import
+{
+  Drawing,
+  Tool,
+  DrawingTool,
+  DrawingMap,
+  DEFAULT_SCALE_LEVEL,
+  MAX_SCALE_LEVEL,
+  MIN_SCALE_LEVEL,
+  DrawingType,
+  BetweenDrawing,
+  DraggingInfo
+} from 'utils/draw';
+import { limit, mapToArray, arrayToMap, assertNever } from 'utils/utils';
 
 export interface State
 {
@@ -36,6 +48,16 @@ export const selectDrawing = actionCreator<string>( 'SELECT_DRAWING' );
 export const deselectDrawing = actionCreator( 'DESELECT_DRAWING' );
 export const updateDrawing = actionCreator<Drawing>( 'UPDATE_DRAWING' );
 export const deleteDrawing = actionCreator<string>( 'DELETE_DRAWING' );
+export const moveDrawing = actionCreator<DraggingInfo>( 'MOVE_DRAWING' );
+
+const setDrawingInState = <D extends Drawing>( state: State, drawing: D ): State =>
+  ( {
+    ...state,
+    drawings: {
+      ...state.drawings,
+      [ drawing.id ]: drawing
+    }
+  } );
 
 export const reducer = reducerWithInitialState( initialState )
   .case( setTool, ( state, tool ) =>
@@ -70,14 +92,7 @@ export const reducer = reducerWithInitialState( initialState )
       originX: 0.0,
       originY: 0.0
     } ) )
-  .case( addDrawing, ( state, drawing ) =>
-    ( {
-      ...state,
-      drawings: {
-        ...state.drawings,
-        [ drawing.id ]: drawing
-      }
-    } ) )
+  .case( addDrawing, setDrawingInState )
   .case( selectDrawing, ( state, drawingId ) =>
     ( {
       ...state,
@@ -120,11 +135,49 @@ export const reducer = reducerWithInitialState( initialState )
       selectedDrawingId
     };
   } )
-  .case( updateDrawing, ( state, drawing ) =>
-    ( {
-      ...state,
-      drawings: {
-        ...state.drawings,
-        [ drawing.id ]: drawing
-      }
-    } ) );
+  .case( updateDrawing, setDrawingInState )
+  .case( moveDrawing, ( state, { drawingId, drawingType, deltaX, deltaY } ) =>
+  {
+    let drawing = state.drawings[ drawingId ];
+
+    if( drawing.type === DrawingType.Above
+      || drawing.type === DrawingType.At
+      || drawing.type === DrawingType.Below )
+    {
+      return setDrawingInState( state, {
+        ...drawing,
+        x: drawing.x + deltaX,
+        y: drawing.y + deltaY,
+      } );
+    }
+    else if( drawing.type === DrawingType.Between )
+    {
+      return setDrawingInState<BetweenDrawing>( state, {
+        ...drawing,
+        x: drawing.x + deltaX,
+        y: drawing.y + deltaY,
+      } );
+    }
+    else if( drawing.type === DrawingType.HorizontalGridLine )
+    {
+      return setDrawingInState( state, {
+        ...drawing,
+        y: drawing.y + deltaY
+      } );
+    }
+    else if( drawing.type === DrawingType.VerticalGridLine )
+    {
+      return setDrawingInState( state, {
+        ...drawing,
+        x: drawing.x + deltaX
+      } );
+    }
+    else if( drawing.type === DrawingType.PathLine )
+    {
+      return state;
+    }
+    else
+    {
+      throw assertNever( drawing.type );
+    }
+  } );

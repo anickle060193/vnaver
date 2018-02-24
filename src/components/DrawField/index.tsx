@@ -5,7 +5,7 @@ import * as uuid from 'uuid/v4';
 
 import { drawingComponentMap, Between, VerticalGridLine, HorizontalGridLine, ActiveIndication } from 'components/DrawField/Drawings';
 import PathLine from 'components/DrawField/Drawings/PathLine';
-import { addDrawing, selectDrawing, deselectDrawing, setOrigin, incrementScaleLevel, decrementScaleLevel } from 'store/reducers/drawing';
+import { addDrawing, selectDrawing, deselectDrawing, setOrigin, incrementScaleLevel, decrementScaleLevel, moveDrawing } from 'store/reducers/drawing';
 import
 {
   DrawingType,
@@ -40,6 +40,7 @@ interface PropsFromDispatch
   addDrawing: typeof addDrawing;
   selectDrawing: typeof selectDrawing;
   deselectDrawing: typeof deselectDrawing;
+  moveDrawing: typeof moveDrawing;
 }
 
 type Props = PropsFromState & PropsFromDispatch;
@@ -51,6 +52,9 @@ interface State
 
   mouseX: number | null;
   mouseY: number | null;
+
+  mouseDownDrawing: Drawing | null;
+  dragging: boolean;
 
   startX: number | null;
   startY: number | null;
@@ -78,6 +82,9 @@ class DrawField extends React.Component<Props, State>
 
       mouseX: null,
       mouseY: null,
+
+      mouseDownDrawing: null,
+      dragging: false,
 
       startX: null,
       startY: null,
@@ -317,13 +324,26 @@ class DrawField extends React.Component<Props, State>
       }
     }
 
+    let cssCursor: string;
+    if( this.props.tool === Tool.Move
+      || this.state.ctrlDown )
+    {
+      cssCursor = 'move';
+    }
+    else if( this.state.dragging )
+    {
+      cssCursor = '-webkit-grabbing';
+    }
+    else
+    {
+      cssCursor = 'default';
+    }
+
     return (
       <div
         ref={( ref ) => this.drawFieldRef = ref}
         className="draw-field"
-        style={{
-          cursor: ( this.props.tool === Tool.Move || this.state.ctrlDown ) ? 'move' : 'unset'
-        }}
+        style={{ cursor: cssCursor }}
       >
         <Stage
           width={this.state.width}
@@ -334,6 +354,7 @@ class DrawField extends React.Component<Props, State>
           y={this.props.originY}
           onContentMouseDown={this.onContentMouseDown}
           onContentClick={this.onContentClick}
+          onContentMouseUp={this.onContentMouseUp}
         >
           <Layer>
             {this.sortedDrawings().map( ( drawing, i ) =>
@@ -344,6 +365,7 @@ class DrawField extends React.Component<Props, State>
                   key={i}
                   drawing={drawing}
                   onClick={( e ) => this.onDrawingClick( drawing, e )}
+                  onMouseDown={( e ) => this.onDrawingMouseDown( drawing, e )}
                 />
               );
             } )}
@@ -472,14 +494,30 @@ class DrawField extends React.Component<Props, State>
   {
     if( ( e.buttons & 1 ) === 1 ) // tslint:disable-line no-bitwise
     {
-      if( this.props.tool === Tool.Move ||
-        e.ctrlKey )
+      if( this.props.tool === Tool.Move
+        || e.ctrlKey )
       {
         this.moved = true;
 
         let originX = this.props.originX + e.movementX;
         let originY = this.props.originY + e.movementY;
         this.props.setOrigin( { originX, originY } );
+      }
+      else if( this.state.mouseDownDrawing )
+      {
+        this.moved = true;
+
+        if( this.state.mouseDownDrawing.type !== DrawingType.PathLine )
+        {
+          this.setState( { dragging: true } );
+
+          this.props.moveDrawing( {
+            drawingId: this.state.mouseDownDrawing.id,
+            drawingType: this.state.mouseDownDrawing.type,
+            deltaX: e.movementX,
+            deltaY: e.movementY
+          } );
+        }
       }
     }
 
@@ -653,6 +691,14 @@ class DrawField extends React.Component<Props, State>
     } );
   }
 
+  private onContentMouseUp = ( e: KonvaMouseEvent<{}> ) =>
+  {
+    this.setState( {
+      mouseDownDrawing: null,
+      dragging: false
+    } );
+  }
+
   private onDrawingClick = ( drawing: Drawing, e: KonvaMouseEvent<{}> ) =>
   {
     if( e.evt.button === 0 )
@@ -663,8 +709,22 @@ class DrawField extends React.Component<Props, State>
       }
 
       this.clickHandled = true;
+    }
+  }
 
-      this.props.selectDrawing( drawing.id );
+  private onDrawingMouseDown = ( drawing: Drawing, e: KonvaMouseEvent<{}> ) =>
+  {
+    if( e.evt.button === 0 )
+    {
+      if( this.props.tool === Tool.Cursor )
+      {
+        this.props.selectDrawing( drawing.id );
+
+        if( drawing.type !== DrawingType.PathLine )
+        {
+          this.setState( { mouseDownDrawing: drawing } );
+        }
+      }
     }
   }
 }
@@ -684,6 +744,7 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     setOrigin,
     addDrawing,
     selectDrawing,
-    deselectDrawing
+    deselectDrawing,
+    moveDrawing
   }
 )( DrawField );

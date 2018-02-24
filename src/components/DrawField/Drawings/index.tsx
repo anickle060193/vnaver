@@ -87,8 +87,8 @@ const GuideLine: React.SFC<GuideLineProps> = ( { x, y, vertical, color, strokeWi
     )
 );
 
-export const Above: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Above>>> = ( { drawing, onClick } ) => (
-  <Group onClick={onClick}>
+export const Above: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Above>>> = ( { drawing, onClick, onMouseDown } ) => (
+  <Group onClick={onClick} onMouseDown={onMouseDown}>
     {drawing.showGuideLine && (
       <GuideLine
         x={drawing.x}
@@ -110,8 +110,8 @@ export const Above: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Abo
   </Group>
 );
 
-export const At: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.At>>> = ( { drawing, onClick } ) => (
-  <Group onClick={onClick}>
+export const At: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.At>>> = ( { drawing, onClick, onMouseDown } ) => (
+  <Group onClick={onClick} onMouseDown={onMouseDown}>
     {drawing.showGuideLine && (
       <GuideLine
         x={drawing.x}
@@ -142,8 +142,8 @@ export const At: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.At>>> 
   </Group>
 );
 
-export const Below: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Below>>> = ( { drawing, onClick } ) => (
-  <Group onClick={onClick}>
+export const Below: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Below>>> = ( { drawing, onClick, onMouseDown } ) => (
+  <Group onClick={onClick} onMouseDown={onMouseDown}>
     {drawing.showGuideLine && (
       <GuideLine
         x={drawing.x}
@@ -165,8 +165,8 @@ export const Below: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Bel
   </Group>
 );
 
-export const Between: React.SFC<DrawingComponentProps<BetweenDrawing>> = ( { drawing, onClick } ) => (
-  <Group onClick={onClick}>
+export const Between: React.SFC<DrawingComponentProps<BetweenDrawing>> = ( { drawing, onClick, onMouseDown } ) => (
+  <Group onClick={onClick} onMouseDown={onMouseDown}>
     {drawing.showGuideLine && (
       <GuideLine
         x={drawing.x}
@@ -197,14 +197,14 @@ export const Between: React.SFC<DrawingComponentProps<BetweenDrawing>> = ( { dra
   </Group>
 );
 
-export const VerticalGridLine: React.SFC<DrawingComponentProps<VerticalGridLineDrawing>> = ( { drawing, onClick } ) => (
-  <Group onClick={onClick}>
+export const VerticalGridLine: React.SFC<DrawingComponentProps<VerticalGridLineDrawing>> = ( { drawing, onClick, onMouseDown } ) => (
+  <Group onClick={onClick} onMouseDown={onMouseDown}>
     <VerticalGuideLine x={drawing.x} color={drawing.color} strokeWidth={1} />
   </Group>
 );
 
-export const HorizontalGridLine: React.SFC<DrawingComponentProps<HorizontalGridLineDrawing>> = ( { drawing, onClick } ) => (
-  <Group onClick={onClick}>
+export const HorizontalGridLine: React.SFC<DrawingComponentProps<HorizontalGridLineDrawing>> = ( { drawing, onClick, onMouseDown } ) => (
+  <Group onClick={onClick} onMouseDown={onMouseDown}>
     <HorizontalGuideLine y={drawing.y} color={drawing.color} strokeWidth={1} />
   </Group>
 );
