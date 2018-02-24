@@ -13,8 +13,7 @@ export const enum DrawingType
 
 export const enum Tool
 {
-  Cursor = 'Cursor',
-  Move = 'Move'
+  Cursor = 'Cursor'
 }
 
 export type DrawingTool = DrawingType | Tool;
