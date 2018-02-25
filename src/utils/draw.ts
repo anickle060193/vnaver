@@ -66,6 +66,7 @@ interface ConnectedPathLineEndPoint
   connected: true;
   anchorId: string;
   topOfBetween: boolean;
+  startOfPathLine: boolean;
 }
 
 interface FloatingPathLineEndPoint
@@ -75,7 +76,7 @@ interface FloatingPathLineEndPoint
   y: number;
 }
 
-type EndPoint = ConnectedPathLineEndPoint | FloatingPathLineEndPoint;
+export type EndPoint = ConnectedPathLineEndPoint | FloatingPathLineEndPoint;
 
 export interface PathLineDrawing extends DrawingBase<DrawingType.PathLine>
 {
@@ -112,7 +113,8 @@ export type Drawing = (
 
 export type AnchorDrawing = (
   BasicDrawing<BasicDrawingTypes> |
-  BetweenDrawing
+  BetweenDrawing |
+  PathLineDrawing
 );
 
 export interface DrawingMap
@@ -143,11 +145,12 @@ export function isValidAnchor( drawing: Drawing | null ): drawing is AnchorDrawi
     && ( drawing.type === DrawingType.At
       || drawing.type === DrawingType.Above
       || drawing.type === DrawingType.Below
-      || drawing.type === DrawingType.Between )
+      || drawing.type === DrawingType.Between
+      || drawing.type === DrawingType.PathLine )
   );
 }
 
-export const getEndPointPosition = ( endPoint: EndPoint, drawings: DrawingMap ) =>
+export const getEndPointPosition = ( endPoint: EndPoint, drawings: DrawingMap ): { x: number, y: number } | null =>
 {
   if( !endPoint.connected )
   {
@@ -190,6 +193,13 @@ export const getEndPointPosition = ( endPoint: EndPoint, drawings: DrawingMap ) 
           y: anchor.y + anchor.height
         };
       }
+    }
+    else if( anchor.type === DrawingType.PathLine )
+    {
+      return getEndPointPosition(
+        endPoint.startOfPathLine ? anchor.start : anchor.end,
+        drawings
+      );
     }
     else
     {

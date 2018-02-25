@@ -17,12 +17,15 @@ import
   DrawingMap,
   getScale,
   isValidAnchor,
-  AnchorDrawing,
-  DrawingTypeMap
+  DrawingTypeMap,
+  EndPoint,
+  getEndPointPosition
 } from 'utils/draw';
 import { mapToArray, assertNever, distance, roundToNearest } from 'utils/utils';
 
 import './styles.css';
+
+const NEAR_DISTANCE = 15;
 
 interface PropsFromState
 {
@@ -66,8 +69,7 @@ interface State
   startX: number | null;
   startY: number | null;
 
-  startAnchor: Drawing | null;
-  startTopOfBetween: boolean;
+  startEndPoint: EndPoint | null;
 
   ctrlDown: boolean;
 }
@@ -97,8 +99,7 @@ class DrawField extends React.Component<Props, State>
       startX: null,
       startY: null,
 
-      startAnchor: null,
-      startTopOfBetween: false,
+      startEndPoint: null,
 
       ctrlDown: false
     };
@@ -188,8 +189,8 @@ class DrawField extends React.Component<Props, State>
       }
       else if( this.props.tool === DrawingType.PathLine )
       {
-        let result = this.findAnchor( this.state.mouseX, this.state.mouseY );
-        if( this.state.startAnchor !== null )
+        let endPoint = this.findEndPoint( this.state.mouseX, this.state.mouseY );
+        if( this.state.startEndPoint !== null )
         {
           cursor = (
             <PathLine
@@ -198,52 +199,8 @@ class DrawField extends React.Component<Props, State>
                 id: uuid(),
                 type: this.props.tool,
                 color: this.props.defaultDrawingColors[ this.props.tool ],
-                start: {
-                  connected: true,
-                  anchorId: this.state.startAnchor.id,
-                  topOfBetween: this.state.startTopOfBetween
-                },
-                end: result ?
-                  {
-                    connected: true,
-                    anchorId: result.anchor.id,
-                    topOfBetween: result.topOfBetween
-                  } :
-                  {
-                    connected: false,
-                    x: this.state.mouseX,
-                    y: this.state.mouseY
-                  }
-              }}
-            />
-          );
-        }
-        else if( this.state.startY !== null
-          && this.state.startX !== null )
-        {
-          cursor = (
-            <PathLine
-              cursor={true}
-              drawing={{
-                id: uuid(),
-                type: this.props.tool,
-                color: this.props.defaultDrawingColors[ this.props.tool ],
-                start: {
-                  connected: false,
-                  x: this.state.startX,
-                  y: this.state.startY,
-                },
-                end: result ?
-                  {
-                    connected: true,
-                    anchorId: result.anchor.id,
-                    topOfBetween: result.topOfBetween
-                  } :
-                  {
-                    connected: false,
-                    x: this.state.mouseX,
-                    y: this.state.mouseY,
-                  }
+                start: this.state.startEndPoint,
+                end: endPoint
               }}
             />
           );
@@ -257,17 +214,7 @@ class DrawField extends React.Component<Props, State>
                 id: uuid(),
                 type: this.props.tool,
                 color: this.props.defaultDrawingColors[ this.props.tool ],
-                start: result ?
-                  {
-                    connected: true,
-                    anchorId: result.anchor.id,
-                    topOfBetween: result.topOfBetween
-                  } :
-                  {
-                    connected: false,
-                    x: this.state.mouseX,
-                    y: this.state.mouseY,
-                  },
+                start: endPoint,
                 end: {
                   connected: false,
                   x: NaN,
@@ -445,34 +392,90 @@ class DrawField extends React.Component<Props, State>
     } );
   }
 
-  private findAnchor( x: number, y: number ): { anchor: AnchorDrawing, topOfBetween: boolean } | null
+  private findEndPoint( x: number, y: number ): EndPoint
   {
-    let drawings = this.sortedDrawings()
-      .reverse()
-      .filter( ( drawing ) => isValidAnchor( drawing ) ) as AnchorDrawing[];
-    for( let drawing of drawings )
+    for( let drawing of this.sortedDrawings().reverse() )
     {
-      let { x: dX, y: dY } = drawing;
-      if( drawing.type === DrawingType.Between )
+      if( isValidAnchor( drawing ) )
       {
-        if( distance( dX, dY, x, y ) < 15 )
+        if( drawing.type === DrawingType.Between )
         {
-          return { anchor: drawing, topOfBetween: true };
+          let { x: dX, y: dY } = drawing;
+          if( distance( dX, dY, x, y ) < NEAR_DISTANCE )
+          {
+            return {
+              connected: true,
+              anchorId: drawing.id,
+              topOfBetween: true,
+              startOfPathLine: false
+            };
+          }
+          else if( distance( dX, dY + drawing.height, x, y ) < NEAR_DISTANCE )
+          {
+            return {
+              connected: true,
+              anchorId: drawing.id,
+              topOfBetween: false,
+              startOfPathLine: false
+            };
+          }
         }
-        else if( distance( dX, dY + drawing.height, x, y ) < 15 )
+        else if( drawing.type === DrawingType.At
+          || drawing.type === DrawingType.Above
+          || drawing.type === DrawingType.Below )
         {
-          return { anchor: drawing, topOfBetween: false };
+          let { x: dX, y: dY } = drawing;
+          if( distance( dX, dY, x, y ) < NEAR_DISTANCE )
+          {
+            return {
+              connected: true,
+              anchorId: drawing.id,
+              topOfBetween: false,
+              startOfPathLine: false
+            };
+          }
         }
-      }
-      else
-      {
-        if( distance( dX, dY, x, y ) < 15 )
+        else if( drawing.type === DrawingType.PathLine )
         {
-          return { anchor: drawing, topOfBetween: false };
+          let start = getEndPointPosition( drawing.start, this.props.drawings );
+          if( start )
+          {
+            if( distance( x, y, start.x, start.y ) < NEAR_DISTANCE )
+            {
+              return {
+                connected: true,
+                anchorId: drawing.id,
+                startOfPathLine: true,
+                topOfBetween: false
+              };
+            }
+          }
+
+          let end = getEndPointPosition( drawing.end, this.props.drawings );
+          if( end )
+          {
+            if( distance( x, y, end.x, end.y ) < NEAR_DISTANCE )
+            {
+              return {
+                connected: true,
+                anchorId: drawing.id,
+                startOfPathLine: false,
+                topOfBetween: false
+              };
+            }
+          }
+        }
+        else
+        {
+          throw assertNever( drawing.type );
         }
       }
     }
-    return null;
+    return {
+      connected: false,
+      x,
+      y
+    };
   }
 
   private onResize = () =>
@@ -567,8 +570,7 @@ class DrawField extends React.Component<Props, State>
         this.setState( {
           startX: null,
           startY: null,
-          startAnchor: null,
-          startTopOfBetween: false
+          startEndPoint: null
         } );
       }
     }
@@ -588,7 +590,7 @@ class DrawField extends React.Component<Props, State>
       mouseY: null,
       startX: null,
       startY: null,
-      startAnchor: null
+      startEndPoint: null
     } );
   }
 
@@ -617,12 +619,8 @@ class DrawField extends React.Component<Props, State>
       }
       else if( this.props.tool === DrawingType.PathLine )
       {
-        let result = this.findAnchor( x, y );
         this.setState( {
-          startX: x,
-          startY: y,
-          startAnchor: result && result.anchor,
-          startTopOfBetween: !!result && result.topOfBetween
+          startEndPoint: this.findEndPoint( x, y )
         } );
       }
     }
@@ -671,37 +669,15 @@ class DrawField extends React.Component<Props, State>
         }
         else if( this.props.tool === DrawingType.PathLine )
         {
-          if( this.state.startY !== null
-            && this.state.startX !== null )
+          if( this.state.startEndPoint !== null )
           {
             added = true;
-            let result = this.findAnchor( x, y );
             this.props.addDrawing( {
               id: uuid(),
               type: this.props.tool,
               color: this.props.defaultDrawingColors[ this.props.tool ],
-              start: this.state.startAnchor ?
-                {
-                  connected: true,
-                  anchorId: this.state.startAnchor.id,
-                  topOfBetween: this.state.startTopOfBetween
-                } :
-                {
-                  connected: false,
-                  x: this.state.startX,
-                  y: this.state.startY,
-                },
-              end: result ?
-                {
-                  connected: true,
-                  anchorId: result && result.anchor.id,
-                  topOfBetween: !!result && result.topOfBetween
-                } :
-                {
-                  connected: false,
-                  x: x,
-                  y: y
-                }
+              start: this.state.startEndPoint,
+              end: this.findEndPoint( x, y )
             } );
           }
         }
@@ -770,7 +746,7 @@ class DrawField extends React.Component<Props, State>
     this.setState( {
       startX: null,
       startY: null,
-      startAnchor: null
+      startEndPoint: null
     } );
   }
 

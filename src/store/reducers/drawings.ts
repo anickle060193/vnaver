@@ -70,32 +70,38 @@ const baseReducer = reducerWithInitialState( initialState )
   .case( deleteDrawing, ( state, drawingId ) =>
   {
     let selectedDrawingId = state.selectedDrawingId;
-    if( selectedDrawingId === drawingId )
+    let drawings = mapToArray( state.drawings );
+
+    let removedDrawings: string[] = [ drawingId ];
+    while( removedDrawings.length > 0 )
     {
-      selectedDrawingId = null;
+      let removedId = removedDrawings.pop();
+      if( selectedDrawingId === removedId )
+      {
+        selectedDrawingId = null;
+      }
+      drawings = drawings.filter( ( drawing ) =>
+      {
+        if( drawing.id === removedId )
+        {
+          return false;
+        }
+        if( drawing.type === DrawingType.PathLine )
+        {
+          if( ( drawing.start.connected && drawing.start.anchorId === removedId )
+            || ( drawing.end.connected && drawing.end.anchorId === removedId ) )
+          {
+            removedDrawings.push( drawing.id );
+            return false;
+          }
+        }
+        return true;
+      } );
     }
-    let drawings = arrayToMap( mapToArray( state.drawings ).filter( ( drawing ) =>
-    {
-      if( drawing.id === drawingId )
-      {
-        return false;
-      }
-      if( drawing.type === DrawingType.PathLine )
-      {
-        if( drawing.start.connected && drawing.start.anchorId === drawingId )
-        {
-          return false;
-        }
-        else if( drawing.end.connected && drawing.end.anchorId === drawingId )
-        {
-          return false;
-        }
-      }
-      return true;
-    } ) );
+
     return {
       ...state,
-      drawings,
+      drawings: arrayToMap( drawings ),
       selectedDrawingId
     };
   } )
