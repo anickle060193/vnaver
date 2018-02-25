@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import { deleteDrawing, updateDrawing } from 'store/reducers/drawings';
-import { Drawing, DrawingType, DrawingMap } from 'utils/draw';
+import { Drawing, DrawingType, DrawingMap, drawingToolDisplayNames } from 'utils/draw';
 
 import './styles.css';
 import
@@ -11,7 +11,8 @@ import
   BetweenDrawingProperties,
   VerticalGridLineDrawingProperties,
   HorizontalGridLineDrawingProperties,
-  PlaneDrawingProperties
+  PlaneDrawingProperties,
+  PathLineDrawingProperties
 } from './DrawingProperties';
 import { assertNever } from 'utils/utils';
 
@@ -67,7 +68,11 @@ class DrawingProperties extends React.Component<Props>
     else if( selectedDrawing.type === DrawingType.PathLine )
     {
       drawingProperties = (
-        null
+        <PathLineDrawingProperties
+          drawing={selectedDrawing}
+          onChange={this.onDrawingChange}
+          onColorChange={( color ) => this.onColorChange( selectedDrawing, color )}
+        />
       );
     }
     else if( selectedDrawing.type === DrawingType.VerticalGridLine )
@@ -109,6 +114,8 @@ class DrawingProperties extends React.Component<Props>
       <div
         className="drawing-properties"
       >
+        <b className="d-block text-center">{drawingToolDisplayNames[ selectedDrawing.type ]}</b>
+        <div style={{ borderTop: '1px solid lightgray', margin: '0.5rem -1rem 0.5rem' }} />
         {drawingProperties}
         <button
           type="button"
