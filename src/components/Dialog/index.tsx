@@ -21,7 +21,7 @@ export default class Dialog extends React.Component<Props, State>
     super( props );
 
     this.state = {
-      state: 'hidden'
+      state: this.props.show ? 'show' : 'hidden'
     };
   }
 

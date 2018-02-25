@@ -41,6 +41,11 @@ export function distance( x1: number, y1: number, x2: number, y2: number )
   return Math.sqrt( xDiff * xDiff + yDiff * yDiff );
 }
 
+export function roundToNearest( val: number, mulitple: number )
+{
+  return Math.round( val / mulitple ) * mulitple;
+}
+
 export function floorToNearest( val: number, multiple: number )
 {
   return Math.floor( val / multiple ) * multiple;

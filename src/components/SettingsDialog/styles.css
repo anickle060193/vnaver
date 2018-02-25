@@ -4,3 +4,24 @@
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
+
+.grid-intervals
+{
+  margin-bottom: 0.5rem;
+}
+
+.grid-intervals label
+{
+  margin-right: 0.5rem;
+}
+
+.grid-intervals input
+{
+  display: inline-block;
+  width: 5rem;
+}
+
+.grid-intervals input:not( :last-of-type )
+{
+  margin-right: 0.5rem;
+}

@@ -20,7 +20,7 @@ import
   AnchorDrawing,
   DrawingTypeMap
 } from 'utils/draw';
-import { mapToArray, assertNever, distance } from 'utils/utils';
+import { mapToArray, assertNever, distance, roundToNearest } from 'utils/utils';
 
 import './styles.css';
 
@@ -30,10 +30,13 @@ interface PropsFromState
   scale: number;
   originX: number;
   originY: number;
+  gridOn: boolean;
+  snapToGrid: boolean;
+  gridIntervalX: number;
+  gridIntervalY: number;
   drawings: DrawingMap;
   defaultDrawingColors: DrawingTypeMap<string>;
   selectedDrawingId: string | null;
-  gridOn: boolean;
 }
 
 interface PropsFromDispatch
@@ -393,8 +396,8 @@ class DrawField extends React.Component<Props, State>
                 originX={this.props.originX}
                 originY={this.props.originY}
                 scale={this.props.scale}
-                verticalInterval={50}
-                horizontalInterval={50}
+                verticalInterval={this.props.gridIntervalX}
+                horizontalInterval={this.props.gridIntervalY}
               />}
             {this.sortedDrawings().map( ( drawing, i ) =>
             {
@@ -490,10 +493,19 @@ class DrawField extends React.Component<Props, State>
 
   private mouseToDrawing( e: { clientX: number, clientY: number } )
   {
-    return {
-      x: ( e.clientX - this.props.originX ) / this.props.scale,
-      y: ( e.clientY - this.props.originY ) / this.props.scale
-    };
+    let x = ( e.clientX - this.props.originX ) / this.props.scale;
+    let y = ( e.clientY - this.props.originY ) / this.props.scale;
+    if( this.props.gridOn && this.props.snapToGrid )
+    {
+      return {
+        x: roundToNearest( x, this.props.gridIntervalX ),
+        y: roundToNearest( y, this.props.gridIntervalY )
+      };
+    }
+    else
+    {
+      return { x, y };
+    }
   }
 
   private onDocumentMouseWheel = ( e: MouseWheelEvent ) =>
@@ -806,10 +818,13 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     scale: getScale( state.editor.scaleLevel ),
     originX: state.editor.originX,
     originY: state.editor.originY,
+    gridOn: state.settings.gridOn,
+    snapToGrid: state.settings.snapToGrid,
+    gridIntervalX: state.settings.gridIntervalX,
+    gridIntervalY: state.settings.gridIntervalY,
     drawings: state.drawings.present.drawings,
     defaultDrawingColors: state.settings.defaultDrawingColors,
-    selectedDrawingId: state.drawings.present.selectedDrawingId,
-    gridOn: state.settings.gridOn
+    selectedDrawingId: state.drawings.present.selectedDrawingId
   } ),
   {
     incrementScaleLevel,

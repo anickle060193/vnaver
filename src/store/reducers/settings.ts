@@ -9,7 +9,13 @@ import
   setGridOnSetting,
   getGridOnSetting,
   getAllDefaultDrawingColorSettings,
-  setDefaultDrawingColorSetting
+  setDefaultDrawingColorSetting,
+  setGridIntervalXSetting,
+  getGridIntervalXSetting,
+  getGridIntervalYSetting,
+  setGridIntervalYSetting,
+  getSnapToGridSetting,
+  setSnapToGridSetting
 } from 'utils/settings';
 import { ShortcutMap } from 'utils/shortcut';
 
@@ -17,6 +23,9 @@ export interface State
 {
   show: boolean;
   gridOn: boolean;
+  snapToGrid: boolean;
+  gridIntervalX: number;
+  gridIntervalY: number;
   shortcuts: ShortcutMap;
   defaultDrawingColors: DrawingTypeMap<string>;
 }
@@ -24,6 +33,9 @@ export interface State
 const initialState: State = {
   show: false,
   gridOn: getGridOnSetting(),
+  snapToGrid: getSnapToGridSetting(),
+  gridIntervalX: getGridIntervalXSetting(),
+  gridIntervalY: getGridIntervalYSetting(),
   shortcuts: getAllShortcutSettings(),
   defaultDrawingColors: getAllDefaultDrawingColorSettings()
 };
@@ -33,6 +45,9 @@ const actionCreator = actionCreatorFactory();
 export const showSettings = actionCreator( 'SHOW_SETTINGS' );
 export const hideSettings = actionCreator( 'HIDE_SETTINGS' );
 export const setGridOn = actionCreator<boolean>( 'SET_GRID_ON' );
+export const setSnapToGrid = actionCreator<boolean>( 'SET_SNAP_TO_GRID' );
+export const setGridIntervalX = actionCreator<number>( 'SET_GRID_INTERVAL_X' );
+export const setGridIntervalY = actionCreator<number>( 'SET_GRID_INTERVAL_Y' );
 export const setShortcut = actionCreator<{ tool: DrawingTool, shortcut: string }>( 'SET_SHORTCUT' );
 export const setDefaultDrawingColor = actionCreator<{ drawingType: DrawingType, color: string }>( 'SET_DEFAULT_DRAWING_COLOR' );
 
@@ -53,6 +68,30 @@ export const reducer = reducerWithInitialState( initialState )
     return {
       ...state,
       gridOn
+    };
+  } )
+  .case( setSnapToGrid, ( state, snapToGrid ) =>
+  {
+    setSnapToGridSetting( snapToGrid );
+    return {
+      ...state,
+      snapToGrid
+    };
+  } )
+  .case( setGridIntervalX, ( state, gridIntervalX ) =>
+  {
+    setGridIntervalXSetting( gridIntervalX );
+    return {
+      ...state,
+      gridIntervalX
+    };
+  } )
+  .case( setGridIntervalY, ( state, gridIntervalY ) =>
+  {
+    setGridIntervalYSetting( gridIntervalY );
+    return {
+      ...state,
+      gridIntervalY
     };
   } )
   .case( setShortcut, ( state, { tool, shortcut } ) =>

@@ -6,6 +6,7 @@ import { ShortcutMap } from 'utils/shortcut';
 const ajv = new Ajv( { allErrors: true } )
   .addSchema( { type: 'string' }, 'string' )
   .addSchema( { type: 'boolean' }, 'boolean' )
+  .addSchema( { type: 'number' }, 'number' )
   .addFormat( 'color', /^#[0-9a-fA-F]{6}/ )
   .addSchema( { type: 'string', format: 'color' }, 'color' )
   .addFormat( 'shortcut', /^((Ctrl\+)?(Shift\+)?(Alt\+)?[a-zA-Z0-9])?$/ )
@@ -123,4 +124,34 @@ export function setGridOnSetting( gridOn: boolean )
 export function getGridOnSetting()
 {
   return getBoolean( k( GRID_ON_PREFIX ), true );
+}
+
+export function setGridIntervalXSetting( gridIntervalX: number )
+{
+  setItem( k( 'grid_interval_x' ), gridIntervalX );
+}
+
+export function getGridIntervalXSetting()
+{
+  return getValidItem( k( 'grid_interval_x' ), 'number', 50 );
+}
+
+export function setGridIntervalYSetting( gridIntervalX: number )
+{
+  setItem( k( 'grid_interval_y' ), gridIntervalX );
+}
+
+export function getGridIntervalYSetting()
+{
+  return getValidItem( k( 'grid_interval_y' ), 'number', 50 );
+}
+
+export function setSnapToGridSetting( snapToGrid: boolean )
+{
+  setItem( k( 'snap_to_grid' ), snapToGrid );
+}
+
+export function getSnapToGridSetting()
+{
+  return getValidItem( k( 'snap_to_grid' ), 'boolean', true );
 }
