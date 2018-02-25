@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
+import { ActionCreators } from 'redux-undo';
 
-import { deleteDrawing, setTool } from 'store/reducers/drawing';
+import { deleteDrawing } from 'store/reducers/drawings';
+import { setTool } from 'store/reducers/editor';
 import { DrawingTool, Tool } from 'utils/draw';
 import { getShortcutFromKeyEvent, ShortcutMap } from 'utils/shortcut';
 
@@ -15,6 +17,8 @@ interface PropsFromDispatch
 {
   setTool: typeof setTool;
   deleteDrawing: typeof deleteDrawing;
+  undo: typeof ActionCreators.undo;
+  redo: typeof ActionCreators.redo;
 }
 
 type Props = PropsFromState & PropsFromDispatch;
@@ -44,7 +48,17 @@ class ShortcutManager extends React.Component<Props>
       return;
     }
 
-    if( e.key === 'Delete' )
+    let shortcut = getShortcutFromKeyEvent( e );
+
+    if( shortcut === 'Ctrl+z' )
+    {
+      this.props.undo();
+    }
+    else if( shortcut === 'Ctrl+y' )
+    {
+      this.props.redo();
+    }
+    else if( e.key === 'Delete' )
     {
       if( this.props.selectedDrawingId )
       {
@@ -57,8 +71,6 @@ class ShortcutManager extends React.Component<Props>
     }
     else
     {
-      let shortcut = getShortcutFromKeyEvent( e );
-
       for( let [ tool, toolShortcut ] of Object.entries( this.props.shortcuts ) )
       {
         if( toolShortcut === shortcut )
@@ -72,11 +84,13 @@ class ShortcutManager extends React.Component<Props>
 
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   ( state ) => ( {
-    selectedDrawingId: state.drawing.selectedDrawingId,
+    selectedDrawingId: state.drawings.present.selectedDrawingId,
     shortcuts: state.settings.shortcuts
   } ),
   {
     setTool,
-    deleteDrawing
+    deleteDrawing,
+    undo: ActionCreators.undo,
+    redo: ActionCreators.redo
   }
 )( ShortcutManager );

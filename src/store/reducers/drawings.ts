@@ -1,3 +1,4 @@
+import undoable, { groupByActionTypes } from 'redux-undo';
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
 import actionCreatorFactory from 'typescript-fsa';
 
@@ -8,13 +9,11 @@ import
   DrawingTool,
   DrawingMap,
   DEFAULT_SCALE_LEVEL,
-  MAX_SCALE_LEVEL,
-  MIN_SCALE_LEVEL,
   DrawingType,
   BetweenDrawing,
   DraggingInfo
 } from 'utils/draw';
-import { limit, mapToArray, arrayToMap, assertNever } from 'utils/utils';
+import { mapToArray, arrayToMap, assertNever } from 'utils/utils';
 
 export interface State
 {
@@ -37,12 +36,6 @@ const initialState: State = {
 
 const actionCreator = actionCreatorFactory();
 
-export const setTool = actionCreator<DrawingTool>( 'SET_TOOL' );
-export const incrementScaleLevel = actionCreator( 'INCREMENT_SCALE_LEVEL' );
-export const decrementScaleLevel = actionCreator( 'DECREMENT_SCALE_LEVEL' );
-export const resetScaleLevel = actionCreator( 'RESET_SCALE_LEVEL' );
-export const setOrigin = actionCreator<{ originX: number, originY: number }>( 'SET_ORIGIN' );
-export const resetOrigin = actionCreator( 'RESET_ORIGIN' );
 export const addDrawing = actionCreator<Drawing>( 'ADD_DRAWING' );
 export const selectDrawing = actionCreator<string>( 'SELECT_DRAWING' );
 export const deselectDrawing = actionCreator( 'DESELECT_DRAWING' );
@@ -59,39 +52,7 @@ const setDrawingInState = <D extends Drawing>( state: State, drawing: D ): State
     }
   } );
 
-export const reducer = reducerWithInitialState( initialState )
-  .case( setTool, ( state, tool ) =>
-    ( {
-      ...state,
-      tool: tool
-    } ) )
-  .case( incrementScaleLevel, ( state ) =>
-    ( {
-      ...state,
-      scaleLevel: limit( state.scaleLevel + 1, MIN_SCALE_LEVEL, MAX_SCALE_LEVEL )
-    } ) )
-  .case( decrementScaleLevel, ( state ) =>
-    ( {
-      ...state,
-      scaleLevel: limit( state.scaleLevel - 1, MIN_SCALE_LEVEL, MAX_SCALE_LEVEL )
-    } ) )
-  .case( resetScaleLevel, ( state ) =>
-    ( {
-      ...state,
-      scaleLevel: DEFAULT_SCALE_LEVEL
-    } ) )
-  .case( setOrigin, ( state, { originX, originY } ) =>
-    ( {
-      ...state,
-      originX,
-      originY
-    } ) )
-  .case( resetOrigin, ( state ) =>
-    ( {
-      ...state,
-      originX: 0.0,
-      originY: 0.0
-    } ) )
+const baseReducer = reducerWithInitialState( initialState )
   .case( addDrawing, ( state, drawing ) => ( {
     ...setDrawingInState( state, drawing ),
     selectedDrawingId: drawing.id
@@ -192,3 +153,7 @@ export const reducer = reducerWithInitialState( initialState )
       throw assertNever( drawing.type );
     }
   } );
+
+export const reducer = undoable( baseReducer, {
+  groupBy: groupByActionTypes( [ moveDrawing ].map( ( a ) => a.type ) )
+} );

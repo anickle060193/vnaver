@@ -83,7 +83,7 @@ const PathLine: React.SFC<Props> = ( { drawing, onClick, onMouseDown, drawings, 
 
 export default connect<PropsFromState, {}, OwnProps, RootState>(
   ( state ) => ( {
-    drawings: state.drawing.drawings
+    drawings: state.drawings.present.drawings
   } ),
   {
   }

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import ToolbarItem from 'components/Toolbar/ToolbarItem';
-import { setTool } from 'store/reducers/drawing';
+import { setTool } from 'store/reducers/editor';
 import { DrawingType, Tool, DrawingTool, UP_ARROW_PATH, DOWN_ARROW_PATH, PLANE_PATH, DrawingTypeMap } from 'utils/draw';
 import { ShortcutMap } from 'utils/shortcut';
 
@@ -172,7 +172,7 @@ class Toolbar extends React.Component<Props>
 
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   ( state ) => ( {
-    tool: state.drawing.tool,
+    tool: state.editor.tool,
     shortcuts: state.settings.shortcuts,
     defaultDrawingColors: state.settings.defaultDrawingColors
   } ),

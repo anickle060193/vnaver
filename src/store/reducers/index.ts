@@ -1,6 +1,8 @@
 import { combineReducers } from 'redux';
+import { StateWithHistory } from 'redux-undo';
 
-import { State as DrawingState, reducer as drawingReducer } from 'store/reducers/drawing';
+import { State as DrawingsState, reducer as drawingsReducer } from 'store/reducers/drawings';
+import { State as EditorState, reducer as editorReducer } from 'store/reducers/editor';
 import { State as UpdaterState, reducer as updaterReducer } from 'store/reducers/updater';
 import { State as SettingsState, reducer as settingsReducer } from 'store/reducers/settings';
 
@@ -8,14 +10,16 @@ declare global
 {
   interface RootState
   {
-    drawing: DrawingState;
+    drawings: StateWithHistory<DrawingsState>;
+    editor: EditorState;
     updater: UpdaterState;
     settings: SettingsState;
   }
 }
 
 export default combineReducers<RootState>( {
-  drawing: drawingReducer,
+  drawings: drawingsReducer,
+  editor: editorReducer,
   updater: updaterReducer,
   settings: settingsReducer
 } );

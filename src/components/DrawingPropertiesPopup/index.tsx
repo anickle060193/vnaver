@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { deleteDrawing, updateDrawing } from 'store/reducers/drawing';
+import { deleteDrawing, updateDrawing } from 'store/reducers/drawings';
 import { Drawing, DrawingType, DrawingMap } from 'utils/draw';
 
 import './styles.css';
@@ -145,8 +145,8 @@ class DrawingProperties extends React.Component<Props>
 
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   ( state ) => ( {
-    drawings: state.drawing.drawings,
-    selectedDrawingId: state.drawing.selectedDrawingId
+    drawings: state.drawings.present.drawings,
+    selectedDrawingId: state.drawings.present.selectedDrawingId
   } ),
   {
     deleteDrawing,

@@ -6,7 +6,8 @@ import * as uuid from 'uuid/v4';
 import Grid from 'components/DrawField/Grid';
 import { drawingComponentMap, Between, VerticalGridLine, HorizontalGridLine, ActiveIndication, Plane } from 'components/DrawField/Drawings';
 import PathLine from 'components/DrawField/Drawings/PathLine';
-import { addDrawing, selectDrawing, deselectDrawing, setOrigin, incrementScaleLevel, decrementScaleLevel, moveDrawing } from 'store/reducers/drawing';
+import { addDrawing, selectDrawing, deselectDrawing, moveDrawing } from 'store/reducers/drawings';
+import { incrementScaleLevel, decrementScaleLevel, setOrigin } from 'store/reducers/editor';
 import
 {
   DrawingType,
@@ -790,13 +791,13 @@ class DrawField extends React.Component<Props, State>
 
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   ( state ) => ( {
-    tool: state.drawing.tool,
-    scale: getScale( state.drawing.scaleLevel ),
-    originX: state.drawing.originX,
-    originY: state.drawing.originY,
-    drawings: state.drawing.drawings,
+    tool: state.editor.tool,
+    scale: getScale( state.editor.scaleLevel ),
+    originX: state.editor.originX,
+    originY: state.editor.originY,
+    drawings: state.drawings.present.drawings,
     defaultDrawingColors: state.settings.defaultDrawingColors,
-    selectedDrawingId: state.drawing.selectedDrawingId,
+    selectedDrawingId: state.drawings.present.selectedDrawingId,
     gridOn: state.settings.gridOn
   } ),
   {
