@@ -67,91 +67,97 @@ function getColor( key: string, defaultValue: string )
   return getValidItem( key, 'color', defaultValue );
 }
 
-export function setShortcutSetting( tool: DrawingTool, shortcut: string )
+class Settings
 {
-  return setItem( k( SHORTCUT_PREFIX, tool ), shortcut );
+  setShortcutSetting( tool: DrawingTool, shortcut: string )
+  {
+    return setItem( k( SHORTCUT_PREFIX, tool ), shortcut );
+  }
+
+  getShortcutSetting( tool: DrawingTool )
+  {
+    return getValidItem( k( SHORTCUT_PREFIX, tool ), 'shortcut', '' );
+  }
+
+  getAllShortcutSettings(): ShortcutMap
+  {
+    return {
+      [ Tool.Cursor ]: this.getShortcutSetting( Tool.Cursor ),
+      [ DrawingType.Above ]: this.getShortcutSetting( DrawingType.Above ),
+      [ DrawingType.At ]: this.getShortcutSetting( DrawingType.At ),
+      [ DrawingType.Below ]: this.getShortcutSetting( DrawingType.Below ),
+      [ DrawingType.Between ]: this.getShortcutSetting( DrawingType.Between ),
+      [ DrawingType.PathLine ]: this.getShortcutSetting( DrawingType.PathLine ),
+      [ DrawingType.VerticalGridLine ]: this.getShortcutSetting( DrawingType.VerticalGridLine ),
+      [ DrawingType.HorizontalGridLine ]: this.getShortcutSetting( DrawingType.HorizontalGridLine ),
+      [ DrawingType.Plane ]: this.getShortcutSetting( DrawingType.Plane )
+    };
+  }
+
+  setDefaultDrawingColorSetting( drawingType: DrawingType, color: string )
+  {
+    return setItem( k( DEFAULT_DRAWING_COLOR_PREFIX, drawingType ), color );
+  }
+
+  getDefaultDrawingColorSetting( drawingType: DrawingType )
+  {
+    return getColor( k( DEFAULT_DRAWING_COLOR_PREFIX, drawingType ), '#000000' );
+  }
+
+  getAllDefaultDrawingColorSettings(): DrawingTypeMap<string>
+  {
+    return {
+      [ DrawingType.Above ]: this.getDefaultDrawingColorSetting( DrawingType.Above ),
+      [ DrawingType.At ]: this.getDefaultDrawingColorSetting( DrawingType.At ),
+      [ DrawingType.Below ]: this.getDefaultDrawingColorSetting( DrawingType.Below ),
+      [ DrawingType.Between ]: this.getDefaultDrawingColorSetting( DrawingType.Between ),
+      [ DrawingType.PathLine ]: this.getDefaultDrawingColorSetting( DrawingType.PathLine ),
+      [ DrawingType.VerticalGridLine ]: this.getDefaultDrawingColorSetting( DrawingType.VerticalGridLine ),
+      [ DrawingType.HorizontalGridLine ]: this.getDefaultDrawingColorSetting( DrawingType.HorizontalGridLine ),
+      [ DrawingType.Plane ]: this.getDefaultDrawingColorSetting( DrawingType.Plane )
+    };
+  }
+
+  set gridOn( gridOn: boolean )
+  {
+    setItem( k( GRID_ON_PREFIX ), gridOn );
+  }
+
+  get gridOn()
+  {
+    return getBoolean( k( GRID_ON_PREFIX ), true );
+  }
+
+  set gridIntervalX( gridIntervalX: number )
+  {
+    setItem( k( 'grid_interval_x' ), gridIntervalX );
+  }
+
+  get gridIntervalX()
+  {
+    return getValidItem( k( 'grid_interval_x' ), 'number', 50 );
+  }
+
+  set gridIntervalY( gridIntervalX: number )
+  {
+    setItem( k( 'grid_interval_y' ), gridIntervalX );
+  }
+
+  get gridIntervalY()
+  {
+    return getValidItem( k( 'grid_interval_y' ), 'number', 50 );
+  }
+
+  set snapToGrid( snapToGrid: boolean )
+  {
+    setItem( k( 'snap_to_grid' ), snapToGrid );
+  }
+
+  get snapToGrid()
+  {
+    return getValidItem( k( 'snap_to_grid' ), 'boolean', true );
+  }
 }
 
-export function getShortcutSetting( tool: DrawingTool )
-{
-  return getValidItem( k( SHORTCUT_PREFIX, tool ), 'shortcut', '' );
-}
-
-export function getAllShortcutSettings(): ShortcutMap
-{
-  return {
-    [ Tool.Cursor ]: getShortcutSetting( Tool.Cursor ),
-    [ DrawingType.Above ]: getShortcutSetting( DrawingType.Above ),
-    [ DrawingType.At ]: getShortcutSetting( DrawingType.At ),
-    [ DrawingType.Below ]: getShortcutSetting( DrawingType.Below ),
-    [ DrawingType.Between ]: getShortcutSetting( DrawingType.Between ),
-    [ DrawingType.PathLine ]: getShortcutSetting( DrawingType.PathLine ),
-    [ DrawingType.VerticalGridLine ]: getShortcutSetting( DrawingType.VerticalGridLine ),
-    [ DrawingType.HorizontalGridLine ]: getShortcutSetting( DrawingType.HorizontalGridLine ),
-    [ DrawingType.Plane ]: getShortcutSetting( DrawingType.Plane )
-  };
-}
-
-export function setDefaultDrawingColorSetting( drawingType: DrawingType, color: string )
-{
-  return setItem( k( DEFAULT_DRAWING_COLOR_PREFIX, drawingType ), color );
-}
-
-export function getDefaultDrawingColorSetting( drawingType: DrawingType )
-{
-  return getColor( k( DEFAULT_DRAWING_COLOR_PREFIX, drawingType ), '#000000' );
-}
-
-export function getAllDefaultDrawingColorSettings(): DrawingTypeMap<string>
-{
-  return {
-    [ DrawingType.Above ]: getDefaultDrawingColorSetting( DrawingType.Above ),
-    [ DrawingType.At ]: getDefaultDrawingColorSetting( DrawingType.At ),
-    [ DrawingType.Below ]: getDefaultDrawingColorSetting( DrawingType.Below ),
-    [ DrawingType.Between ]: getDefaultDrawingColorSetting( DrawingType.Between ),
-    [ DrawingType.PathLine ]: getDefaultDrawingColorSetting( DrawingType.PathLine ),
-    [ DrawingType.VerticalGridLine ]: getDefaultDrawingColorSetting( DrawingType.VerticalGridLine ),
-    [ DrawingType.HorizontalGridLine ]: getDefaultDrawingColorSetting( DrawingType.HorizontalGridLine ),
-    [ DrawingType.Plane ]: getDefaultDrawingColorSetting( DrawingType.Plane )
-  };
-}
-
-export function setGridOnSetting( gridOn: boolean )
-{
-  setItem( k( GRID_ON_PREFIX ), gridOn );
-}
-
-export function getGridOnSetting()
-{
-  return getBoolean( k( GRID_ON_PREFIX ), true );
-}
-
-export function setGridIntervalXSetting( gridIntervalX: number )
-{
-  setItem( k( 'grid_interval_x' ), gridIntervalX );
-}
-
-export function getGridIntervalXSetting()
-{
-  return getValidItem( k( 'grid_interval_x' ), 'number', 50 );
-}
-
-export function setGridIntervalYSetting( gridIntervalX: number )
-{
-  setItem( k( 'grid_interval_y' ), gridIntervalX );
-}
-
-export function getGridIntervalYSetting()
-{
-  return getValidItem( k( 'grid_interval_y' ), 'number', 50 );
-}
-
-export function setSnapToGridSetting( snapToGrid: boolean )
-{
-  setItem( k( 'snap_to_grid' ), snapToGrid );
-}
-
-export function getSnapToGridSetting()
-{
-  return getValidItem( k( 'snap_to_grid' ), 'boolean', true );
-}
+const settings = new Settings();
+export default settings;

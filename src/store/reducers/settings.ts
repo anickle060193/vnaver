@@ -2,21 +2,7 @@ import { reducerWithInitialState } from 'typescript-fsa-reducers';
 import actionCreatorFactory from 'typescript-fsa';
 
 import { DrawingTool, DrawingTypeMap, DrawingType } from 'utils/draw';
-import
-{
-  getAllShortcutSettings,
-  setShortcutSetting,
-  setGridOnSetting,
-  getGridOnSetting,
-  getAllDefaultDrawingColorSettings,
-  setDefaultDrawingColorSetting,
-  setGridIntervalXSetting,
-  getGridIntervalXSetting,
-  getGridIntervalYSetting,
-  setGridIntervalYSetting,
-  getSnapToGridSetting,
-  setSnapToGridSetting
-} from 'utils/settings';
+import settings from 'utils/settings';
 import { ShortcutMap } from 'utils/shortcut';
 
 export interface State
@@ -32,12 +18,12 @@ export interface State
 
 const initialState: State = {
   show: false,
-  gridOn: getGridOnSetting(),
-  snapToGrid: getSnapToGridSetting(),
-  gridIntervalX: getGridIntervalXSetting(),
-  gridIntervalY: getGridIntervalYSetting(),
-  shortcuts: getAllShortcutSettings(),
-  defaultDrawingColors: getAllDefaultDrawingColorSettings()
+  gridOn: settings.gridOn,
+  snapToGrid: settings.snapToGrid,
+  gridIntervalX: settings.gridIntervalX,
+  gridIntervalY: settings.gridIntervalY,
+  shortcuts: settings.getAllShortcutSettings(),
+  defaultDrawingColors: settings.getAllDefaultDrawingColorSettings()
 };
 
 const actionCreator = actionCreatorFactory();
@@ -64,7 +50,7 @@ export const reducer = reducerWithInitialState( initialState )
     } ) )
   .case( setGridOn, ( state, gridOn ) =>
   {
-    setGridOnSetting( gridOn );
+    settings.gridOn = gridOn;
     return {
       ...state,
       gridOn
@@ -72,7 +58,7 @@ export const reducer = reducerWithInitialState( initialState )
   } )
   .case( setSnapToGrid, ( state, snapToGrid ) =>
   {
-    setSnapToGridSetting( snapToGrid );
+    settings.snapToGrid = snapToGrid;
     return {
       ...state,
       snapToGrid
@@ -80,7 +66,7 @@ export const reducer = reducerWithInitialState( initialState )
   } )
   .case( setGridIntervalX, ( state, gridIntervalX ) =>
   {
-    setGridIntervalXSetting( gridIntervalX );
+    settings.gridIntervalX = gridIntervalX;
     return {
       ...state,
       gridIntervalX
@@ -88,7 +74,7 @@ export const reducer = reducerWithInitialState( initialState )
   } )
   .case( setGridIntervalY, ( state, gridIntervalY ) =>
   {
-    setGridIntervalYSetting( gridIntervalY );
+    settings.gridIntervalY = gridIntervalY;
     return {
       ...state,
       gridIntervalY
@@ -98,7 +84,7 @@ export const reducer = reducerWithInitialState( initialState )
   {
     let shortcuts = { ...state.shortcuts };
 
-    setShortcutSetting( tool, shortcut );
+    settings.setShortcutSetting( tool, shortcut );
     shortcuts[ tool ] = shortcut;
 
     Object.keys( shortcuts ).forEach( ( t: DrawingTool ) =>
@@ -106,7 +92,7 @@ export const reducer = reducerWithInitialState( initialState )
       if( t !== tool && shortcuts[ t ] === shortcut )
       {
         shortcuts[ t ] = '';
-        setShortcutSetting( t, '' );
+        settings.setShortcutSetting( t, '' );
       }
     } );
 
@@ -117,7 +103,7 @@ export const reducer = reducerWithInitialState( initialState )
   } )
   .case( setDefaultDrawingColor, ( state, { drawingType, color } ) =>
   {
-    setDefaultDrawingColorSetting( drawingType, color );
+    settings.setDefaultDrawingColorSetting( drawingType, color );
     return {
       ...state,
       defaultDrawingColors: {
