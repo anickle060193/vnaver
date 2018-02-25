@@ -34,7 +34,7 @@ const NumberInput: React.SFC<{
         type="number"
         className="form-control"
         placeholder={label}
-        value={val}
+        value={val.toString()}
         onChange={( e ) => onChange( e.target.valueAsNumber || 0 )}
       />
     </div>
@@ -71,14 +71,16 @@ const GuideLineInputs: React.SFC<{
   showGuideLine: boolean;
   onShowGuideLineChange: ( showGuideLine: boolean ) => void;
 }> = ( { showGuideLine, onShowGuideLineChange } ) => (
-  <div className="form-check form-check-inline">
-    <label className="col-form-label mr-2 mb-2">Show Guide Line:</label>
-    <input
-      type="checkbox"
-      className="form-check-input"
-      checked={showGuideLine}
-      onChange={( e ) => onShowGuideLineChange( e.target.checked )}
-    />
+  <div className="form-check">
+    <label className="form-check-label mb-2">
+      <input
+        type="checkbox"
+        className="form-check-input"
+        checked={showGuideLine}
+        onChange={( e ) => onShowGuideLineChange( e.target.checked )}
+      />
+      Show Guide Line
+    </label>
   </div>
 );
 
