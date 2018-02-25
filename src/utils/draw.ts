@@ -21,10 +21,10 @@ export type DrawingTool = DrawingType | Tool;
 
 export const drawingToolDisplayNames: {[ key in DrawingTool ]: string } = {
   [ Tool.Cursor ]: 'Cursor',
-  [ DrawingType.Above ]: 'Above',
-  [ DrawingType.At ]: 'At',
-  [ DrawingType.Below ]: 'Below',
-  [ DrawingType.Between ]: 'Between',
+  [ DrawingType.Above ]: 'Above Constraint',
+  [ DrawingType.At ]: 'At Constraint',
+  [ DrawingType.Below ]: 'Below Constraint',
+  [ DrawingType.Between ]: 'Between Constraint',
   [ DrawingType.PathLine ]: 'Path Line',
   [ DrawingType.VerticalGridLine ]: 'Vertical Grid Line',
   [ DrawingType.HorizontalGridLine ]: 'Horizontal Grid Line',
