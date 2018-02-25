@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Line, Group, Circle } from 'react-konva';
+import { Group, Circle } from 'react-konva';
 
-import { DrawingComponentProps } from './DrawingComponent';
+import { DrawingComponentProps, LineDrawing } from './DrawingComponent';
 import { PathLineDrawing, DrawingMap, getEndPointPosition } from 'utils/draw';
 
 const OUTER_CIRCLE_RADIUS = 4;
@@ -32,16 +32,14 @@ const PathLine: React.SFC<Props> = ( { drawing, onClick, onMouseDown, drawings, 
 
   return (
     <Group onClick={onClick} onMouseDown={onMouseDown}>
-      <Line
-        points={[ start.x, start.y, end.x, end.y ]}
-        strokeWidth={5}
-        opacity={0.0}
-        stroke="black"
-      />
-      <Line
-        points={[ start.x, start.y, end.x, end.y ]}
-        stroke={drawing.color}
-        strokeWidth={2}
+      <LineDrawing
+        x1={start.x}
+        y1={start.y}
+        x2={end.x}
+        y2={end.y}
+        color={drawing.color}
+        strokeWidth={drawing.strokeWidth}
+        dash={drawing.dash}
       />
       {cursor && (
         <>

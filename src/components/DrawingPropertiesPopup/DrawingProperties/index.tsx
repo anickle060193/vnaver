@@ -13,7 +13,10 @@ import
   PathLineDrawing,
   DrawingMap,
   drawingToolDisplayNames,
-  getEndPointPosition
+  getEndPointPosition,
+  LineStyle,
+  dashStyles,
+  LineDashStyle
 } from 'utils/draw';
 import { selectDrawing } from 'store/reducers/drawings';
 
@@ -75,21 +78,57 @@ const XyInputs: React.SFC<{
   </>
 );
 
-const GuideLineInputs: React.SFC<{
+type LineStyleChangeEventHandler = ( lineStyleUpdate: Partial<LineStyle> ) => void;
+
+const LineStyleInputs: React.SFC<LineStyle & {
+  onLineStyleChange: LineStyleChangeEventHandler;
+}> = ( { dash, strokeWidth, onLineStyleChange } ) => (
+  <>
+    <NumberInput
+      label="Width"
+      val={strokeWidth}
+      onChange={( s ) => onLineStyleChange( { strokeWidth: s } )}
+    />
+    <div className="form-group row">
+      <label className="col-sm-3 col-form-label">Dash:</label>
+      <div className="col-sm-9">
+        <select
+          className="form-control"
+          value={dash}
+          onChange={( e ) => onLineStyleChange( { dash: e.target.value as LineDashStyle } )}
+        >
+          {Object.keys( dashStyles ).map( ( dashStyle ) => (
+            <option key={dashStyle} value={dashStyle}>{dashStyle}</option>
+          ) )}
+        </select>
+      </div>
+    </div>
+  </>
+);
+
+const GuideLineInputs: React.SFC<LineStyle & {
   showGuideLine: boolean;
   onShowGuideLineChange: ( showGuideLine: boolean ) => void;
-}> = ( { showGuideLine, onShowGuideLineChange } ) => (
-  <div className="form-check">
-    <label className="form-check-label mb-2">
-      <input
-        type="checkbox"
-        className="form-check-input"
-        checked={showGuideLine}
-        onChange={( e ) => onShowGuideLineChange( e.target.checked )}
-      />
-      Show Guide Line
+  onLineStyleChange: LineStyleChangeEventHandler;
+}> = ( { showGuideLine, onShowGuideLineChange, dash, strokeWidth, onLineStyleChange } ) => (
+  <>
+    <div className="form-check">
+      <label className="form-check-label mb-2">
+        <input
+          type="checkbox"
+          className="form-check-input"
+          checked={showGuideLine}
+          onChange={( e ) => onShowGuideLineChange( e.target.checked )}
+        />
+        Show Guide Line
     </label>
-  </div>
+    </div>
+    <LineStyleInputs
+      dash={dash}
+      strokeWidth={strokeWidth}
+      onLineStyleChange={onLineStyleChange}
+    />
+  </>
 );
 
 const ColorInput: React.SFC<{
@@ -128,6 +167,9 @@ export class BasicDrawingProperties extends DrawingPropertiesComponent<BasicDraw
         <GuideLineInputs
           showGuideLine={this.props.drawing.showGuideLine}
           onShowGuideLineChange={this.onShowGuideLineChange}
+          dash={this.props.drawing.guideLine.dash}
+          strokeWidth={this.props.drawing.guideLine.strokeWidth}
+          onLineStyleChange={this.onLineStyleChange}
         />
       </form>
     );
@@ -156,6 +198,17 @@ export class BasicDrawingProperties extends DrawingPropertiesComponent<BasicDraw
       showGuideLine
     } );
   }
+
+  private onLineStyleChange = ( lineStyle: LineStyle ) =>
+  {
+    this.props.onChange( {
+      ...this.props.drawing,
+      guideLine: {
+        ...this.props.drawing.guideLine,
+        ...lineStyle
+      }
+    } );
+  }
 }
 
 export class BetweenDrawingProperties extends DrawingPropertiesComponent<BetweenDrawing>
@@ -182,6 +235,9 @@ export class BetweenDrawingProperties extends DrawingPropertiesComponent<Between
         <GuideLineInputs
           showGuideLine={this.props.drawing.showGuideLine}
           onShowGuideLineChange={this.onShowGuideLineChange}
+          dash={this.props.drawing.guideLine.dash}
+          strokeWidth={this.props.drawing.guideLine.strokeWidth}
+          onLineStyleChange={this.onLineStyleChange}
         />
       </form>
     );
@@ -218,6 +274,17 @@ export class BetweenDrawingProperties extends DrawingPropertiesComponent<Between
       showGuideLine
     } );
   }
+
+  private onLineStyleChange = ( lineStyle: LineStyle ) =>
+  {
+    this.props.onChange( {
+      ...this.props.drawing,
+      guideLine: {
+        ...this.props.drawing.guideLine,
+        ...lineStyle
+      }
+    } );
+  }
 }
 
 export class VerticalGridLineDrawingProperties extends DrawingPropertiesComponent<VerticalGridLineDrawing>
@@ -234,6 +301,11 @@ export class VerticalGridLineDrawingProperties extends DrawingPropertiesComponen
           color={this.props.drawing.color}
           onChange={this.props.onColorChange}
         />
+        <LineStyleInputs
+          dash={this.props.drawing.dash}
+          strokeWidth={this.props.drawing.strokeWidth}
+          onLineStyleChange={this.onLineStyleChange}
+        />
       </form>
     );
   }
@@ -243,6 +315,14 @@ export class VerticalGridLineDrawingProperties extends DrawingPropertiesComponen
     this.props.onChange( {
       ...this.props.drawing,
       x
+    } );
+  }
+
+  private onLineStyleChange = ( lineStyle: LineStyle ) =>
+  {
+    this.props.onChange( {
+      ...this.props.drawing,
+      ...lineStyle
     } );
   }
 }
@@ -261,6 +341,11 @@ export class HorizontalGridLineDrawingProperties extends DrawingPropertiesCompon
           color={this.props.drawing.color}
           onChange={this.props.onColorChange}
         />
+        <LineStyleInputs
+          dash={this.props.drawing.dash}
+          strokeWidth={this.props.drawing.strokeWidth}
+          onLineStyleChange={this.onLineStyleChange}
+        />
       </form>
     );
   }
@@ -270,6 +355,14 @@ export class HorizontalGridLineDrawingProperties extends DrawingPropertiesCompon
     this.props.onChange( {
       ...this.props.drawing,
       y
+    } );
+  }
+
+  private onLineStyleChange = ( lineStyle: LineStyle ) =>
+  {
+    this.props.onChange( {
+      ...this.props.drawing,
+      ...lineStyle
     } );
   }
 }
@@ -537,7 +630,20 @@ export class PathLineDrawingProperties extends DrawingPropertiesComponent<PathLi
           color={this.props.drawing.color}
           onChange={this.props.onColorChange}
         />
+        <LineStyleInputs
+          dash={this.props.drawing.dash}
+          strokeWidth={this.props.drawing.strokeWidth}
+          onLineStyleChange={this.onLineStyleChange}
+        />
       </form>
     );
+  }
+
+  private onLineStyleChange = ( lineStyle: LineStyle ) =>
+  {
+    this.props.onChange( {
+      ...this.props.drawing,
+      ...lineStyle
+    } );
   }
 }

@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { Line, Rect, Path, Text, Label, Tag, Group } from 'react-konva';
+import { Path, Text, Label, Tag, Group } from 'react-konva';
 
-import { DrawingComponentProps } from './DrawingComponent';
+import { DrawingComponentProps, LineDrawing } from './DrawingComponent';
 import PathLine from './PathLine';
 import
 {
@@ -17,22 +17,19 @@ import
   getEndPointPosition,
   PlaneDrawing,
   PLANE_PATH,
-  DrawingTypeMap
+  DrawingTypeMap,
+  LineStyle
 } from 'utils/draw';
 import { assertNever } from 'utils/utils';
 
 const LINE_LENGTH = 10000;
-const LINE_WIDTH = 5;
-
-const GUIDE_LINE_WIDTH = 0.5;
 
 const ARROW_SIZE = 30;
 const ARROW_SCALE = ARROW_SIZE / 100;
 
-interface BasicGuideLineProps
+interface BasicGuideLineProps extends LineStyle
 {
   color: string;
-  strokeWidth: number;
 }
 
 interface VerticalGuideLineProps extends BasicGuideLineProps
@@ -45,36 +42,28 @@ interface HorizontalGuideLineProps extends BasicGuideLineProps
   y: number;
 }
 
-const VerticalGuideLine: React.SFC<VerticalGuideLineProps> = ( { x, color, strokeWidth } ) => (
-  <>
-    <Rect
-      x={x - LINE_WIDTH / 2}
-      width={LINE_WIDTH}
-      y={-LINE_LENGTH}
-      height={2 * LINE_LENGTH}
-    />
-    <Line
-      points={[ x, -LINE_LENGTH, x, LINE_LENGTH ]}
-      stroke={color}
-      strokeWidth={strokeWidth}
-    />
-  </>
+const VerticalGuideLine: React.SFC<VerticalGuideLineProps> = ( { x, color, dash, strokeWidth } ) => (
+  <LineDrawing
+    x1={x}
+    y1={-LINE_LENGTH}
+    x2={x}
+    y2={LINE_LENGTH}
+    color={color}
+    dash={dash}
+    strokeWidth={strokeWidth}
+  />
 );
 
-const HorizontalGuideLine: React.SFC<HorizontalGuideLineProps> = ( { y, color, strokeWidth } ) => (
-  <>
-    <Rect
-      x={-LINE_LENGTH}
-      width={2 * LINE_LENGTH}
-      y={y - LINE_WIDTH / 2}
-      height={LINE_WIDTH}
-    />
-    <Line
-      points={[ -LINE_LENGTH, y, LINE_LENGTH, y ]}
-      stroke={color}
-      strokeWidth={strokeWidth}
-    />
-  </>
+const HorizontalGuideLine: React.SFC<HorizontalGuideLineProps> = ( { y, color, strokeWidth, dash } ) => (
+  <LineDrawing
+    x1={-LINE_LENGTH}
+    y1={y}
+    x2={LINE_LENGTH}
+    y2={y}
+    color={color}
+    dash={dash}
+    strokeWidth={strokeWidth}
+  />
 );
 
 interface GuideLineProps extends VerticalGuideLineProps, HorizontalGuideLineProps
@@ -82,11 +71,13 @@ interface GuideLineProps extends VerticalGuideLineProps, HorizontalGuideLineProp
   vertical: boolean;
 }
 
-const GuideLine: React.SFC<GuideLineProps> = ( { x, y, vertical, color, strokeWidth } ) => (
-  vertical ? (
-    <VerticalGuideLine x={x} color={color} strokeWidth={strokeWidth} />
-  ) : (
-      <HorizontalGuideLine y={y} color={color} strokeWidth={strokeWidth} />
+const GuideLine: React.SFC<GuideLineProps> = ( { x, y, vertical, color, dash, strokeWidth } ) => (
+  vertical ?
+    (
+      <VerticalGuideLine x={x} color={color} strokeWidth={strokeWidth} dash={dash} />
+    ) :
+    (
+      <HorizontalGuideLine y={y} color={color} strokeWidth={strokeWidth} dash={dash} />
     )
 );
 
@@ -96,9 +87,10 @@ export const Above: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Abo
       <GuideLine
         x={drawing.x}
         y={drawing.y}
-        vertical={drawing.guideLine.vertical}
         color={drawing.color}
-        strokeWidth={GUIDE_LINE_WIDTH}
+        vertical={drawing.guideLine.vertical}
+        strokeWidth={drawing.guideLine.strokeWidth}
+        dash={drawing.guideLine.dash}
       />
     )}
     <Path
@@ -117,9 +109,10 @@ export const At: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.At>>> 
       <GuideLine
         x={drawing.x}
         y={drawing.y}
-        vertical={drawing.guideLine.vertical}
         color={drawing.color}
-        strokeWidth={GUIDE_LINE_WIDTH}
+        vertical={drawing.guideLine.vertical}
+        strokeWidth={drawing.guideLine.strokeWidth}
+        dash={drawing.guideLine.dash}
       />
     )}
     <Path
@@ -145,9 +138,10 @@ export const Below: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Bel
       <GuideLine
         x={drawing.x}
         y={drawing.y}
-        vertical={drawing.guideLine.vertical}
         color={drawing.color}
-        strokeWidth={GUIDE_LINE_WIDTH}
+        vertical={drawing.guideLine.vertical}
+        strokeWidth={drawing.guideLine.strokeWidth}
+        dash={drawing.guideLine.dash}
       />
     )}
     <Path
@@ -166,9 +160,10 @@ export const Between: React.SFC<DrawingComponentProps<BetweenDrawing>> = ( { dra
       <GuideLine
         x={drawing.x}
         y={drawing.y}
-        vertical={drawing.guideLine.vertical}
         color={drawing.color}
-        strokeWidth={GUIDE_LINE_WIDTH}
+        vertical={drawing.guideLine.vertical}
+        strokeWidth={drawing.guideLine.strokeWidth}
+        dash={drawing.guideLine.dash}
       />
     )}
     <Path
@@ -190,13 +185,23 @@ export const Between: React.SFC<DrawingComponentProps<BetweenDrawing>> = ( { dra
 
 export const VerticalGridLine: React.SFC<DrawingComponentProps<VerticalGridLineDrawing>> = ( { drawing, onClick, onMouseDown } ) => (
   <Group onClick={onClick} onMouseDown={onMouseDown}>
-    <VerticalGuideLine x={drawing.x} color={drawing.color} strokeWidth={1} />
+    <VerticalGuideLine
+      x={drawing.x}
+      color={drawing.color}
+      strokeWidth={drawing.strokeWidth}
+      dash={drawing.dash}
+    />
   </Group>
 );
 
 export const HorizontalGridLine: React.SFC<DrawingComponentProps<HorizontalGridLineDrawing>> = ( { drawing, onClick, onMouseDown } ) => (
   <Group onClick={onClick} onMouseDown={onMouseDown}>
-    <HorizontalGuideLine y={drawing.y} color={drawing.color} strokeWidth={1} />
+    <HorizontalGuideLine
+      y={drawing.y}
+      color={drawing.color}
+      strokeWidth={drawing.strokeWidth}
+      dash={drawing.dash}
+    />
   </Group>
 );
 

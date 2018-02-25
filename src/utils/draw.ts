@@ -38,10 +38,53 @@ export interface DrawingBase<T extends DrawingType>
   color: string;
 }
 
+export const enum LineDashStyle
+{
+  Solid = 'Solid',
+  Dotted = 'Dotted',
+  DenselyDotted = 'DenselyDotted',
+  LooselyDotted = 'LooselyDotted',
+  Dashed = 'Dashed',
+  DenselyDashed = 'DenselyDashed',
+  LooselyDashed = 'LooselyDashed',
+  DashDotted = 'DashDotted',
+  DenselyDashDotted = 'DenselyDashDotted',
+  LooselyDashDotted = 'LooselyDashDotted'
+}
+
+const DOT_LENGTH = 4;
+const DASH_LENGTH = 10;
+
+const DENSE = 6;
+const NORMAL = 10;
+const LOOSE = 20;
+
+export const dashStyles: {[ key in LineDashStyle ]: number[]} = {
+  [ LineDashStyle.Solid ]: [],
+
+  [ LineDashStyle.DenselyDotted ]: [ DOT_LENGTH, DENSE ],
+  [ LineDashStyle.Dotted ]: [ DOT_LENGTH, NORMAL ],
+  [ LineDashStyle.LooselyDotted ]: [ DOT_LENGTH, LOOSE ],
+
+  [ LineDashStyle.DenselyDashed ]: [ DASH_LENGTH, DENSE ],
+  [ LineDashStyle.Dashed ]: [ DASH_LENGTH, NORMAL ],
+  [ LineDashStyle.LooselyDashed ]: [ DASH_LENGTH, LOOSE ],
+
+  [ LineDashStyle.DenselyDashDotted ]: [ DOT_LENGTH, DENSE, DASH_LENGTH, DENSE ],
+  [ LineDashStyle.DashDotted ]: [ DOT_LENGTH, NORMAL, DASH_LENGTH, NORMAL ],
+  [ LineDashStyle.LooselyDashDotted ]: [ DOT_LENGTH, LOOSE, DASH_LENGTH, LOOSE ]
+};
+
+export interface LineStyle
+{
+  dash: LineDashStyle;
+  strokeWidth: number;
+}
+
 interface ContainsGuideLineDrawing<T extends DrawingType> extends DrawingBase<T>
 {
   showGuideLine: boolean;
-  guideLine: {
+  guideLine: LineStyle & {
     vertical: boolean;
   };
 }
@@ -78,18 +121,18 @@ interface FloatingPathLineEndPoint
 
 export type EndPoint = ConnectedPathLineEndPoint | FloatingPathLineEndPoint;
 
-export interface PathLineDrawing extends DrawingBase<DrawingType.PathLine>
+export interface PathLineDrawing extends DrawingBase<DrawingType.PathLine>, LineStyle
 {
   start: EndPoint;
   end: EndPoint;
 }
 
-export interface VerticalGridLineDrawing extends DrawingBase<DrawingType.VerticalGridLine>
+export interface VerticalGridLineDrawing extends DrawingBase<DrawingType.VerticalGridLine>, LineStyle
 {
   x: number;
 }
 
-export interface HorizontalGridLineDrawing extends DrawingBase<DrawingType.HorizontalGridLine>
+export interface HorizontalGridLineDrawing extends DrawingBase<DrawingType.HorizontalGridLine>, LineStyle
 {
   y: number;
 }

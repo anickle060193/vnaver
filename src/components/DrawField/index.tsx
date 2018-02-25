@@ -19,11 +19,28 @@ import
   isValidAnchor,
   DrawingTypeMap,
   EndPoint,
-  getEndPointPosition
+  getEndPointPosition,
+  LineStyle,
+  LineDashStyle
 } from 'utils/draw';
 import { mapToArray, assertNever, distance, roundToNearest } from 'utils/utils';
 
 import './styles.css';
+
+const DEFAULT_LINE_STYLE: LineStyle = {
+  dash: LineDashStyle.LooselyDashed,
+  strokeWidth: 2
+};
+
+const DEFAULT_GUIDE_LINE_STYLE: LineStyle = {
+  dash: LineDashStyle.Solid,
+  strokeWidth: 0.5
+};
+
+const DEFAULT_PATH_LINE_STYLE: LineStyle = {
+  dash: LineDashStyle.Solid,
+  strokeWidth: 2
+};
 
 const NEAR_DISTANCE = 15;
 
@@ -160,6 +177,7 @@ class DrawField extends React.Component<Props, State>
                 height: Math.abs( this.state.mouseY - this.state.startY ),
                 showGuideLine: false,
                 guideLine: {
+                  ...DEFAULT_GUIDE_LINE_STYLE,
                   vertical: true
                 }
               }}
@@ -180,6 +198,7 @@ class DrawField extends React.Component<Props, State>
                 height: 0,
                 showGuideLine: false,
                 guideLine: {
+                  ...DEFAULT_GUIDE_LINE_STYLE,
                   vertical: true
                 }
               }}
@@ -196,7 +215,8 @@ class DrawField extends React.Component<Props, State>
             <PathLine
               cursor={true}
               drawing={{
-                id: uuid(),
+                ...DEFAULT_PATH_LINE_STYLE,
+                id: '',
                 type: this.props.tool,
                 color: this.props.defaultDrawingColors[ this.props.tool ],
                 start: this.state.startEndPoint,
@@ -211,7 +231,8 @@ class DrawField extends React.Component<Props, State>
             <PathLine
               cursor={true}
               drawing={{
-                id: uuid(),
+                ...DEFAULT_PATH_LINE_STYLE,
+                id: '',
                 type: this.props.tool,
                 color: this.props.defaultDrawingColors[ this.props.tool ],
                 start: endPoint,
@@ -231,6 +252,7 @@ class DrawField extends React.Component<Props, State>
           <VerticalGridLine
             cursor={true}
             drawing={{
+              ...DEFAULT_LINE_STYLE,
               id: '',
               type: this.props.tool,
               color: this.props.defaultDrawingColors[ this.props.tool ],
@@ -245,6 +267,7 @@ class DrawField extends React.Component<Props, State>
           <HorizontalGridLine
             cursor={true}
             drawing={{
+              ...DEFAULT_LINE_STYLE,
               id: '',
               type: this.props.tool,
               color: this.props.defaultDrawingColors[ this.props.tool ],
@@ -285,6 +308,7 @@ class DrawField extends React.Component<Props, State>
               y: this.state.mouseY,
               showGuideLine: false,
               guideLine: {
+                ...DEFAULT_GUIDE_LINE_STYLE,
                 vertical: true
               }
             }}
@@ -662,6 +686,7 @@ class DrawField extends React.Component<Props, State>
               height: diff,
               showGuideLine: true,
               guideLine: {
+                ...DEFAULT_GUIDE_LINE_STYLE,
                 vertical: true
               }
             } );
@@ -673,6 +698,7 @@ class DrawField extends React.Component<Props, State>
           {
             added = true;
             this.props.addDrawing( {
+              ...DEFAULT_PATH_LINE_STYLE,
               id: uuid(),
               type: this.props.tool,
               color: this.props.defaultDrawingColors[ this.props.tool ],
@@ -685,6 +711,7 @@ class DrawField extends React.Component<Props, State>
         {
           added = true;
           this.props.addDrawing( {
+            ...DEFAULT_LINE_STYLE,
             id: uuid(),
             type: this.props.tool,
             color: this.props.defaultDrawingColors[ this.props.tool ],
@@ -695,6 +722,7 @@ class DrawField extends React.Component<Props, State>
         {
           added = true;
           this.props.addDrawing( {
+            ...DEFAULT_LINE_STYLE,
             id: uuid(),
             type: this.props.tool,
             color: this.props.defaultDrawingColors[ this.props.tool ],
@@ -727,6 +755,7 @@ class DrawField extends React.Component<Props, State>
             y: y,
             showGuideLine: true,
             guideLine: {
+              ...DEFAULT_GUIDE_LINE_STYLE,
               vertical: true
             }
           } );
