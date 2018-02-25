@@ -631,7 +631,7 @@ class DrawField extends React.Component<Props, State>
         return;
       }
 
-      this.props.deselectDrawing();
+      let added = false;
 
       let { x, y } = this.mouseToDrawing( e.evt );
 
@@ -641,6 +641,7 @@ class DrawField extends React.Component<Props, State>
         {
           if( this.state.startY !== null && this.state.startX !== null )
           {
+            added = true;
             let diff = Math.abs( y - this.state.startY );
             this.props.addDrawing( {
               id: uuid(),
@@ -661,6 +662,7 @@ class DrawField extends React.Component<Props, State>
           if( this.state.startY !== null
             && this.state.startX !== null )
           {
+            added = true;
             let result = this.findAnchor( x, y );
             this.props.addDrawing( {
               id: uuid(),
@@ -693,6 +695,7 @@ class DrawField extends React.Component<Props, State>
         }
         else if( this.props.tool === DrawingType.VerticalGridLine )
         {
+          added = true;
           this.props.addDrawing( {
             id: uuid(),
             type: this.props.tool,
@@ -702,6 +705,7 @@ class DrawField extends React.Component<Props, State>
         }
         else if( this.props.tool === DrawingType.HorizontalGridLine )
         {
+          added = true;
           this.props.addDrawing( {
             id: uuid(),
             type: this.props.tool,
@@ -711,6 +715,7 @@ class DrawField extends React.Component<Props, State>
         }
         else if( this.props.tool === DrawingType.Plane )
         {
+          added = true;
           this.props.addDrawing( {
             id: uuid(),
             type: this.props.tool,
@@ -725,6 +730,7 @@ class DrawField extends React.Component<Props, State>
           || this.props.tool === DrawingType.Above
           || this.props.tool === DrawingType.Below )
         {
+          added = true;
           this.props.addDrawing( {
             id: uuid(),
             type: this.props.tool!,
@@ -741,6 +747,11 @@ class DrawField extends React.Component<Props, State>
         {
           throw assertNever( this.props.tool );
         }
+      }
+
+      if( !added )
+      {
+        this.props.deselectDrawing();
       }
     }
 
