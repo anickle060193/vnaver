@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Stage, Layer } from 'react-konva';
+import { Stage, Layer, Rect } from 'react-konva';
 import * as uuid from 'uuid/v4';
 
 import Grid from 'components/DrawField/Grid';
@@ -378,6 +378,13 @@ class DrawField extends React.Component<Props, State>
           onContentMouseUp={this.onContentMouseUp}
         >
           <Layer>
+            <Rect
+              x={-this.props.originX / this.props.scale}
+              y={-this.props.originY / this.props.scale}
+              width={this.state.width / this.props.scale}
+              height={this.state.height / this.props.scale}
+              fill="white"
+            />
             {this.props.gridOn &&
               <Grid
                 width={this.state.width}

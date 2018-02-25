@@ -4,9 +4,10 @@ import { connect } from 'react-redux';
 import Tooltip from 'components/Tooltip';
 import { resetScaleLevel, resetOrigin, incrementScaleLevel, decrementScaleLevel } from 'store/reducers/drawing';
 import { showSettings, setGridOn } from 'store/reducers/settings';
+import { getScale } from 'utils/draw';
+import { exportImage } from 'utils/electron';
 
 import './styles.css';
-import { getScale } from 'utils/draw';
 
 const CENTERED_POSITION_PATH = `M50 34C41.16 34 34 41.16 34 50S41.16 66 50 66 66 58.84 66 50 58.84 34 50
                                 34ZM85.76 46C83.92 29.32 70.68 16.08 54 14.24V6H46V14.24C29.32 16.08 16.08 29.32 14.24
@@ -95,6 +96,14 @@ class DrawFieldControls extends React.Component<Props>
         </div>
 
         <div
+          className="drawing-export-image"
+          onClick={this.onExportImage}
+        >
+          <Tooltip align="bottom" title="Export Image" />
+          <span className="material-icons">photo</span>
+        </div>
+
+        <div
           className="drawing-settings"
           onClick={this.onSettingsClick}
         >
@@ -132,6 +141,15 @@ class DrawFieldControls extends React.Component<Props>
   private onToggleGridOn = () =>
   {
     this.props.setGridOn( !this.props.gridOn );
+  }
+
+  private onExportImage = () =>
+  {
+    let canvas = document.querySelector( 'canvas' ) as HTMLCanvasElement;
+    if( canvas )
+    {
+      exportImage( canvas );
+    }
   }
 
   private onSettingsClick = () =>
