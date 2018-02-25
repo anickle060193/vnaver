@@ -45,6 +45,16 @@
   transform: scale( 0 ) translate( -100%, -50% );
 }
 
+.tooltip-item-bottom
+{
+  left: 50%;
+  top: 100%;
+
+  margin-top: 0.5rem;
+
+  transform: scale( 0 ) translate( -50%, -100% );
+}
+
 .tooltip-item.tooltip-show
 {
   visibility: visible;
@@ -58,4 +68,9 @@
 .tooltip-item.tooltip-item-right.tooltip-show
 {
   transform: scale( 1 ) translate( 0, -50% );
+}
+
+.tooltip-item.tooltip-item-bottom.tooltip-show
+{
+  transform: scale( 1 ) translate( -50%, 0 );
 }

@@ -34,6 +34,7 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "dependencies": {
+    "ajv": "^6.1.1",
     "bootstrap-css-only": "^4.0.0",
     "electron-log": "^2.2.14",
     "electron-updater": "^2.20.1",

@@ -15,9 +15,9 @@ import
   Tool,
   DrawingMap,
   getScale,
-  drawingTypeColors,
   isValidAnchor,
-  AnchorDrawing
+  AnchorDrawing,
+  DrawingTypeMap
 } from 'utils/draw';
 import { mapToArray, assertNever, distance } from 'utils/utils';
 
@@ -29,9 +29,10 @@ interface PropsFromState
   scale: number;
   originX: number;
   originY: number;
-  gridOn: boolean;
   drawings: DrawingMap;
+  defaultDrawingColors: DrawingTypeMap<string>;
   selectedDrawingId: string | null;
+  gridOn: boolean;
 }
 
 interface PropsFromDispatch
@@ -148,7 +149,7 @@ class DrawField extends React.Component<Props, State>
               drawing={{
                 id: '',
                 type: this.props.tool,
-                color: drawingTypeColors[ this.props.tool ],
+                color: this.props.defaultDrawingColors[ this.props.tool ],
                 x: this.state.startX,
                 y: Math.min( this.state.mouseY, this.state.startY ),
                 height: Math.abs( this.state.mouseY - this.state.startY ),
@@ -168,7 +169,7 @@ class DrawField extends React.Component<Props, State>
               drawing={{
                 id: '',
                 type: this.props.tool,
-                color: drawingTypeColors[ this.props.tool ],
+                color: this.props.defaultDrawingColors[ this.props.tool ],
                 x: this.state.mouseX,
                 y: this.state.mouseY,
                 height: 0,
@@ -192,7 +193,7 @@ class DrawField extends React.Component<Props, State>
               drawing={{
                 id: uuid(),
                 type: this.props.tool,
-                color: drawingTypeColors[ this.props.tool ],
+                color: this.props.defaultDrawingColors[ this.props.tool ],
                 start: {
                   connected: true,
                   anchorId: this.state.startAnchor.id,
@@ -222,7 +223,7 @@ class DrawField extends React.Component<Props, State>
               drawing={{
                 id: uuid(),
                 type: this.props.tool,
-                color: drawingTypeColors[ this.props.tool ],
+                color: this.props.defaultDrawingColors[ this.props.tool ],
                 start: {
                   connected: false,
                   x: this.state.startX,
@@ -251,7 +252,7 @@ class DrawField extends React.Component<Props, State>
               drawing={{
                 id: uuid(),
                 type: this.props.tool,
-                color: drawingTypeColors[ this.props.tool ],
+                color: this.props.defaultDrawingColors[ this.props.tool ],
                 start: result ?
                   {
                     connected: true,
@@ -281,7 +282,7 @@ class DrawField extends React.Component<Props, State>
             drawing={{
               id: '',
               type: this.props.tool,
-              color: drawingTypeColors[ this.props.tool ],
+              color: this.props.defaultDrawingColors[ this.props.tool ],
               x: this.state.mouseX
             }}
           />
@@ -295,7 +296,7 @@ class DrawField extends React.Component<Props, State>
             drawing={{
               id: '',
               type: this.props.tool,
-              color: drawingTypeColors[ this.props.tool ],
+              color: this.props.defaultDrawingColors[ this.props.tool ],
               y: this.state.mouseY
             }}
           />
@@ -308,7 +309,7 @@ class DrawField extends React.Component<Props, State>
             drawing={{
               id: '',
               type: this.props.tool,
-              color: drawingTypeColors[ this.props.tool ],
+              color: this.props.defaultDrawingColors[ this.props.tool ],
               x: this.state.mouseX,
               y: this.state.mouseY,
               size: 65,
@@ -328,7 +329,7 @@ class DrawField extends React.Component<Props, State>
             drawing={{
               id: '',
               type: this.props.tool,
-              color: drawingTypeColors[ this.props.tool ],
+              color: this.props.defaultDrawingColors[ this.props.tool ],
               x: this.state.mouseX,
               y: this.state.mouseY,
               showGuideLine: false,
@@ -417,7 +418,7 @@ class DrawField extends React.Component<Props, State>
 
   private sortedDrawings()
   {
-    const sortOrderMap: {[ key in DrawingType ]: number } = {
+    const sortOrderMap: DrawingTypeMap<number> = {
       [ DrawingType.VerticalGridLine ]: 0,
       [ DrawingType.HorizontalGridLine ]: 1,
       [ DrawingType.PathLine ]: 2,
@@ -636,7 +637,7 @@ class DrawField extends React.Component<Props, State>
             this.props.addDrawing( {
               id: uuid(),
               type: this.props.tool,
-              color: drawingTypeColors[ this.props.tool ],
+              color: this.props.defaultDrawingColors[ this.props.tool ],
               x: this.state.startX,
               y: Math.min( y, this.state.startY ),
               height: diff,
@@ -656,7 +657,7 @@ class DrawField extends React.Component<Props, State>
             this.props.addDrawing( {
               id: uuid(),
               type: this.props.tool,
-              color: drawingTypeColors[ this.props.tool ],
+              color: this.props.defaultDrawingColors[ this.props.tool ],
               start: this.state.startAnchor ?
                 {
                   connected: true,
@@ -687,7 +688,7 @@ class DrawField extends React.Component<Props, State>
           this.props.addDrawing( {
             id: uuid(),
             type: this.props.tool,
-            color: drawingTypeColors[ this.props.tool ],
+            color: this.props.defaultDrawingColors[ this.props.tool ],
             x: x
           } );
         }
@@ -696,7 +697,7 @@ class DrawField extends React.Component<Props, State>
           this.props.addDrawing( {
             id: uuid(),
             type: this.props.tool,
-            color: drawingTypeColors[ this.props.tool ],
+            color: this.props.defaultDrawingColors[ this.props.tool ],
             y: y
           } );
         }
@@ -705,7 +706,7 @@ class DrawField extends React.Component<Props, State>
           this.props.addDrawing( {
             id: uuid(),
             type: this.props.tool,
-            color: drawingTypeColors[ this.props.tool ],
+            color: this.props.defaultDrawingColors[ this.props.tool ],
             x: x,
             y: y,
             size: 65,
@@ -719,7 +720,7 @@ class DrawField extends React.Component<Props, State>
           this.props.addDrawing( {
             id: uuid(),
             type: this.props.tool!,
-            color: drawingTypeColors[ this.props.tool ],
+            color: this.props.defaultDrawingColors[ this.props.tool ],
             x: x,
             y: y,
             showGuideLine: true,
@@ -786,9 +787,10 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     scale: getScale( state.drawing.scaleLevel ),
     originX: state.drawing.originX,
     originY: state.drawing.originY,
-    gridOn: state.drawing.gridOn,
     drawings: state.drawing.drawings,
-    selectedDrawingId: state.drawing.selectedDrawingId
+    defaultDrawingColors: state.settings.defaultDrawingColors,
+    selectedDrawingId: state.drawing.selectedDrawingId,
+    gridOn: state.settings.gridOn
   } ),
   {
     incrementScaleLevel,

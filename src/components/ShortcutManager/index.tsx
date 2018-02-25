@@ -3,11 +3,12 @@ import { connect } from 'react-redux';
 
 import { deleteDrawing, setTool } from 'store/reducers/drawing';
 import { DrawingTool, Tool } from 'utils/draw';
-import { getAllShortcuts } from 'utils/settings';
+import { getShortcutFromKeyEvent, ShortcutMap } from 'utils/shortcut';
 
 interface PropsFromState
 {
   selectedDrawingId: string | null;
+  shortcuts: ShortcutMap;
 }
 
 interface PropsFromDispatch
@@ -56,9 +57,11 @@ class ShortcutManager extends React.Component<Props>
     }
     else
     {
-      for( let [ tool, shortcut ] of Object.entries( getAllShortcuts() ) )
+      let shortcut = getShortcutFromKeyEvent( e );
+
+      for( let [ tool, toolShortcut ] of Object.entries( this.props.shortcuts ) )
       {
-        if( shortcut === e.key )
+        if( toolShortcut === shortcut )
         {
           this.props.setTool( tool as DrawingTool );
         }
@@ -69,7 +72,8 @@ class ShortcutManager extends React.Component<Props>
 
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   ( state ) => ( {
-    selectedDrawingId: state.drawing.selectedDrawingId
+    selectedDrawingId: state.drawing.selectedDrawingId,
+    shortcuts: state.settings.shortcuts
   } ),
   {
     setTool,

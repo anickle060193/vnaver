@@ -2,7 +2,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import Tooltip from 'components/Tooltip';
-import { resetScaleLevel, resetOrigin, incrementScaleLevel, decrementScaleLevel, setGridOn } from 'store/reducers/drawing';
+import { resetScaleLevel, resetOrigin, incrementScaleLevel, decrementScaleLevel } from 'store/reducers/drawing';
+import { showSettings, setGridOn } from 'store/reducers/settings';
 
 import './styles.css';
 import { getScale } from 'utils/draw';
@@ -32,6 +33,7 @@ interface PropsFromDispatch
   resetScaleLevel: typeof resetScaleLevel;
   resetOrigin: typeof resetOrigin;
   setGridOn: typeof setGridOn;
+  showSettings: typeof showSettings;
 }
 
 type Props = PropsFromState & PropsFromDispatch;
@@ -47,26 +49,26 @@ class DrawFieldControls extends React.Component<Props>
         <div
           className="drawing-scale"
         >
-          <span
-            className="material-icons"
-            onClick={this.onZoomOutClick}
-          >
-            remove
-          </span>
+          <div onClick={this.onZoomOutClick}>
+            <Tooltip align="bottom" title="Zoom Out" />
+            <span className="material-icons">
+              remove
+            </span>
+          </div>
 
-          <span
-            className="drawing-scale-percentage"
-            onClick={this.onResetScale}
-          >
-            {( this.props.scale * 100 ).toFixed( 0 )}%
-          </span>
+          <div onClick={this.onResetScale}>
+            <Tooltip align="bottom" title="Reset Zoom" />
+            <span className="drawing-scale-percentage">
+              {( this.props.scale * 100 ).toFixed( 0 )}%
+            </span>
+          </div>
 
-          <span
-            className="material-icons"
-            onClick={this.onZoomInClick}
-          >
-            add
-          </span>
+          <div onClick={this.onZoomInClick}>
+            <Tooltip align="bottom" title="Zoom In" />
+            <span className="material-icons">
+              add
+            </span>
+          </div>
         </div>
 
         <div
@@ -76,7 +78,7 @@ class DrawFieldControls extends React.Component<Props>
           ].join( ' ' )}
           onClick={this.onResetOrigin}
         >
-          <Tooltip align="left" title="Re-center" />
+          <Tooltip align="bottom" title="Re-center" />
           <svg viewBox="0 0 100 100">
             <path d={centered ? CENTERED_POSITION_PATH : UNCENTERED_POSITION_PATH} />
           </svg>
@@ -86,10 +88,18 @@ class DrawFieldControls extends React.Component<Props>
           className="drawing-grid"
           onClick={this.onToggleGridOn}
         >
-          <Tooltip align="left" title={this.props.gridOn ? 'Hide Grid' : 'Display Grid'} />
+          <Tooltip align="bottom" title={this.props.gridOn ? 'Hide Grid' : 'Display Grid'} />
           <span className="material-icons">
             {!this.props.gridOn ? 'grid_off' : 'grid_on'}
           </span>
+        </div>
+
+        <div
+          className="drawing-settings"
+          onClick={this.onSettingsClick}
+        >
+          <Tooltip align="bottom" title="Settings" />
+          <span className="material-icons">settings</span>
         </div>
       </div>
     );
@@ -123,6 +133,11 @@ class DrawFieldControls extends React.Component<Props>
   {
     this.props.setGridOn( !this.props.gridOn );
   }
+
+  private onSettingsClick = () =>
+  {
+    this.props.showSettings();
+  }
 }
 
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
@@ -130,13 +145,14 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     originX: state.drawing.originX,
     originY: state.drawing.originY,
     scale: getScale( state.drawing.scaleLevel ),
-    gridOn: state.drawing.gridOn
+    gridOn: state.settings.gridOn
   } ),
   {
     incrementScaleLevel,
     decrementScaleLevel,
     resetScaleLevel,
     resetOrigin,
-    setGridOn
+    setGridOn,
+    showSettings
   }
 )( DrawFieldControls );

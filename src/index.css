@@ -2,6 +2,7 @@ html,
 body,
 #root
 {
+  position: relative;
   margin: 0;
   padding: 0;
   width: 100%;
@@ -12,4 +13,11 @@ body,
   user-select: none;
 
   overflow: hidden;
+}
+
+input[type="color"]
+{
+  --vertical-padding: 0.1rem;
+  height: calc( 2.5rem - 2 * var( --vertical-padding ) );
+  padding: var( --vertical-padding ) 0.3rem;
 }

@@ -92,7 +92,6 @@ const ColorInput: React.SFC<{
       <input
         type="color"
         className="form-control"
-        style={{ height: '2.5rem', padding: '0.2rem 0.3rem' }}
         value={color}
         onChange={( e ) => onChange( e.target.value )}
       />

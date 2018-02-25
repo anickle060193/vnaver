@@ -4,6 +4,7 @@ import { Provider } from 'react-redux';
 import ShortcutManager from 'components/ShortcutManager';
 import Layout from 'components/Layout';
 import UpdateNotification from 'components/UpdateNotification';
+import SettingsDialog from 'components/SettingsDialog';
 import store from 'store';
 import { createAutoUpdater } from 'utils/auto_updater';
 
@@ -21,6 +22,7 @@ export default class App extends React.Component
         <ShortcutManager>
           <Layout />
           <UpdateNotification />
+          <SettingsDialog />
         </ShortcutManager>
       </Provider>
     );

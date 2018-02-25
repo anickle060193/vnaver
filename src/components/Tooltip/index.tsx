@@ -5,7 +5,7 @@ import './styles.css';
 interface Props extends React.HTMLProps<HTMLDivElement>
 {
   title: string;
-  align: 'left' | 'right';
+  align: 'left' | 'right' | 'bottom';
 }
 
 interface State

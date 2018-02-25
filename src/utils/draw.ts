@@ -19,6 +19,18 @@ export const enum Tool
 
 export type DrawingTool = DrawingType | Tool;
 
+export const drawingToolDisplayNames: {[ key in DrawingTool ]: string } = {
+  [ Tool.Cursor ]: 'Cursor',
+  [ DrawingType.Above ]: 'Above',
+  [ DrawingType.At ]: 'At',
+  [ DrawingType.Below ]: 'Below',
+  [ DrawingType.Between ]: 'Between',
+  [ DrawingType.PathLine ]: 'Path Line',
+  [ DrawingType.VerticalGridLine ]: 'Vertical Grid Line',
+  [ DrawingType.HorizontalGridLine ]: 'Horizontal Grid Line',
+  [ DrawingType.Plane ]: 'Plane'
+};
+
 export interface DrawingBase<T extends DrawingType>
 {
   type: T;
@@ -108,16 +120,7 @@ export interface DrawingMap
   [ id: string ]: Drawing;
 }
 
-export const drawingTypeColors: {[ key in DrawingType ]: string } = {
-  [ DrawingType.Above ]: '#800080',
-  [ DrawingType.At ]: '#008000',
-  [ DrawingType.Below ]: '#ffa500',
-  [ DrawingType.Between ]: '#0000ff',
-  [ DrawingType.PathLine ]: '#ff0000',
-  [ DrawingType.VerticalGridLine ]: '#ff0000',
-  [ DrawingType.HorizontalGridLine ]: '#00ffff',
-  [ DrawingType.Plane ]: '#000000'
-};
+export type DrawingTypeMap<T> = {[ key in DrawingType ]: T };
 
 export const UP_ARROW_PATH = 'M97.969 73.984l-47.969-47.969L2.031 73.984H97.969z';
 export const DOWN_ARROW_PATH = 'M2.031 26.016l47.969 47.969L97.969 26.016H2.031z';

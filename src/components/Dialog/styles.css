@@ -1,0 +1,85 @@
+.dialog-shade
+{
+  --animation-length: 250ms;
+
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+
+  background-color: rgba(0, 0, 0, 0.356);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.dialog-shade.dialog-showing
+{
+  animation: fade-in var( --animation-length ) ease-in-out;
+}
+
+.dialog-shade.dialog-show
+{
+}
+
+.dialog-shade.dialog-hiding
+{
+  animation: fade-out var( --animation-length ) ease-in-out;
+}
+
+.dialog-shade.dialog-hidden
+{
+  display: none;
+}
+
+.dialog
+{
+  background: white;
+  border-radius: 4px;
+  min-width: 20%;
+  min-height: 20%;
+  box-shadow: 1px 1px 5px 0px rgba(77, 77, 77, 0.664);
+}
+
+.dialog-showing .dialog
+{
+  animation: slide-in var( --animation-length ) ease-in-out,
+             fade-in var( --animation-length ) ease-in-out;
+}
+
+.dialog-show .dialog
+{
+}
+
+.dialog-hiding .dialog
+{
+  animation: slide-out var( --animation-length ) ease-in-out,
+             fade-out var( --animation-length ) ease-in-out;
+}
+
+@keyframes fade-in
+{
+  0% { opacity: 0 }
+  100% { opacity: 1 }
+}
+
+@keyframes fade-out
+{
+  0% { opacity: 1 }
+  100% { opacity: 0 }
+}
+
+@keyframes slide-in
+{
+  0% { transform: translateY( 100vh ) }
+  100% {  transform: translateY( 0 ) }
+}
+
+@keyframes slide-out
+{
+  0% { transform: translateY( 0 ) }
+  100% {  transform: translateY( 100vh ) }
+}

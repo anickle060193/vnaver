@@ -1,8 +1,45 @@
 .draw-controls
 {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  flex-direction: row;
+  align-items: center;
+}
+
+.draw-controls > div:not( :last-child )
+{
+  margin-right: 0.75rem;
+}
+
+.draw-controls > div
+{
+  background: white;
+  box-shadow: 1px 1px 5px 0px rgba(142, 142, 142, 0.664);
+}
+
+.drawing-settings
+{
+  position: relative;
+
+  width: 3rem;
+  height: 3rem;
+  padding: 0.3rem;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+
+  color: slategray;
+  border-radius: 50%;
+}
+
+.drawing-settings .material-icons
+{
+  --size: 36px;
+  font-size: var( --size );
+  width: var( --size );
+  height: var( --size );
 }
 
 .drawing-scale
@@ -16,14 +53,17 @@
   padding: 0.3rem 0.75rem;
   font-size: 14pt;
 
-  background: white;
   border-radius: 4px;
-
-  box-shadow: 1px 1px 5px 0px rgba(142, 142, 142, 0.664);
 }
 
-.drawing-scale .material-icons
+.drawing-scale > div
 {
+  position: relative;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   cursor: pointer;
 }
 
@@ -38,7 +78,6 @@
 
   width: 3rem;
   height: 3rem;
-  margin-top: 0.75rem;
   padding: 0.3rem;
 
   display: flex;
@@ -48,9 +87,7 @@
   cursor: pointer;
 
   font-size: 14pt;
-  background: white;
   border-radius: 50%;
-  box-shadow: 1px 1px 5px 0px rgba(142, 142, 142, 0.664);
 
   fill: rgb(136, 136, 136);
 }
@@ -72,7 +109,6 @@
 
   width: 3rem;
   height: 3rem;
-  margin-top: 0.75rem;
   padding: 0.3rem;
 
   display: flex;
@@ -81,10 +117,8 @@
 
   cursor: pointer;
 
-  background: white;
   color: slategray;
   border-radius: 8px;
-  box-shadow: 1px 1px 5px 0px rgba(142, 142, 142, 0.664);
 }
 
 .drawing-grid .material-icons

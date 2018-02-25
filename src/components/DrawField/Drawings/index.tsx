@@ -16,7 +16,8 @@ import
   DrawingMap,
   getEndPointPosition,
   PlaneDrawing,
-  PLANE_PATH
+  PLANE_PATH,
+  DrawingTypeMap
 } from 'utils/draw';
 import { assertNever } from 'utils/utils';
 
@@ -214,7 +215,7 @@ export const Plane: React.SFC<DrawingComponentProps<PlaneDrawing>> = ( { drawing
   />
 );
 
-export const drawingComponentMap: {[ key in DrawingType ]: React.SFC<DrawingComponentProps<Drawing>> | React.ComponentClass<DrawingComponentProps<Drawing>> } = {
+export const drawingComponentMap: DrawingTypeMap<React.SFC<DrawingComponentProps<Drawing>> | React.ComponentClass<DrawingComponentProps<Drawing>>> = {
   [ DrawingType.Above ]: Above,
   [ DrawingType.At ]: At,
   [ DrawingType.Below ]: Below,

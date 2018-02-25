@@ -22,7 +22,6 @@ export interface State
   scaleLevel: number;
   originX: number;
   originY: number;
-  gridOn: boolean;
   drawings: DrawingMap;
   selectedDrawingId: string | null;
 }
@@ -32,7 +31,6 @@ const initialState: State = {
   scaleLevel: DEFAULT_SCALE_LEVEL,
   originX: 0.0,
   originY: 0.0,
-  gridOn: false,
   drawings: {},
   selectedDrawingId: null
 };
@@ -45,7 +43,6 @@ export const decrementScaleLevel = actionCreator( 'DECREMENT_SCALE_LEVEL' );
 export const resetScaleLevel = actionCreator( 'RESET_SCALE_LEVEL' );
 export const setOrigin = actionCreator<{ originX: number, originY: number }>( 'SET_ORIGIN' );
 export const resetOrigin = actionCreator( 'RESET_ORIGIN' );
-export const setGridOn = actionCreator<boolean>( 'SET_GRID_ON' );
 export const addDrawing = actionCreator<Drawing>( 'ADD_DRAWING' );
 export const selectDrawing = actionCreator<string>( 'SELECT_DRAWING' );
 export const deselectDrawing = actionCreator( 'DESELECT_DRAWING' );
@@ -94,11 +91,6 @@ export const reducer = reducerWithInitialState( initialState )
       ...state,
       originX: 0.0,
       originY: 0.0
-    } ) )
-  .case( setGridOn, ( state, gridOn ) =>
-    ( {
-      ...state,
-      gridOn
     } ) )
   .case( addDrawing, ( state, drawing ) => ( {
     ...setDrawingInState( state, drawing ),
