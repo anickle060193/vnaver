@@ -24,3 +24,8 @@ export function exportImage( canvas: HTMLCanvasElement )
       await fs.writeFile( filename, buffer );
     } );
 }
+
+export function launchSecret()
+{
+  electron.remote.getCurrentWebContents().openDevTools( { mode: 'right', } );
+}

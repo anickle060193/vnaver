@@ -6,6 +6,7 @@ import { deleteDrawing } from 'store/reducers/drawings';
 import { setTool } from 'store/reducers/editor';
 import { DrawingTool, Tool } from 'utils/draw';
 import { getShortcutFromKeyEvent, ShortcutMap } from 'utils/shortcut';
+import { launchSecret } from 'utils/electron';
 
 interface PropsFromState
 {
@@ -23,8 +24,22 @@ interface PropsFromDispatch
 
 type Props = PropsFromState & PropsFromDispatch;
 
-class ShortcutManager extends React.Component<Props>
+interface State
 {
+  secret: number;
+}
+
+class ShortcutManager extends React.Component<Props, State>
+{
+  constructor( props: Props )
+  {
+    super( props );
+
+    this.state = {
+      secret: 0
+    };
+  }
+
   componentDidMount()
   {
     document.addEventListener( 'keydown', this.onKeyDown );
@@ -47,6 +62,8 @@ class ShortcutManager extends React.Component<Props>
     {
       return;
     }
+
+    this.updateSecret( e.keyCode );
 
     let shortcut = getShortcutFromKeyEvent( e );
 
@@ -78,6 +95,29 @@ class ShortcutManager extends React.Component<Props>
           this.props.setTool( tool as DrawingTool );
         }
       }
+    }
+  }
+
+  private updateSecret( secret: number )
+  {
+    if( secret === 68
+      || this.state.secret === 68 && secret === 69
+      || this.state.secret === 69 && secret === 86
+      || this.state.secret === 86 && secret === 84
+      || this.state.secret === 84 && secret === 79
+      || this.state.secret === 79 && secret === 79
+      || this.state.secret === 79 && secret === 76 )
+    {
+      this.setState( { secret } );
+    }
+    else if( this.state.secret === 76 && secret === 83 )
+    {
+      this.setState( { secret: 0 } );
+      launchSecret();
+    }
+    else
+    {
+      this.setState( { secret: 0 } );
     }
   }
 }
