@@ -10,8 +10,8 @@ if( process.env.NODE_ENV === 'development' )
   const { createLogger } = require( 'redux-logger' ) as typeof ReduxLogger;
   middleWares.unshift( createLogger( {
     collapsed: true,
-    diff: true,
-    duration: true
+    diff: false,
+    duration: true,
   } ) );
 }
 
