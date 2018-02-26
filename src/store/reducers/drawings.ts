@@ -105,7 +105,7 @@ const baseReducer = reducerWithInitialState( initialState )
     };
   } )
   .case( updateDrawing, setDrawingInState )
-  .case( moveDrawing, ( state, { drawingId, drawingType, deltaX, deltaY } ) =>
+  .case( moveDrawing, ( state, { drawingId, x, y } ) =>
   {
     let drawing = state.drawings[ drawingId ];
 
@@ -118,22 +118,22 @@ const baseReducer = reducerWithInitialState( initialState )
     {
       return setDrawingInState( state, {
         ...drawing,
-        x: drawing.x + deltaX,
-        y: drawing.y + deltaY,
+        x,
+        y
       } );
     }
     else if( drawing.type === DrawingType.HorizontalGridLine )
     {
       return setDrawingInState( state, {
         ...drawing,
-        y: drawing.y + deltaY
+        y
       } );
     }
     else if( drawing.type === DrawingType.VerticalGridLine )
     {
       return setDrawingInState( state, {
         ...drawing,
-        x: drawing.x + deltaX
+        x
       } );
     }
     else if( drawing.type === DrawingType.PathLine )

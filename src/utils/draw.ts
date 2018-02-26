@@ -278,12 +278,9 @@ export const getEndPointPosition = ( endPoint: EndPoint, drawings: DrawingMap ):
   }
 };
 
-interface BaseDraggingInfo<T extends DrawingType>
+export interface DraggingInfo
 {
-  drawingType: T;
   drawingId: string;
-  deltaX: number;
-  deltaY: number;
+  x: number;
+  y: number;
 }
-
-export type DraggingInfo = BaseDraggingInfo<DrawingType>;

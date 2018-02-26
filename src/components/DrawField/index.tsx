@@ -576,6 +576,8 @@ class DrawField extends React.Component<Props, State>
 
   private onDocumentMouseMove = ( e: MouseEvent ) =>
   {
+    let { x, y } = this.mouseToDrawing( e );
+
     if( ( e.buttons & 1 ) === 1 // tslint:disable-line no-bitwise
       && this.mouseDown )
     {
@@ -597,9 +599,8 @@ class DrawField extends React.Component<Props, State>
 
           this.props.moveDrawing( {
             drawingId: this.state.mouseDownDrawing.id,
-            drawingType: this.state.mouseDownDrawing.type,
-            deltaX: e.movementX / this.props.scale,
-            deltaY: e.movementY / this.props.scale
+            x,
+            y
           } );
         }
       }
@@ -623,8 +624,6 @@ class DrawField extends React.Component<Props, State>
         } );
       }
     }
-
-    let { x, y } = this.mouseToDrawing( e );
 
     this.setState( {
       mouseX: x,
