@@ -1,7 +1,7 @@
 {
   "name": "vnaver",
   "displayName": "VNAVer",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "A simple application to create VNAV diagrams.",
   "author": {
     "email": "anickle060193@gmail.com",
