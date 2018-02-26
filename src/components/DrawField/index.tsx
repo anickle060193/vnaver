@@ -4,7 +4,7 @@ import { Stage, Layer, Rect } from 'react-konva';
 import * as uuid from 'uuid/v4';
 
 import Grid from 'components/DrawField/Grid';
-import { drawingComponentMap, Between, VerticalGridLine, HorizontalGridLine, ActiveIndication, Plane } from 'components/DrawField/Drawings';
+import { drawingComponentMap, Between, VerticalGridLine, HorizontalGridLine, ActiveIndication, Plane, Text } from 'components/DrawField/Drawings';
 import PathLine from 'components/DrawField/Drawings/PathLine';
 import { addDrawing, selectDrawing, deselectDrawing, moveDrawing } from 'store/reducers/drawings';
 import { incrementScaleLevel, decrementScaleLevel, setOrigin } from 'store/reducers/editor';
@@ -21,7 +21,9 @@ import
   EndPoint,
   getEndPointPosition,
   LineStyle,
-  LineDashStyle
+  LineDashStyle,
+  HorizontalAlign,
+  VerticalAlign
 } from 'utils/draw';
 import { mapToArray, assertNever, distance, roundToNearest } from 'utils/utils';
 
@@ -40,6 +42,13 @@ const DEFAULT_GUIDE_LINE_STYLE: LineStyle = {
 const DEFAULT_PATH_LINE_STYLE: LineStyle = {
   dash: LineDashStyle.Solid,
   strokeWidth: 2
+};
+
+const DEFAULT_TEXT_DRAWING = {
+  fontSize: 24,
+  horizontalAlign: HorizontalAlign.Left,
+  verticalAlign: VerticalAlign.Top,
+  text: 'Text'
 };
 
 const NEAR_DISTANCE = 15;
@@ -292,6 +301,21 @@ class DrawField extends React.Component<Props, State>
           />
         );
       }
+      else if( this.props.tool === DrawingType.Text )
+      {
+        cursor = (
+          <Text
+            drawing={{
+              id: '',
+              type: this.props.tool,
+              color: this.props.defaultDrawingColors[ this.props.tool ],
+              x: this.state.mouseX,
+              y: this.state.mouseY,
+              ...DEFAULT_TEXT_DRAWING
+            }}
+          />
+        );
+      }
       else if( this.props.tool === DrawingType.At ||
         this.props.tool === DrawingType.Above ||
         this.props.tool === DrawingType.Below )
@@ -408,7 +432,8 @@ class DrawField extends React.Component<Props, State>
       [ DrawingType.At ]: 4,
       [ DrawingType.Below ]: 5,
       [ DrawingType.Between ]: 6,
-      [ DrawingType.Plane ]: 7
+      [ DrawingType.Plane ]: 7,
+      [ DrawingType.Text ]: 8
     };
     return mapToArray( this.props.drawings ).sort( ( d1, d2 ) =>
     {
@@ -740,6 +765,18 @@ class DrawField extends React.Component<Props, State>
             y: y,
             size: 65,
             rotation: 0
+          } );
+        }
+        else if( this.props.tool === DrawingType.Text )
+        {
+          added = true;
+          this.props.addDrawing( {
+            id: uuid(),
+            type: this.props.tool,
+            color: this.props.defaultDrawingColors[ this.props.tool ],
+            x: x,
+            y: y,
+            ...DEFAULT_TEXT_DRAWING
           } );
         }
         else if( this.props.tool === DrawingType.At

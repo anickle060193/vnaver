@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Path, Text, Label, Tag, Group } from 'react-konva';
+import { Path, Text as KText, Label, Tag, Group } from 'react-konva';
 
 import { DrawingComponentProps, LineDrawing } from './DrawingComponent';
 import PathLine from './PathLine';
@@ -18,7 +18,10 @@ import
   PlaneDrawing,
   PLANE_PATH,
   DrawingTypeMap,
-  LineStyle
+  LineStyle,
+  TextDrawing,
+  VerticalAlign,
+  HorizontalAlign
 } from 'utils/draw';
 import { assertNever } from 'utils/utils';
 
@@ -220,6 +223,52 @@ export const Plane: React.SFC<DrawingComponentProps<PlaneDrawing>> = ( { drawing
   />
 );
 
+const horizontalAlignMap: {[ key in HorizontalAlign ]: string } = {
+  [ HorizontalAlign.Left ]: 'left',
+  [ HorizontalAlign.Center ]: 'center',
+  [ HorizontalAlign.Right ]: 'right'
+};
+
+const calculateTextHeight = ( text: string, fontSize: number ) =>
+{
+  return text.split( '\n' ).length * fontSize;
+};
+
+const calculateTextY = ( text: string, fontSize: number, y: number, verticalAlign: VerticalAlign ) =>
+{
+  if( verticalAlign === VerticalAlign.Top )
+  {
+    return y;
+  }
+  else if( verticalAlign === VerticalAlign.Center )
+  {
+    return y - calculateTextHeight( text, fontSize ) / 2;
+  }
+  else if( verticalAlign === VerticalAlign.Bottom )
+  {
+    return y - calculateTextHeight( text, fontSize );
+  }
+  else
+  {
+    throw assertNever( verticalAlign );
+  }
+};
+
+export const Text: React.SFC<DrawingComponentProps<TextDrawing>> = ( { drawing, onClick, onMouseDown } ) => (
+  <KText
+    x={drawing.x}
+    y={calculateTextY( drawing.text, drawing.fontSize, drawing.y, drawing.verticalAlign )}
+    text={drawing.text}
+    fontFamily="Roboto"
+    fontSize={drawing.fontSize}
+    fill={drawing.color}
+    align={horizontalAlignMap[ drawing.horizontalAlign ]}
+    wrap="none"
+    onClick={onClick}
+    onMouseDown={onMouseDown}
+  />
+);
+
 export const drawingComponentMap: DrawingTypeMap<React.SFC<DrawingComponentProps<Drawing>> | React.ComponentClass<DrawingComponentProps<Drawing>>> = {
   [ DrawingType.Above ]: Above,
   [ DrawingType.At ]: At,
@@ -228,7 +277,8 @@ export const drawingComponentMap: DrawingTypeMap<React.SFC<DrawingComponentProps
   [ DrawingType.PathLine ]: PathLine,
   [ DrawingType.VerticalGridLine ]: VerticalGridLine,
   [ DrawingType.HorizontalGridLine ]: HorizontalGridLine,
-  [ DrawingType.Plane ]: Plane
+  [ DrawingType.Plane ]: Plane,
+  [ DrawingType.Text ]: Text
 };
 
 export const ActiveIndication: React.SFC<{
@@ -303,6 +353,24 @@ export const ActiveIndication: React.SFC<{
       x = drawing.x + drawing.size / 2 + 5;
       y = drawing.y;
     }
+    else if( drawing.type === DrawingType.Text )
+    {
+      arrowDirection = 'right';
+      x = drawing.x - 4;
+
+      if( drawing.verticalAlign === VerticalAlign.Top )
+      {
+        y = drawing.y + calculateTextHeight( drawing.text, drawing.fontSize ) / 2;
+      }
+      else if( drawing.verticalAlign === VerticalAlign.Bottom )
+      {
+        y = drawing.y - calculateTextHeight( drawing.text, drawing.fontSize ) / 2;
+      }
+      else
+      {
+        y = drawing.y;
+      }
+    }
     else
     {
       throw assertNever( drawing.type );
@@ -318,7 +386,7 @@ export const ActiveIndication: React.SFC<{
           pointerHeight={10}
           lineJoin="round"
         />
-        <Text
+        <KText
           text={drawing.id}
           fill="white"
           fontFamily="Roboto"

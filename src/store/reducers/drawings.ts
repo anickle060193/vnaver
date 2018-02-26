@@ -10,7 +10,6 @@ import
   DrawingMap,
   DEFAULT_SCALE_LEVEL,
   DrawingType,
-  BetweenDrawing,
   DraggingInfo
 } from 'utils/draw';
 import { mapToArray, arrayToMap, assertNever } from 'utils/utils';
@@ -112,17 +111,12 @@ const baseReducer = reducerWithInitialState( initialState )
 
     if( drawing.type === DrawingType.Above
       || drawing.type === DrawingType.At
-      || drawing.type === DrawingType.Below )
+      || drawing.type === DrawingType.Below
+      || drawing.type === DrawingType.Between
+      || drawing.type === DrawingType.Plane
+      || drawing.type === DrawingType.Text )
     {
       return setDrawingInState( state, {
-        ...drawing,
-        x: drawing.x + deltaX,
-        y: drawing.y + deltaY,
-      } );
-    }
-    else if( drawing.type === DrawingType.Between )
-    {
-      return setDrawingInState<BetweenDrawing>( state, {
         ...drawing,
         x: drawing.x + deltaX,
         y: drawing.y + deltaY,
@@ -145,14 +139,6 @@ const baseReducer = reducerWithInitialState( initialState )
     else if( drawing.type === DrawingType.PathLine )
     {
       return state;
-    }
-    else if( drawing.type === DrawingType.Plane )
-    {
-      return setDrawingInState( state, {
-        ...drawing,
-        x: drawing.x + deltaX,
-        y: drawing.y + deltaY
-      } );
     }
     else
     {

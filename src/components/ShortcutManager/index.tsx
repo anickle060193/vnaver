@@ -43,7 +43,7 @@ class ShortcutManager extends React.Component<Props>
   private onKeyDown = ( e: KeyboardEvent ) =>
   {
     let target = e.target as HTMLElement;
-    if( target.matches( 'input' ) )
+    if( target.matches( 'input, select, textarea' ) )
     {
       return;
     }

@@ -9,7 +9,8 @@ export const enum DrawingType
   PathLine = 'PathLine',
   VerticalGridLine = 'VerticalGridLine',
   HorizontalGridLine = 'HorizontalGridLine',
-  Plane = 'Plane'
+  Plane = 'Plane',
+  Text = 'Text'
 }
 
 export const enum Tool
@@ -28,7 +29,8 @@ export const drawingToolDisplayNames: {[ key in DrawingTool ]: string } = {
   [ DrawingType.PathLine ]: 'Path Line',
   [ DrawingType.VerticalGridLine ]: 'Vertical Grid Line',
   [ DrawingType.HorizontalGridLine ]: 'Horizontal Grid Line',
-  [ DrawingType.Plane ]: 'Plane'
+  [ DrawingType.Plane ]: 'Plane',
+  [ DrawingType.Text ]: 'Text'
 };
 
 export interface DrawingBase<T extends DrawingType>
@@ -145,13 +147,38 @@ export interface PlaneDrawing extends DrawingBase<DrawingType.Plane>
   rotation: number;
 }
 
+export enum HorizontalAlign
+{
+  Left = 'Left',
+  Center = 'Center',
+  Right = 'Right'
+}
+
+export enum VerticalAlign
+{
+  Top = 'Top',
+  Center = 'Center',
+  Bottom = 'Bottom'
+}
+
+export interface TextDrawing extends DrawingBase<DrawingType.Text>
+{
+  x: number;
+  y: number;
+  horizontalAlign: HorizontalAlign;
+  verticalAlign: VerticalAlign;
+  text: string;
+  fontSize: number;
+}
+
 export type Drawing = (
   BasicDrawing<BasicDrawingTypes> |
   BetweenDrawing |
   PathLineDrawing |
   VerticalGridLineDrawing |
   HorizontalGridLineDrawing |
-  PlaneDrawing
+  PlaneDrawing |
+  TextDrawing
 );
 
 export type AnchorDrawing = (

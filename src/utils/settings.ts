@@ -90,7 +90,8 @@ class Settings
       [ DrawingType.PathLine ]: this.getShortcutSetting( DrawingType.PathLine ),
       [ DrawingType.VerticalGridLine ]: this.getShortcutSetting( DrawingType.VerticalGridLine ),
       [ DrawingType.HorizontalGridLine ]: this.getShortcutSetting( DrawingType.HorizontalGridLine ),
-      [ DrawingType.Plane ]: this.getShortcutSetting( DrawingType.Plane )
+      [ DrawingType.Plane ]: this.getShortcutSetting( DrawingType.Plane ),
+      [ DrawingType.Text ]: this.getShortcutSetting( DrawingType.Text )
     };
   }
 
@@ -114,7 +115,8 @@ class Settings
       [ DrawingType.PathLine ]: this.getDefaultDrawingColorSetting( DrawingType.PathLine ),
       [ DrawingType.VerticalGridLine ]: this.getDefaultDrawingColorSetting( DrawingType.VerticalGridLine ),
       [ DrawingType.HorizontalGridLine ]: this.getDefaultDrawingColorSetting( DrawingType.HorizontalGridLine ),
-      [ DrawingType.Plane ]: this.getDefaultDrawingColorSetting( DrawingType.Plane )
+      [ DrawingType.Plane ]: this.getDefaultDrawingColorSetting( DrawingType.Plane ),
+      [ DrawingType.Text ]: this.getDefaultDrawingColorSetting( DrawingType.Text )
     };
   }
 

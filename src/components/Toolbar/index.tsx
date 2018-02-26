@@ -12,7 +12,7 @@ const CURSOR_PATH = 'M18 2l64 49.116-27.804 4.68 17.3 35.268-14.384 6.936-17.4-3
 
 interface PropsFromState
 {
-  tool: DrawingTool | null;
+  tool: DrawingTool;
   shortcuts: ShortcutMap;
   defaultDrawingColors: DrawingTypeMap<string>;
 }
@@ -24,6 +24,22 @@ interface PropsFromDispatch
 
 type Props = ( PropsFromState & PropsFromDispatch );
 
+const DrawingToolToolbarItem: React.SFC<{
+  tool: DrawingTool;
+  selectedTool: DrawingTool;
+  onClick: ( tool: DrawingTool ) => void;
+  shortcuts: ShortcutMap;
+}> = ( { tool, selectedTool, onClick, children, shortcuts } ) => (
+  <ToolbarItem
+    title={drawingToolDisplayNames[ tool ]}
+    shortcut={shortcuts[ tool ]}
+    active={tool === selectedTool}
+    onClick={() => onClick( tool )}
+  >
+    {children}
+  </ToolbarItem>
+);
+
 class Toolbar extends React.Component<Props>
 {
   render()
@@ -33,48 +49,65 @@ class Toolbar extends React.Component<Props>
 
         <div className="toolbar">
 
-          <ToolbarItem
-            title={drawingToolDisplayNames[ Tool.Cursor ]}
-            shortcut={this.props.shortcuts[ Tool.Cursor ]}
-            active={this.props.tool === Tool.Cursor}
-            onClick={() => this.onToolClick( Tool.Cursor )}
+          <DrawingToolToolbarItem
+            tool={Tool.Cursor}
+            selectedTool={this.props.tool}
+            shortcuts={this.props.shortcuts}
+            onClick={this.onToolClick}
           >
             <svg viewBox="0 0 100 100" style={{ width: '2.5rem', height: '2.5rem' }}>
               <path d={CURSOR_PATH} />
             </svg>
-          </ToolbarItem>
+          </DrawingToolToolbarItem>
 
         </div>
 
         <div className="toolbar">
 
-          <ToolbarItem
-            title={drawingToolDisplayNames[ DrawingType.Plane ]}
-            shortcut={this.props.shortcuts[ DrawingType.Plane ]}
-            active={this.props.tool === DrawingType.Plane}
-            onClick={() => this.onToolClick( DrawingType.Plane )}
+          <DrawingToolToolbarItem
+            tool={DrawingType.Plane}
+            selectedTool={this.props.tool}
+            shortcuts={this.props.shortcuts}
+            onClick={this.onToolClick}
           >
             <svg viewBox="-50 -50 100 100" style={{ width: '2rem', height: '2rem' }}>
               <path d={PLANE_PATH} fill={this.props.defaultDrawingColors[ DrawingType.Plane ]} />
             </svg>
-          </ToolbarItem>
+          </DrawingToolToolbarItem>
 
-          <ToolbarItem
-            title={drawingToolDisplayNames[ DrawingType.Above ]}
-            shortcut={this.props.shortcuts[ DrawingType.Above ]}
-            active={this.props.tool === DrawingType.Above}
-            onClick={() => this.onToolClick( DrawingType.Above )}
+          <DrawingToolToolbarItem
+            tool={DrawingType.Text}
+            selectedTool={this.props.tool}
+            shortcuts={this.props.shortcuts}
+            onClick={this.onToolClick}
+          >
+            <span
+              className="material-icons"
+              style={{
+                color: this.props.defaultDrawingColors[ DrawingType.Text ],
+                fontSize: '26pt'
+              }}
+            >
+              text_fields
+            </span>
+          </DrawingToolToolbarItem>
+
+          <DrawingToolToolbarItem
+            tool={DrawingType.Above}
+            selectedTool={this.props.tool}
+            shortcuts={this.props.shortcuts}
+            onClick={this.onToolClick}
           >
             <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
               <path d={UP_ARROW_PATH} fill={this.props.defaultDrawingColors[ DrawingType.Above ]} />
             </svg>
-          </ToolbarItem>
+          </DrawingToolToolbarItem>
 
-          <ToolbarItem
-            title={drawingToolDisplayNames[ DrawingType.At ]}
-            shortcut={this.props.shortcuts[ DrawingType.At ]}
-            active={this.props.tool === DrawingType.At}
-            onClick={() => this.onToolClick( DrawingType.At )}
+          <DrawingToolToolbarItem
+            tool={DrawingType.At}
+            selectedTool={this.props.tool}
+            shortcuts={this.props.shortcuts}
+            onClick={this.onToolClick}
           >
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', marginBottom: '-20px' }}>
@@ -84,24 +117,24 @@ class Toolbar extends React.Component<Props>
                 <path d={UP_ARROW_PATH} fill={this.props.defaultDrawingColors[ DrawingType.At ]} />
               </svg>
             </div>
-          </ToolbarItem>
+          </DrawingToolToolbarItem>
 
-          <ToolbarItem
-            title={drawingToolDisplayNames[ DrawingType.Below ]}
-            shortcut={this.props.shortcuts[ DrawingType.Below ]}
-            active={this.props.tool === DrawingType.Below}
-            onClick={() => this.onToolClick( DrawingType.Below )}
+          <DrawingToolToolbarItem
+            tool={DrawingType.Below}
+            selectedTool={this.props.tool}
+            shortcuts={this.props.shortcuts}
+            onClick={this.onToolClick}
           >
             <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
               <path d={DOWN_ARROW_PATH} fill={this.props.defaultDrawingColors[ DrawingType.Below ]} />
             </svg>
-          </ToolbarItem>
+          </DrawingToolToolbarItem>
 
-          <ToolbarItem
-            title={drawingToolDisplayNames[ DrawingType.Between ]}
-            shortcut={this.props.shortcuts[ DrawingType.Between ]}
-            active={this.props.tool === DrawingType.Between}
-            onClick={() => this.onToolClick( DrawingType.Between )}
+          <DrawingToolToolbarItem
+            tool={DrawingType.Between}
+            selectedTool={this.props.tool}
+            shortcuts={this.props.shortcuts}
+            onClick={this.onToolClick}
           >
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem', marginBottom: '-8px' }}>
@@ -111,13 +144,13 @@ class Toolbar extends React.Component<Props>
                 <path d={UP_ARROW_PATH} fill={this.props.defaultDrawingColors[ DrawingType.Between ]} />
               </svg>
             </div>
-          </ToolbarItem>
+          </DrawingToolToolbarItem>
 
-          <ToolbarItem
-            title={drawingToolDisplayNames[ DrawingType.PathLine ]}
-            shortcut={this.props.shortcuts[ DrawingType.PathLine ]}
-            active={this.props.tool === DrawingType.PathLine}
-            onClick={() => this.onToolClick( DrawingType.PathLine )}
+          <DrawingToolToolbarItem
+            tool={DrawingType.PathLine}
+            selectedTool={this.props.tool}
+            shortcuts={this.props.shortcuts}
+            onClick={this.onToolClick}
           >
             <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
               <line x1={10} y1={10} x2={80} y2={80} stroke={this.props.defaultDrawingColors[ DrawingType.PathLine ]} strokeWidth={6} />
@@ -126,29 +159,29 @@ class Toolbar extends React.Component<Props>
               <circle cx={80} cy={80} r={10} fill={this.props.defaultDrawingColors[ DrawingType.PathLine ]} />
               <circle cx={80} cy={80} r={6} fill="white" />
             </svg>
-          </ToolbarItem>
+          </DrawingToolToolbarItem>
 
-          <ToolbarItem
-            title={drawingToolDisplayNames[ DrawingType.VerticalGridLine ]}
-            shortcut={this.props.shortcuts[ DrawingType.VerticalGridLine ]}
-            active={this.props.tool === DrawingType.VerticalGridLine}
-            onClick={() => this.onToolClick( DrawingType.VerticalGridLine )}
+          <DrawingToolToolbarItem
+            tool={DrawingType.VerticalGridLine}
+            selectedTool={this.props.tool}
+            shortcuts={this.props.shortcuts}
+            onClick={this.onToolClick}
           >
             <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
               <path d="M20 5 L20 95 M50 5 L50 95 M80 5 L80 95" stroke={this.props.defaultDrawingColors[ DrawingType.VerticalGridLine ]} strokeWidth={6} />
             </svg>
-          </ToolbarItem>
+          </DrawingToolToolbarItem>
 
-          <ToolbarItem
-            title={drawingToolDisplayNames[ DrawingType.HorizontalGridLine ]}
-            shortcut={this.props.shortcuts[ DrawingType.HorizontalGridLine ]}
-            active={this.props.tool === DrawingType.HorizontalGridLine}
-            onClick={() => this.onToolClick( DrawingType.HorizontalGridLine )}
+          <DrawingToolToolbarItem
+            tool={DrawingType.HorizontalGridLine}
+            selectedTool={this.props.tool}
+            shortcuts={this.props.shortcuts}
+            onClick={this.onToolClick}
           >
             <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
               <path d="M5 20 L95 20 M5 50 L95 50 M5 80 L95 80" stroke={this.props.defaultDrawingColors[ DrawingType.HorizontalGridLine ]} strokeWidth={6} />
             </svg>
-          </ToolbarItem>
+          </DrawingToolToolbarItem>
 
         </div>
 

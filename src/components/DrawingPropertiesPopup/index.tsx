@@ -12,7 +12,8 @@ import
   VerticalGridLineDrawingProperties,
   HorizontalGridLineDrawingProperties,
   PlaneDrawingProperties,
-  PathLineDrawingProperties
+  PathLineDrawingProperties,
+  TextDrawingProperties
 } from './DrawingProperties';
 import { assertNever } from 'utils/utils';
 
@@ -99,6 +100,16 @@ class DrawingProperties extends React.Component<Props>
     {
       drawingProperties = (
         <PlaneDrawingProperties
+          drawing={selectedDrawing}
+          onChange={this.onDrawingChange}
+          onColorChange={( color ) => this.onColorChange( selectedDrawing, color )}
+        />
+      );
+    }
+    else if( selectedDrawing.type === DrawingType.Text )
+    {
+      drawingProperties = (
+        <TextDrawingProperties
           drawing={selectedDrawing}
           onChange={this.onDrawingChange}
           onColorChange={( color ) => this.onColorChange( selectedDrawing, color )}

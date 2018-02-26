@@ -16,7 +16,10 @@ import
   getEndPointPosition,
   LineStyle,
   dashStyles,
-  LineDashStyle
+  LineDashStyle,
+  TextDrawing,
+  HorizontalAlign,
+  VerticalAlign
 } from 'utils/draw';
 import { selectDrawing } from 'store/reducers/drawings';
 
@@ -36,11 +39,12 @@ type NumberInputChangeHandler = ( value: number ) => void;
 const NumberInput: React.SFC<{
   val: number;
   label: string;
+  labelWidth?: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
   onChange: NumberInputChangeHandler;
-}> = ( { val, label, onChange } ) => (
+}> = ( { val, label, labelWidth = 3, onChange } ) => (
   <div className="form-group row">
-    <label className="col-sm-3 col-form-label">{label}:</label>
-    <div className="col-sm-9">
+    <label className={`col-sm-${labelWidth} col-form-label`}>{label}:</label>
+    <div className={`col-sm-${12 - labelWidth}`}>
       <input
         type="number"
         className="form-control"
@@ -644,6 +648,124 @@ export class PathLineDrawingProperties extends DrawingPropertiesComponent<PathLi
     this.props.onChange( {
       ...this.props.drawing,
       ...lineStyle
+    } );
+  }
+}
+
+export class TextDrawingProperties extends DrawingPropertiesComponent<TextDrawing>
+{
+  render()
+  {
+    return (
+      <form>
+
+        <div className="form-group">
+          <textarea
+            className="form-control"
+            rows={4}
+            cols={35}
+            value={this.props.drawing.text}
+            onChange={this.onTextChange}
+          />
+        </div>
+
+        <XyInputs
+          x={this.props.drawing.x}
+          y={this.props.drawing.y}
+          onXChange={this.onXChange}
+          onYChange={this.onYChange}
+        />
+        <ColorInput
+          color={this.props.drawing.color}
+          onChange={this.props.onColorChange}
+        />
+
+        <NumberInput
+          label="Font Size"
+          labelWidth={6}
+          val={this.props.drawing.fontSize}
+          onChange={this.onFontSizeChange}
+        />
+
+        <div className="form-group row">
+          <label className="col-sm-6 col-form-label">Horizontal Align:</label>
+          <div className="col-sm-6">
+            <select
+              className="form-control"
+              value={this.props.drawing.horizontalAlign}
+              onChange={this.onHorizontalAlignChange}
+            >
+              {Object.keys( HorizontalAlign ).map( ( horizontalAlign ) => (
+                <option key={horizontalAlign} value={horizontalAlign}>{horizontalAlign}</option>
+              ) )}
+            </select>
+          </div>
+        </div>
+
+        <div className="form-group row">
+          <label className="col-sm-6 col-form-label">Vertical Align:</label>
+          <div className="col-sm-6">
+            <select
+              className="form-control"
+              value={this.props.drawing.verticalAlign}
+              onChange={this.onVerticalAlignChange}
+            >
+              {Object.keys( VerticalAlign ).map( ( verticalAlign ) => (
+                <option key={verticalAlign} value={verticalAlign}>{verticalAlign}</option>
+              ) )}
+            </select>
+          </div>
+        </div>
+
+      </form>
+    );
+  }
+
+  private onTextChange = ( e: React.ChangeEvent<HTMLTextAreaElement> ) =>
+  {
+    this.props.onChange( {
+      ...this.props.drawing,
+      text: e.target.value
+    } );
+  }
+
+  private onXChange = ( x: number ) =>
+  {
+    this.props.onChange( {
+      ...this.props.drawing,
+      x
+    } );
+  }
+
+  private onYChange = ( y: number ) =>
+  {
+    this.props.onChange( {
+      ...this.props.drawing,
+      y
+    } );
+  }
+
+  private onFontSizeChange = ( fontSize: number ) =>
+  {
+    this.props.onChange( {
+      ...this.props.drawing,
+      fontSize
+    } );
+  }
+
+  private onHorizontalAlignChange = ( e: React.ChangeEvent<HTMLSelectElement> ) =>
+  {
+    this.props.onChange( {
+      ...this.props.drawing,
+      horizontalAlign: e.target.value as HorizontalAlign
+    } );
+  }
+
+  private onVerticalAlignChange = ( e: React.ChangeEvent<HTMLSelectElement> ) =>
+  {
+    this.props.onChange( {
+      ...this.props.drawing,
+      verticalAlign: e.target.value as VerticalAlign
     } );
   }
 }
