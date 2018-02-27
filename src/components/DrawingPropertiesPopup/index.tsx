@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { deleteDrawing, updateDrawing } from 'store/reducers/drawings';
+import { deleteDrawing, updateDrawing, deselectDrawing } from 'store/reducers/drawings';
 import { Drawing, DrawingType, DrawingMap, drawingToolDisplayNames } from 'utils/draw';
 
 import './styles.css';
@@ -27,6 +27,7 @@ interface PropsFromDispatch
 {
   deleteDrawing: typeof deleteDrawing;
   updateDrawing: typeof updateDrawing;
+  deselectDrawing: typeof deselectDrawing;
 }
 
 type Props = PropsFromState & PropsFromDispatch;
@@ -125,6 +126,13 @@ class DrawingProperties extends React.Component<Props>
       <div
         className="drawing-properties"
       >
+        <button
+          type="button"
+          className="close drawing-properties-close"
+          onClick={this.onCloseClick}
+        >
+          &times;
+        </button>
         <b className="d-block text-center">{drawingToolDisplayNames[ selectedDrawing.type ]}</b>
         <div style={{ borderTop: '1px solid lightgray', margin: '0.5rem -1rem 0.5rem' }} />
         {drawingProperties}
@@ -137,6 +145,11 @@ class DrawingProperties extends React.Component<Props>
         </button>
       </div>
     );
+  }
+
+  private onCloseClick = () =>
+  {
+    this.props.deselectDrawing();
   }
 
   private onDrawingChange = ( drawing: Drawing ) =>
@@ -168,6 +181,7 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   } ),
   {
     deleteDrawing,
-    updateDrawing
+    updateDrawing,
+    deselectDrawing
   }
 )( DrawingProperties );

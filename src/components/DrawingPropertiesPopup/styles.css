@@ -6,3 +6,19 @@
   border-radius: 4px;
   box-shadow: 1px 1px 5px 1px rgba(131, 131, 131, 0.774);
 }
+
+.drawing-properties-close
+{
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 1.5rem;
+  width: 1.5rem;
+  margin: 0.25rem;
+}
+
+.drawing-properties-close:active,
+.drawing-properties-close:focus
+{
+  outline: none;
+}
