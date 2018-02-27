@@ -130,6 +130,58 @@
   height: var( --size );
 }
 
+.drawing-open-diagram
+{
+  position: relative;
+
+  width: 3rem;
+  height: 3rem;
+  padding: 0.3rem;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+
+  color: slategray;
+  border-radius: 8px;
+}
+
+.drawing-open-diagram .material-icons
+{
+  --size: 44px;
+  font-size: var( --size );
+  width: var( --size );
+  height: var( --size );
+}
+
+.drawing-save-diagram
+{
+  position: relative;
+
+  width: 3rem;
+  height: 3rem;
+  padding: 0.3rem;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  cursor: pointer;
+
+  color: slategray;
+  border-radius: 8px;
+}
+
+.drawing-save-diagram .material-icons
+{
+  --size: 44px;
+  font-size: var( --size );
+  width: var( --size );
+  height: var( --size );
+}
+
 .drawing-export-image
 {
   position: relative;

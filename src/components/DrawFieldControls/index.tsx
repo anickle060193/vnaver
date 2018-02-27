@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import Tooltip from 'components/Tooltip';
 import { resetScaleLevel, resetOrigin, incrementScaleLevel, decrementScaleLevel } from 'store/reducers/editor';
 import { showSettings, setGridOn } from 'store/reducers/settings';
-import { getScale } from 'utils/draw';
-import { exportImage } from 'utils/electron';
+import { getScale, DrawingMap } from 'utils/draw';
+import { exportImage, saveDiagram, openDiagram } from 'utils/electron';
 
 import './styles.css';
 
@@ -15,6 +15,7 @@ interface PropsFromState
   originY: number;
   scale: number;
   gridOn: boolean;
+  drawings: DrawingMap;
 }
 
 interface PropsFromDispatch
@@ -86,6 +87,22 @@ class DrawFieldControls extends React.Component<Props>
         </div>
 
         <div
+          className="drawing-open-diagram"
+          onClick={this.onOpenDiagram}
+        >
+          <Tooltip align="bottom" title="Open Diagram" />
+          <span className="material-icons">folder_open</span>
+        </div>
+
+        <div
+          className="drawing-save-diagram"
+          onClick={this.onSaveDiagram}
+        >
+          <Tooltip align="bottom" title="Save Diagram" />
+          <span className="material-icons">save</span>
+        </div>
+
+        <div
           className="drawing-export-image"
           onClick={this.onExportImage}
         >
@@ -146,6 +163,17 @@ class DrawFieldControls extends React.Component<Props>
   {
     this.props.showSettings();
   }
+
+  private onSaveDiagram = () =>
+  {
+    saveDiagram( this.props.drawings );
+  }
+
+  private onOpenDiagram = async () =>
+  {
+    let diagramData = await openDiagram();
+    console.log( 'DIAGRAM:', diagramData );
+  }
 }
 
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
@@ -153,7 +181,8 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     originX: state.editor.originX,
     originY: state.editor.originY,
     scale: getScale( state.editor.scaleLevel ),
-    gridOn: state.settings.gridOn
+    gridOn: state.settings.gridOn,
+    drawings: state.drawings.present.drawings
   } ),
   {
     incrementScaleLevel,
