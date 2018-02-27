@@ -4,9 +4,11 @@
 
   position: absolute;
   left: 0;
-  right: 0;
   top: 0;
+  right: 0;
   bottom: 0;
+
+  padding: 2rem;
 
   background-color: rgba(0, 0, 0, 0.356);
 
@@ -14,11 +16,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+
+  overflow: auto;
 }
 
 .dialog-shade.dialog-showing
 {
   animation: fade-in var( --animation-length ) ease-in-out;
+  overflow: hidden;
 }
 
 .dialog-shade.dialog-show
@@ -28,18 +33,23 @@
 .dialog-shade.dialog-hiding
 {
   animation: fade-out var( --animation-length ) ease-in-out;
+  overflow: hidden;
 }
 
 .dialog-shade.dialog-hidden
 {
   display: none;
+  overflow: hidden;
 }
 
 .dialog
 {
+  position: absolute;
+  top: 0;
+  margin: 2rem;
   background: white;
   border-radius: 4px;
-  min-width: 20%;
+  min-width: 80%;
   min-height: 20%;
   box-shadow: 1px 1px 5px 0px rgba(77, 77, 77, 0.664);
 }

@@ -7,7 +7,7 @@ import Grid from 'components/DrawField/Grid';
 import { drawingComponentMap, Between, VerticalGridLine, HorizontalGridLine, ActiveIndication, Plane, Text } from 'components/DrawField/Drawings';
 import PathLine from 'components/DrawField/Drawings/PathLine';
 import { addDrawing, selectDrawing, deselectDrawing, moveDrawing } from 'store/reducers/drawings';
-import { incrementScaleLevel, decrementScaleLevel, setOrigin } from 'store/reducers/editor';
+import { incrementScaleLevel, decrementScaleLevel, setOrigin, setTool } from 'store/reducers/editor';
 import
 {
   DrawingType,
@@ -65,6 +65,7 @@ interface PropsFromState
   gridIntervalY: number;
   drawings: DrawingMap;
   defaultDrawingColors: DrawingTypeMap<string>;
+  deselectToolAfterAdd: DrawingTypeMap<boolean>;
   selectedDrawingId: string | null;
 }
 
@@ -77,6 +78,7 @@ interface PropsFromDispatch
   selectDrawing: typeof selectDrawing;
   deselectDrawing: typeof deselectDrawing;
   moveDrawing: typeof moveDrawing;
+  setTool: typeof setTool;
 }
 
 type Props = PropsFromState & PropsFromDispatch;
@@ -813,7 +815,15 @@ class DrawField extends React.Component<Props, State>
         }
       }
 
-      if( !added )
+      if( added )
+      {
+        if( this.props.tool !== Tool.Cursor
+          && this.props.deselectToolAfterAdd[ this.props.tool ] )
+        {
+          this.props.setTool( Tool.Cursor );
+        }
+      }
+      else
       {
         this.props.deselectDrawing();
       }
@@ -876,6 +886,7 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     gridIntervalY: state.settings.gridIntervalY,
     drawings: state.drawings.present.drawings,
     defaultDrawingColors: state.settings.defaultDrawingColors,
+    deselectToolAfterAdd: state.settings.deselectToolAfterAdd,
     selectedDrawingId: state.drawings.present.selectedDrawingId
   } ),
   {
@@ -885,6 +896,7 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     addDrawing,
     selectDrawing,
     deselectDrawing,
-    moveDrawing
+    moveDrawing,
+    setTool
   }
 )( DrawField );

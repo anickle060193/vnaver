@@ -14,6 +14,7 @@ export interface State
   gridIntervalY: number;
   shortcuts: ShortcutMap;
   defaultDrawingColors: DrawingTypeMap<string>;
+  deselectToolAfterAdd: DrawingTypeMap<boolean>;
 }
 
 const initialState: State = {
@@ -23,7 +24,8 @@ const initialState: State = {
   gridIntervalX: settings.gridIntervalX,
   gridIntervalY: settings.gridIntervalY,
   shortcuts: settings.getAllShortcutSettings(),
-  defaultDrawingColors: settings.getAllDefaultDrawingColorSettings()
+  defaultDrawingColors: settings.getAllDefaultDrawingColorSettings(),
+  deselectToolAfterAdd: settings.getAllDeselectToolAfterAdd()
 };
 
 const actionCreator = actionCreatorFactory();
@@ -36,6 +38,7 @@ export const setGridIntervalX = actionCreator<number>( 'SET_GRID_INTERVAL_X' );
 export const setGridIntervalY = actionCreator<number>( 'SET_GRID_INTERVAL_Y' );
 export const setShortcut = actionCreator<{ tool: DrawingTool, shortcut: string }>( 'SET_SHORTCUT' );
 export const setDefaultDrawingColor = actionCreator<{ drawingType: DrawingType, color: string }>( 'SET_DEFAULT_DRAWING_COLOR' );
+export const setDeselectToolAfterAdd = actionCreator<{ drawingType: DrawingType, deselectToolAfterAdd: boolean }>( 'SET_CLEAR_TOOL_AFTER_ADD' );
 
 export const reducer = reducerWithInitialState( initialState )
   .case( showSettings, ( state ) =>
@@ -109,6 +112,17 @@ export const reducer = reducerWithInitialState( initialState )
       defaultDrawingColors: {
         ...state.defaultDrawingColors,
         [ drawingType ]: color
+      }
+    };
+  } )
+  .case( setDeselectToolAfterAdd, ( state, { drawingType, deselectToolAfterAdd } ) =>
+  {
+    settings.setDeselectAfterAdd( drawingType, deselectToolAfterAdd );
+    return {
+      ...state,
+      deselectToolAfterAdd: {
+        ...state.deselectToolAfterAdd,
+        [ drawingType ]: deselectToolAfterAdd
       }
     };
   } );

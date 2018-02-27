@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import Dialog from 'components/Dialog';
 import ShortcutInput from 'components/SettingsDialog/ShortcutInput';
-import { hideSettings, setShortcut, setDefaultDrawingColor, setSnapToGrid, setGridIntervalX, setGridIntervalY } from 'store/reducers/settings';
+import { hideSettings, setShortcut, setDefaultDrawingColor, setSnapToGrid, setGridIntervalX, setGridIntervalY, setDeselectToolAfterAdd } from 'store/reducers/settings';
 import { drawingToolDisplayNames, DrawingTool, DrawingTypeMap, DrawingType, Tool } from 'utils/draw';
 import { ShortcutMap } from 'utils/shortcut';
 
@@ -14,6 +14,7 @@ interface PropsFromState
   show: boolean;
   shortcuts: ShortcutMap;
   defaultDrawingColors: DrawingTypeMap<string>;
+  deselectToolAfterAdd: DrawingTypeMap<boolean>;
   gridIntervalX: number;
   gridIntervalY: number;
   snapToGrid: boolean;
@@ -24,6 +25,7 @@ interface PropsFromDispatch
   hideSettings: typeof hideSettings;
   setShortcut: typeof setShortcut;
   setDefaultDrawingColor: typeof setDefaultDrawingColor;
+  setDeselectToolAfterAdd: typeof setDeselectToolAfterAdd;
   setGridIntervalX: typeof setGridIntervalX;
   setGridIntervalY: typeof setGridIntervalY;
   setSnapToGrid: typeof setSnapToGrid;
@@ -55,25 +57,33 @@ class SettingsDialog extends React.Component<Props, State>
         onClose={this.onClose}
       >
         <div className="settings">
-          <div className="container-fluid d-flex flex-column">
+          <div className="container-fluid">
 
-            <div className="grid-settings">
-              <b className="d-block">Grid Settings:</b>
+            <div className="row">
+              <h5>Grid Settings:</h5>
+            </div>
 
-              <div className="form-check">
-                <label className="form-check-label">
-                  <input
-                    type="checkbox"
-                    className="form-check-input"
-                    checked={this.props.snapToGrid}
-                    onChange={this.onSnapToGridChange}
-                  />
-                  Snap to Grid
-                </label>
+            <div className="form-row">
+              <div className="col-auto">
+                <div className="form-check">
+                  <label className="form-check-label">
+                    <input
+                      type="checkbox"
+                      className="form-check-input"
+                      checked={this.props.snapToGrid}
+                      onChange={this.onSnapToGridChange}
+                    />
+                    Snap to Grid
+                  </label>
+                </div>
               </div>
+            </div>
 
-              <div className="grid-intervals">
-                <label>Interval X:</label>
+            <div className="form-row">
+              <div className="col-1">
+                <label className="col-form-label">Interval X:</label>
+              </div>
+              <div className="col-3">
                 <input
                   type="number"
                   className="form-control"
@@ -81,7 +91,11 @@ class SettingsDialog extends React.Component<Props, State>
                   value={this.props.gridIntervalX.toString()}
                   onChange={this.onGridIntervalXChange}
                 />
-                <label>Interval Y:</label>
+              </div>
+              <div className="col-1">
+                <label className="col-form-label">Interval Y:</label>
+              </div>
+              <div className="col-3">
                 <input
                   type="number"
                   className="form-control"
@@ -92,21 +106,28 @@ class SettingsDialog extends React.Component<Props, State>
               </div>
             </div>
 
-            <div className="row">
-              <div className="col-sm-4">
+            <div className="row mt-2">
+              <h5>Tools Settings:</h5>
+            </div>
+
+            <div className="form-row">
+              <div className="col-4 d-flex align-items-end">
                 <b>Tool</b>
               </div>
-              <div className="col-sm-4 d-flex justify-content-center">
+              <div className="col-3 d-flex align-items-end justify-content-center text-center">
                 <b>Shortcut</b>
               </div>
-              <div className="col-sm-4 d-flex justify-content-center">
+              <div className="col-3 d-flex align-items-end justify-content-center text-center">
                 <b>Default Color</b>
+              </div>
+              <div className="col-2 d-flex align-items-end justify-content-center text-center">
+                <b>Deselect Tool After Add</b>
               </div>
             </div>
             {Object.entries( drawingToolDisplayNames ).map( ( [ tool, name ]: [ DrawingTool, string ] ) => (
-              <div key={tool} className="form-group row">
-                <label className="col-sm-4 col-form-label">{name}:</label>
-                <div className="col-sm-4">
+              <div key={tool} className="form-group form-row">
+                <label className="col-4 col-form-label">{name}:</label>
+                <div className="col-3">
                   <ShortcutInput
                     className="form-control"
                     shortcut={this.props.shortcuts[ tool ]}
@@ -114,26 +135,36 @@ class SettingsDialog extends React.Component<Props, State>
                   />
                 </div>
                 {( tool !== Tool.Cursor ) && (
-                  <div className="col-sm-4">
-                    <input
-                      type="color"
-                      className="form-control"
-                      value={this.props.defaultDrawingColors[ tool ]}
-                      onChange={( e ) => this.onDefaultDrawingColorChange( tool, e.target.value )}
-                    />
-                  </div>
+                  <>
+                    <div className="col-3">
+                      <input
+                        type="color"
+                        className="form-control"
+                        value={this.props.defaultDrawingColors[ tool ]}
+                        onChange={( e ) => this.onDefaultDrawingColorChange( tool, e.target.value )}
+                      />
+                    </div>
+                    <div className="col-2 d-flex justify-content-center">
+                      <div className="form-check form-check-inline">
+                        <input
+                          type="checkbox"
+                          className="form-check-input"
+                          checked={this.props.deselectToolAfterAdd[ tool ]}
+                          onChange={( e ) => this.onDeselectToolAfterAddChange( tool, e.target.checked )}
+                        />
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
             ) )}
 
-            <button
-              className="btn btn-primary ml-auto"
-              onClick={this.onClose}
-            >
-              Close
-            </button>
+            <div className="row mt-4">
+              <button className="btn btn-primary ml-auto" onClick={this.onClose}>Close</button>
+            </div>
 
           </div>
+
         </div>
       </Dialog>
     );
@@ -168,6 +199,11 @@ class SettingsDialog extends React.Component<Props, State>
   {
     this.props.setGridIntervalY( e.target.valueAsNumber || 0 );
   }
+
+  private onDeselectToolAfterAddChange = ( drawingType: DrawingType, deselectToolAfterAdd: boolean ) =>
+  {
+    this.props.setDeselectToolAfterAdd( { drawingType, deselectToolAfterAdd } );
+  }
 }
 
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
@@ -175,6 +211,7 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     show: state.settings.show,
     shortcuts: state.settings.shortcuts,
     defaultDrawingColors: state.settings.defaultDrawingColors,
+    deselectToolAfterAdd: state.settings.deselectToolAfterAdd,
     gridIntervalX: state.settings.gridIntervalX,
     gridIntervalY: state.settings.gridIntervalY,
     snapToGrid: state.settings.snapToGrid
@@ -183,6 +220,7 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     hideSettings,
     setShortcut,
     setDefaultDrawingColor,
+    setDeselectToolAfterAdd,
     setGridIntervalX,
     setGridIntervalY,
     setSnapToGrid

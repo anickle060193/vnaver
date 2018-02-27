@@ -71,7 +71,7 @@ class Settings
 {
   setShortcutSetting( tool: DrawingTool, shortcut: string )
   {
-    return setItem( k( SHORTCUT_PREFIX, tool ), shortcut );
+    setItem( k( SHORTCUT_PREFIX, tool ), shortcut );
   }
 
   getShortcutSetting( tool: DrawingTool )
@@ -97,7 +97,7 @@ class Settings
 
   setDefaultDrawingColorSetting( drawingType: DrawingType, color: string )
   {
-    return setItem( k( DEFAULT_DRAWING_COLOR_PREFIX, drawingType ), color );
+    setItem( k( DEFAULT_DRAWING_COLOR_PREFIX, drawingType ), color );
   }
 
   getDefaultDrawingColorSetting( drawingType: DrawingType )
@@ -117,6 +117,31 @@ class Settings
       [ DrawingType.HorizontalGridLine ]: this.getDefaultDrawingColorSetting( DrawingType.HorizontalGridLine ),
       [ DrawingType.Plane ]: this.getDefaultDrawingColorSetting( DrawingType.Plane ),
       [ DrawingType.Text ]: this.getDefaultDrawingColorSetting( DrawingType.Text )
+    };
+  }
+
+  setDeselectAfterAdd( drawingType: DrawingType, deselectAfterAdd: boolean )
+  {
+    setItem( k( 'deselect_after_add', drawingType ), deselectAfterAdd );
+  }
+
+  getDeselectToolAfterAdd( drawingType: DrawingType )
+  {
+    return getValidItem( k( 'clear_tool_after_add', drawingType ), 'boolean', true );
+  }
+
+  getAllDeselectToolAfterAdd(): DrawingTypeMap<boolean>
+  {
+    return {
+      [ DrawingType.Above ]: this.getDeselectToolAfterAdd( DrawingType.Above ),
+      [ DrawingType.At ]: this.getDeselectToolAfterAdd( DrawingType.At ),
+      [ DrawingType.Below ]: this.getDeselectToolAfterAdd( DrawingType.Below ),
+      [ DrawingType.Between ]: this.getDeselectToolAfterAdd( DrawingType.Between ),
+      [ DrawingType.PathLine ]: this.getDeselectToolAfterAdd( DrawingType.PathLine ),
+      [ DrawingType.VerticalGridLine ]: this.getDeselectToolAfterAdd( DrawingType.VerticalGridLine ),
+      [ DrawingType.HorizontalGridLine ]: this.getDeselectToolAfterAdd( DrawingType.HorizontalGridLine ),
+      [ DrawingType.Plane ]: this.getDeselectToolAfterAdd( DrawingType.Plane ),
+      [ DrawingType.Text ]: this.getDeselectToolAfterAdd( DrawingType.Text )
     };
   }
 
