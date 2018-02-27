@@ -13,15 +13,18 @@ export function exportImage( canvas: HTMLCanvasElement )
     filters: [
       { name: 'PNG Images', extensions: [ 'png' ] }
     ]
-  }, async ( filename: string ) =>
+  }, async ( filename: string | null ) =>
     {
-      console.log( 'Exporting to:', filename );
+      if( filename )
+      {
+        console.log( 'Exporting to:', filename );
 
-      let data = canvas.toDataURL( 'image/png' );
-      let image = electron.nativeImage.createFromDataURL( data );
-      let buffer = image.toPNG();
+        let data = canvas.toDataURL( 'image/png' );
+        let image = electron.nativeImage.createFromDataURL( data );
+        let buffer = image.toPNG();
 
-      await fs.writeFile( filename, buffer );
+        await fs.writeFile( filename, buffer );
+      }
     } );
 }
 
