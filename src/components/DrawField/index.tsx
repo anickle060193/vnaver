@@ -720,15 +720,26 @@ class DrawField extends React.Component<Props, State>
         {
           if( this.state.startEndPoint !== null )
           {
-            added = true;
-            this.props.addDrawing( {
-              ...DEFAULT_PATH_LINE_STYLE,
-              id: uuid(),
-              type: this.props.tool,
-              color: this.props.defaultDrawingColors[ this.props.tool ],
-              start: this.state.startEndPoint,
-              end: this.findEndPoint( x, y )
-            } );
+            let endEndPoint = this.findEndPoint( x, y );
+
+            let start = getEndPointPosition( this.state.startEndPoint, this.props.drawings );
+            let end = getEndPointPosition( endEndPoint, this.props.drawings );
+
+            if( start && end )
+            {
+              if( distance( start.x, start.y, end.x, end.y ) > NEAR_DISTANCE )
+              {
+                added = true;
+                this.props.addDrawing( {
+                  ...DEFAULT_PATH_LINE_STYLE,
+                  id: uuid(),
+                  type: this.props.tool,
+                  color: this.props.defaultDrawingColors[ this.props.tool ],
+                  start: this.state.startEndPoint,
+                  end: endEndPoint
+                } );
+              }
+            }
           }
         }
         else if( this.props.tool === DrawingType.VerticalGridLine )
