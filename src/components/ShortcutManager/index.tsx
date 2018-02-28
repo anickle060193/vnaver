@@ -12,6 +12,7 @@ interface PropsFromState
 {
   selectedDrawingId: string | null;
   shortcuts: ShortcutMap;
+  settingsOpen: boolean;
 }
 
 interface PropsFromDispatch
@@ -57,6 +58,11 @@ class ShortcutManager extends React.Component<Props, State>
 
   private onKeyDown = ( e: KeyboardEvent ) =>
   {
+    if( this.props.settingsOpen )
+    {
+      return;
+    }
+
     let target = e.target as HTMLElement;
     if( target.matches( 'input, select, textarea' ) )
     {
@@ -66,6 +72,11 @@ class ShortcutManager extends React.Component<Props, State>
     this.updateSecret( e.keyCode );
 
     let shortcut = getShortcutFromKeyEvent( e );
+
+    if( !shortcut )
+    {
+      return;
+    }
 
     if( shortcut === 'Ctrl+z' )
     {
@@ -125,7 +136,8 @@ class ShortcutManager extends React.Component<Props, State>
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   ( state ) => ( {
     selectedDrawingId: state.drawings.present.selectedDrawingId,
-    shortcuts: state.settings.shortcuts
+    shortcuts: state.settings.shortcuts,
+    settingsOpen: state.settings.show
   } ),
   {
     setTool,
