@@ -289,6 +289,7 @@ class DrawField extends React.Component<Props, State>
       {
         cursor = (
           <Plane
+            cursor={true}
             drawing={{
               id: '',
               type: this.props.tool,
@@ -305,6 +306,7 @@ class DrawField extends React.Component<Props, State>
       {
         cursor = (
           <Text
+            cursor={true}
             drawing={{
               id: '',
               type: this.props.tool,
@@ -385,7 +387,7 @@ class DrawField extends React.Component<Props, State>
               height={this.state.height / this.props.scale}
               fill="white"
             />
-            {this.props.gridOn &&
+            {this.props.gridOn && (
               <Grid
                 width={this.state.width}
                 height={this.state.height}
@@ -394,13 +396,26 @@ class DrawField extends React.Component<Props, State>
                 scale={this.props.scale}
                 verticalInterval={this.props.gridIntervalX}
                 horizontalInterval={this.props.gridIntervalY}
-              />}
+              />
+            )}
+            {this.props.selectedDrawingId && (
+              <ActiveIndication
+                drawings={this.props.drawings}
+                drawing={this.props.drawings[ this.props.selectedDrawingId ]}
+                originX={this.props.originX}
+                originY={this.props.originY}
+                scale={this.props.scale}
+                fieldWidth={this.state.width}
+                fieldHeight={this.state.height}
+              />
+            )}
             {this.sortedDrawings().map( ( drawing, i ) =>
             {
               let DrawingComponent = drawingComponentMap[ drawing.type ];
               return (
                 <DrawingComponent
                   key={i}
+                  cursor={false}
                   drawing={drawing}
                   onClick={( e ) => this.onDrawingClick( drawing, e )}
                   onMouseDown={( e ) => this.onDrawingMouseDown( drawing, e )}
@@ -408,15 +423,6 @@ class DrawField extends React.Component<Props, State>
               );
             } )}
             {cursor}
-            <ActiveIndication
-              drawings={this.props.drawings}
-              drawing={this.props.drawings[ this.props.selectedDrawingId! ]}
-              originX={this.props.originX}
-              originY={this.props.originY}
-              scale={this.props.scale}
-              fieldWidth={this.state.width}
-              fieldHeight={this.state.height}
-            />
           </Layer>
         </Stage>
       </div>

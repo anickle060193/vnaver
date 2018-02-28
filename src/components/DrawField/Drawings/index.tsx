@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Path, Text as KText, Label, Tag, Group } from 'react-konva';
+import { Path, Text as KText, Group, Rect } from 'react-konva';
 
 import { DrawingComponentProps, LineDrawing } from './DrawingComponent';
 import PathLine from './PathLine';
@@ -296,103 +296,130 @@ export const ActiveIndication: React.SFC<{
       return null;
     }
 
+    let drawingFieldWidth = fieldWidth / scale;
+    let drawingFieldHeight = fieldHeight / scale;
+
     let x: number;
     let y: number;
-    let arrowDirection = 'left';
+    let width: number;
+    let height: number;
 
     if( drawing.type === DrawingType.Above )
     {
-      x = drawing.x + ARROW_SIZE / 2 + 3;
-      y = drawing.y - 3;
+      x = drawing.x;
+      y = drawing.y + ARROW_SIZE / 4;
+      width = ARROW_SIZE;
+      height = ARROW_SIZE;
     }
     else if( drawing.type === DrawingType.Below )
     {
-      x = drawing.x + ARROW_SIZE / 2 + 3;
-      y = drawing.y - 6;
+      x = drawing.x;
+      y = drawing.y - ARROW_SIZE / 4;
+      width = ARROW_SIZE;
+      height = ARROW_SIZE;
     }
     else if( drawing.type === DrawingType.At )
     {
-      x = drawing.x + ARROW_SIZE / 2 + 3;
-      y = drawing.y - 7;
+      x = drawing.x;
+      y = drawing.y;
+      width = ARROW_SIZE;
+      height = ARROW_SIZE;
     }
     else if( drawing.type === DrawingType.Between )
     {
-      x = drawing.x + ARROW_SIZE / 2 + 3;
-      y = drawing.y - 12;
+      x = drawing.x;
+      y = drawing.y + drawing.height / 2;
+      width = ARROW_SIZE;
+      height = ARROW_SIZE + drawing.height;
     }
     else if( drawing.type === DrawingType.PathLine )
     {
       let start = getEndPointPosition( drawing.start, drawings );
-      if( !start )
-      {
-        return null;
-      }
       let end = getEndPointPosition( drawing.end, drawings );
-      if( !end )
-      {
-        return null;
-      }
-
-      arrowDirection = 'down';
-      x = ( start.x + end.x ) / 2;
-      y = ( start.y + end.y ) / 2;
+      width = Math.abs( start.x - end.x );
+      height = Math.abs( start.y - end.y );
+      x = Math.min( start.x, end.x ) + width / 2;
+      y = Math.min( start.y, end.y ) + height / 2;
     }
     else if( drawing.type === DrawingType.HorizontalGridLine )
     {
-      arrowDirection = 'down';
-      x = ( -originX + fieldWidth / 2 ) / scale;
-      y = drawing.y - 4;
+      x = drawingFieldWidth / 2 - originX / scale;
+      y = drawing.y;
+      width = drawingFieldWidth;
+      height = drawing.strokeWidth;
     }
     else if( drawing.type === DrawingType.VerticalGridLine )
     {
-      x = drawing.x + 4;
-      y = ( -originY + fieldHeight / 2 ) / scale;
+      x = drawing.x;
+      y = drawingFieldHeight / 2 - originY / scale;
+      width = drawing.strokeWidth;
+      height = drawingFieldHeight;
     }
     else if( drawing.type === DrawingType.Plane )
     {
-      x = drawing.x + drawing.size / 2 + 5;
+      x = drawing.x;
       y = drawing.y;
+      width = drawing.size;
+      height = drawing.size;
     }
     else if( drawing.type === DrawingType.Text )
     {
-      arrowDirection = 'right';
-      x = drawing.x - 4;
-
+      let lineCount = drawing.text.split( '\n' ).length;
+      width = Math.max( ...drawing.text.split( '\n' ).map( ( line ) => line.length ) ) * drawing.fontSize * 0.5;
+      height = lineCount * drawing.fontSize;
       if( drawing.verticalAlign === VerticalAlign.Top )
       {
-        y = drawing.y + calculateTextHeight( drawing.text, drawing.fontSize ) / 2;
+        x = drawing.x;
+        y = drawing.y + height / 2;
+      }
+      else if( drawing.verticalAlign === VerticalAlign.Center )
+      {
+        x = drawing.x;
+        y = drawing.y;
       }
       else if( drawing.verticalAlign === VerticalAlign.Bottom )
       {
-        y = drawing.y - calculateTextHeight( drawing.text, drawing.fontSize ) / 2;
+        x = drawing.x;
+        y = drawing.y - height / 2;
       }
       else
       {
-        y = drawing.y;
+        throw assertNever( drawing.verticalAlign );
       }
+      x += width / 2;
     }
     else
     {
       throw assertNever( drawing.type );
     }
 
+    const ACTIVATION_PADDING = 8;
+    const ACTIVATION_BORDER = 1;
+    const ACTIVATION_CORNER_RADIUS = 4;
+
+    let activationX = x - width / 2;
+    let activationY = y - height / 2;
+
     return (
-      <Label x={x} y={y}>
-        <Tag
-          fill="black"
-          cornerRadius={4}
-          pointerDirection={arrowDirection}
-          pointerWidth={10}
-          pointerHeight={10}
-          lineJoin="round"
+      <>
+        <Rect
+          x={activationX - ACTIVATION_PADDING / 2}
+          y={activationY - ACTIVATION_PADDING / 2}
+          width={width + ACTIVATION_PADDING}
+          height={height + ACTIVATION_PADDING}
+          cornerRadius={ACTIVATION_CORNER_RADIUS}
+          fill="darkblue"
+          opacity={0.8}
         />
-        <KText
-          text={drawing.id}
-          fill="white"
-          fontFamily="Roboto"
-          fontSize={15}
-          padding={4}
+        <Rect
+          x={activationX - ACTIVATION_PADDING / 2 + ACTIVATION_BORDER}
+          y={activationY - ACTIVATION_PADDING / 2 + ACTIVATION_BORDER}
+          width={width + ACTIVATION_PADDING - 2 * ACTIVATION_BORDER}
+          height={height + ACTIVATION_PADDING - 2 * ACTIVATION_BORDER}
+          cornerRadius={ACTIVATION_CORNER_RADIUS}
+          fill="rgb(173, 216, 230)"
+          opacity={0.8}
         />
-      </Label>
+      </>
     );
   };

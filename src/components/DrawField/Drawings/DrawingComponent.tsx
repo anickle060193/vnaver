@@ -6,7 +6,7 @@ import { Drawing, LineStyle, dashStyles } from 'utils/draw';
 export interface DrawingComponentProps<D extends Drawing>
 {
   drawing: D;
-  cursor?: boolean;
+  cursor: boolean;
   onClick?: ( e: KonvaMouseEvent<{}> ) => void;
   onMouseDown?: ( e: KonvaMouseEvent<{}> ) => void;
 }

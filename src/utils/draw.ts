@@ -220,7 +220,7 @@ export function isValidAnchor( drawing: Drawing | null ): drawing is AnchorDrawi
   );
 }
 
-export const getEndPointPosition = ( endPoint: EndPoint, drawings: DrawingMap ): { x: number, y: number } | null =>
+export const getEndPointPosition = ( endPoint: EndPoint, drawings: DrawingMap ): { x: number, y: number } =>
 {
   if( !endPoint.connected )
   {
@@ -236,7 +236,7 @@ export const getEndPointPosition = ( endPoint: EndPoint, drawings: DrawingMap ):
     if( !isValidAnchor( anchor ) )
     {
       console.error( 'Invalid anchor - ID:', endPoint.anchorId, anchor );
-      return null;
+      return { x: 0, y: 0 };
     }
     else if( anchor.type === DrawingType.Above
       || anchor.type === DrawingType.At
