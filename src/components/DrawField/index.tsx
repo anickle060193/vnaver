@@ -145,7 +145,6 @@ class DrawField extends React.Component<Props, State>
     document.addEventListener( 'mousemove', this.onDocumentMouseMove );
     document.addEventListener( 'mouseout', this.onDocumentMouseOut );
     document.addEventListener( 'mouseup', this.onDocumentMouseUp );
-    document.addEventListener( 'mousewheel', this.onDocumentMouseWheel );
     document.addEventListener( 'keydown', this.onDocumentKeyUpDown );
     document.addEventListener( 'keyup', this.onDocumentKeyUpDown );
 
@@ -158,7 +157,6 @@ class DrawField extends React.Component<Props, State>
     document.removeEventListener( 'mousemove', this.onDocumentMouseMove );
     document.removeEventListener( 'mouseout', this.onDocumentMouseOut );
     document.removeEventListener( 'mouseup', this.onDocumentMouseUp );
-    document.removeEventListener( 'mousewheel', this.onDocumentMouseWheel );
     document.removeEventListener( 'keydown', this.onDocumentKeyUpDown );
     document.removeEventListener( 'keyup', this.onDocumentKeyUpDown );
   }
@@ -366,6 +364,7 @@ class DrawField extends React.Component<Props, State>
         ref={( ref ) => this.drawFieldRef = ref}
         className="draw-field"
         style={{ cursor: cssCursor }}
+        onWheel={this.onWheel}
       >
         <Stage
           width={this.state.width}
@@ -562,11 +561,11 @@ class DrawField extends React.Component<Props, State>
     }
   }
 
-  private onDocumentMouseWheel = ( e: MouseWheelEvent ) =>
+  private onWheel = ( e: React.WheelEvent<{}> ) =>
   {
     e.preventDefault();
 
-    if( e.wheelDelta < 0 )
+    if( e.deltaY > 0 )
     {
       this.props.decrementScaleLevel();
     }
