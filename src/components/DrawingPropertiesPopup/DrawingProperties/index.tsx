@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
+import NumberInput from 'components/NumberInput';
 import
 {
   BasicDrawing,
@@ -34,23 +35,22 @@ interface Props<D extends Drawing>
 
 class DrawingPropertiesComponent<D extends Drawing> extends React.Component<Props<D>> { }
 
-type NumberInputChangeHandler = ( value: number ) => void;
+type NumberInputRowChangeHandler = ( value: number ) => void;
 
-const NumberInput: React.SFC<{
-  val: number;
+const NumberInputRow: React.SFC<{
+  value: number;
   label: string;
   labelWidth?: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
-  onChange: NumberInputChangeHandler;
-}> = ( { val, label, labelWidth = 3, onChange } ) => (
+  onChange: NumberInputRowChangeHandler;
+}> = ( { value, label, labelWidth = 3, onChange } ) => (
   <div className="form-group row">
     <label className={`col-sm-${labelWidth} col-form-label`}>{label}:</label>
     <div className={`col-sm-${12 - labelWidth}`}>
-      <input
-        type="number"
+      <NumberInput
         className="form-control"
         placeholder={label}
-        value={val.toString()}
-        onChange={( e ) => onChange( e.target.valueAsNumber || 0 )}
+        value={value}
+        onChange={onChange}
       />
     </div>
   </div>
@@ -58,23 +58,23 @@ const NumberInput: React.SFC<{
 
 const XInput: React.SFC<{
   x: number;
-  onChange: NumberInputChangeHandler;
+  onChange: NumberInputRowChangeHandler;
 }> = ( { x, onChange } ) => (
-  <NumberInput val={x} label="X" onChange={onChange} />
+  <NumberInputRow value={x} label="X" onChange={onChange} />
 );
 
 const YInput: React.SFC<{
   y: number;
-  onChange: NumberInputChangeHandler;
+  onChange: NumberInputRowChangeHandler;
 }> = ( { y, onChange } ) => (
-  <NumberInput val={y} label="Y" onChange={onChange} />
+  <NumberInputRow value={y} label="Y" onChange={onChange} />
 );
 
 const XyInputs: React.SFC<{
   x: number;
   y: number;
-  onXChange: NumberInputChangeHandler;
-  onYChange: NumberInputChangeHandler;
+  onXChange: NumberInputRowChangeHandler;
+  onYChange: NumberInputRowChangeHandler;
 }> = ( { x, y, onXChange, onYChange } ) => (
   <>
     <XInput x={x} onChange={onXChange} />
@@ -88,9 +88,9 @@ const LineStyleInputs: React.SFC<LineStyle & {
   onLineStyleChange: LineStyleChangeEventHandler;
 }> = ( { dash, strokeWidth, onLineStyleChange } ) => (
   <>
-    <NumberInput
+    <NumberInputRow
       label="Width"
-      val={strokeWidth}
+      value={strokeWidth}
       onChange={( s ) => onLineStyleChange( { strokeWidth: s } )}
     />
     <div className="form-group row">
@@ -227,8 +227,8 @@ export class BetweenDrawingProperties extends DrawingPropertiesComponent<Between
           onXChange={this.onXChange}
           onYChange={this.onYChange}
         />
-        <NumberInput
-          val={this.props.drawing.height}
+        <NumberInputRow
+          value={this.props.drawing.height}
           label="Height"
           onChange={this.onHeightChange}
         />
@@ -383,13 +383,13 @@ export class PlaneDrawingProperties extends DrawingPropertiesComponent<PlaneDraw
           onXChange={this.onXChange}
           onYChange={this.onYChange}
         />
-        <NumberInput
-          val={this.props.drawing.size}
+        <NumberInputRow
+          value={this.props.drawing.size}
           label="Size"
           onChange={this.onSizeChange}
         />
-        <NumberInput
-          val={this.props.drawing.rotation}
+        <NumberInputRow
+          value={this.props.drawing.rotation}
           label="Rotation"
           onChange={this.onRotationChange}
         />
@@ -680,10 +680,10 @@ export class TextDrawingProperties extends DrawingPropertiesComponent<TextDrawin
           onChange={this.props.onColorChange}
         />
 
-        <NumberInput
+        <NumberInputRow
           label="Font Size"
           labelWidth={6}
-          val={this.props.drawing.fontSize}
+          value={this.props.drawing.fontSize}
           onChange={this.onFontSizeChange}
         />
 
