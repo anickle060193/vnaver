@@ -3,30 +3,49 @@ import * as Ajv from 'ajv';
 import { DrawingTool, Tool, DrawingType, DrawingTypeMap } from 'utils/draw';
 import { ShortcutMap } from 'utils/shortcut';
 
-const ajv = new Ajv( { allErrors: true } )
-  .addSchema( { type: 'string' }, 'string' )
-  .addSchema( { type: 'boolean' }, 'boolean' )
-  .addSchema( { type: 'number' }, 'number' )
-  .addFormat( 'color', /^#[0-9a-fA-F]{6}/ )
-  .addSchema( { type: 'string', format: 'color' }, 'color' )
-  .addFormat( 'shortcut', /^((Ctrl\+)?(Shift\+)?(Alt\+)?[a-zA-Z0-9])?$/ )
-  .addSchema( { type: 'string', format: 'shortcut' }, 'shortcut' );
+const enum SettingKey
+{
+  Shortcut = 'shortcuts',
+  DefaultDrawingColor = 'default_color',
+  DeselectToolAfterAdd = 'deselect_tool_after_add',
+  GridOn = 'grid_on',
+  GridIntervalX = 'grid_interval_x',
+  GridIntervalY = 'grid_interval_y',
+  SnapToGrid = 'snap_to_grid'
+}
 
-const SHORTCUT_PREFIX = 'shortcuts';
-const GRID_ON_PREFIX = 'grid_on';
-const DEFAULT_DRAWING_COLOR_PREFIX = 'default_color';
-
-function k( ...subkeys: string[] )
+function k( ...subkeys: ( SettingKey | DrawingTool )[] )
 {
   return 'settings.' + subkeys.join( '.' );
 }
 
-function setItem<T>( key: string, value: T )
+const enum SettingType
 {
-  localStorage.setItem( key, JSON.stringify( value ) );
+  String = 'String',
+  Boolean = 'Boolean',
+  Color = 'Color',
+  Shortcut = 'Shortcut',
+  GridInterval = 'GridInterval'
 }
 
-function getValidItem<T>( key: string, schema: string, defaultValue: T )
+const ajv = new Ajv( { allErrors: true } )
+  .addSchema( { type: 'string' }, SettingType.String )
+  .addSchema( { type: 'boolean' }, SettingType.Boolean )
+  .addFormat( 'format.color', /^#[0-9a-fA-F]{6}/ )
+  .addSchema( { type: 'string', format: 'format.color' }, SettingType.Color )
+  .addFormat( 'format.shortcut', /^((Ctrl\+)?(Shift\+)?(Alt\+)?[a-zA-Z0-9])?$/ )
+  .addSchema( { type: 'string', format: 'format.shortcut' }, SettingType.Shortcut )
+  .addSchema( { type: 'number', minimum: 1, maximum: 10000 }, SettingType.GridInterval );
+
+function setValidItem<T>( key: string, settingType: SettingType, value: T )
+{
+  if( ajv.validate( settingType, value ) )
+  {
+    localStorage.setItem( key, JSON.stringify( value ) );
+  }
+}
+
+function getValidItem<T>( key: string, settingType: SettingType, defaultValue: T )
 {
   let s = localStorage.getItem( key );
   if( s )
@@ -40,7 +59,7 @@ function getValidItem<T>( key: string, schema: string, defaultValue: T )
     {
       console.warn( 'Failed to parse setting:', key, s );
     }
-    if( ajv.validate( schema, value ) )
+    if( ajv.validate( settingType, value ) )
     {
       return value;
     }
@@ -49,34 +68,23 @@ function getValidItem<T>( key: string, schema: string, defaultValue: T )
       console.warn( 'Unexpected setting value:', key, value, ajv.errorsText() );
     }
   }
+  if( !ajv.validate( settingType, defaultValue ) )
+  {
+    throw new Error( `Invalid value of type - ${settingType} : ${defaultValue}` );
+  }
   return defaultValue;
-}
-
-// function getString( key: string, defaultValue: string )
-// {
-//   return getValidItem( key, 'string', defaultValue );
-// }
-
-function getBoolean( key: string, defautlValue: boolean )
-{
-  return getValidItem( key, 'boolean', defautlValue );
-}
-
-function getColor( key: string, defaultValue: string )
-{
-  return getValidItem( key, 'color', defaultValue );
 }
 
 class Settings
 {
   setShortcutSetting( tool: DrawingTool, shortcut: string )
   {
-    setItem( k( SHORTCUT_PREFIX, tool ), shortcut );
+    setValidItem( k( SettingKey.Shortcut, tool ), SettingType.Shortcut, shortcut );
   }
 
   getShortcutSetting( tool: DrawingTool )
   {
-    return getValidItem( k( SHORTCUT_PREFIX, tool ), 'shortcut', '' );
+    return getValidItem( k( SettingKey.Shortcut, tool ), SettingType.Shortcut, '' );
   }
 
   getAllShortcutSettings(): ShortcutMap
@@ -97,12 +105,12 @@ class Settings
 
   setDefaultDrawingColorSetting( drawingType: DrawingType, color: string )
   {
-    setItem( k( DEFAULT_DRAWING_COLOR_PREFIX, drawingType ), color );
+    setValidItem( k( SettingKey.DefaultDrawingColor, drawingType ), SettingType.Color, color );
   }
 
   getDefaultDrawingColorSetting( drawingType: DrawingType )
   {
-    return getColor( k( DEFAULT_DRAWING_COLOR_PREFIX, drawingType ), '#000000' );
+    return getValidItem( k( SettingKey.DefaultDrawingColor, drawingType ), SettingType.Color, '#000000' );
   }
 
   getAllDefaultDrawingColorSettings(): DrawingTypeMap<string>
@@ -120,14 +128,14 @@ class Settings
     };
   }
 
-  setDeselectAfterAdd( drawingType: DrawingType, deselectAfterAdd: boolean )
+  setDeselectToolAfterAdd( drawingType: DrawingType, deselectAfterAdd: boolean )
   {
-    setItem( k( 'deselect_after_add', drawingType ), deselectAfterAdd );
+    setValidItem( k( SettingKey.DeselectToolAfterAdd, drawingType ), SettingType.Boolean, deselectAfterAdd );
   }
 
   getDeselectToolAfterAdd( drawingType: DrawingType )
   {
-    return getValidItem( k( 'clear_tool_after_add', drawingType ), 'boolean', true );
+    return getValidItem( k( SettingKey.DeselectToolAfterAdd, drawingType ), SettingType.Boolean, true );
   }
 
   getAllDeselectToolAfterAdd(): DrawingTypeMap<boolean>
@@ -147,42 +155,42 @@ class Settings
 
   set gridOn( gridOn: boolean )
   {
-    setItem( k( GRID_ON_PREFIX ), gridOn );
+    setValidItem( k( SettingKey.GridOn ), SettingType.Boolean, gridOn );
   }
 
   get gridOn()
   {
-    return getBoolean( k( GRID_ON_PREFIX ), true );
+    return getValidItem( k( SettingKey.GridOn ), SettingType.Boolean, true );
   }
 
   set gridIntervalX( gridIntervalX: number )
   {
-    setItem( k( 'grid_interval_x' ), gridIntervalX );
+    setValidItem( k( SettingKey.GridIntervalX ), SettingType.GridInterval, gridIntervalX );
   }
 
   get gridIntervalX()
   {
-    return getValidItem( k( 'grid_interval_x' ), 'number', 50 );
+    return getValidItem( k( SettingKey.GridIntervalX ), SettingType.GridInterval, 50 );
   }
 
   set gridIntervalY( gridIntervalX: number )
   {
-    setItem( k( 'grid_interval_y' ), gridIntervalX );
+    setValidItem( k( SettingKey.GridIntervalY ), SettingType.GridInterval, gridIntervalX );
   }
 
   get gridIntervalY()
   {
-    return getValidItem( k( 'grid_interval_y' ), 'number', 50 );
+    return getValidItem( k( SettingKey.GridIntervalY ), SettingType.GridInterval, 50 );
   }
 
   set snapToGrid( snapToGrid: boolean )
   {
-    setItem( k( 'snap_to_grid' ), snapToGrid );
+    setValidItem( k( SettingKey.SnapToGrid ), SettingType.Boolean, snapToGrid );
   }
 
   get snapToGrid()
   {
-    return getValidItem( k( 'snap_to_grid' ), 'boolean', true );
+    return getValidItem( k( SettingKey.SnapToGrid ), SettingType.Boolean, true );
   }
 }
 

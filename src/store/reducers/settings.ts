@@ -54,33 +54,37 @@ export const reducer = reducerWithInitialState( initialState )
   .case( setGridOn, ( state, gridOn ) =>
   {
     settings.gridOn = gridOn;
+
     return {
       ...state,
-      gridOn
+      gridOn: settings.gridOn
     };
   } )
   .case( setSnapToGrid, ( state, snapToGrid ) =>
   {
     settings.snapToGrid = snapToGrid;
+
     return {
       ...state,
-      snapToGrid
+      snapToGrid: settings.snapToGrid
     };
   } )
   .case( setGridIntervalX, ( state, gridIntervalX ) =>
   {
     settings.gridIntervalX = gridIntervalX;
+
     return {
       ...state,
-      gridIntervalX
+      gridIntervalX: settings.gridIntervalX
     };
   } )
   .case( setGridIntervalY, ( state, gridIntervalY ) =>
   {
     settings.gridIntervalY = gridIntervalY;
+
     return {
       ...state,
-      gridIntervalY
+      gridIntervalY: settings.gridIntervalY
     };
   } )
   .case( setShortcut, ( state, { tool, shortcut } ) =>
@@ -101,28 +105,30 @@ export const reducer = reducerWithInitialState( initialState )
 
     return {
       ...state,
-      shortcuts: shortcuts
+      shortcuts: settings.getAllShortcutSettings()
     };
   } )
   .case( setDefaultDrawingColor, ( state, { drawingType, color } ) =>
   {
     settings.setDefaultDrawingColorSetting( drawingType, color );
+
     return {
       ...state,
       defaultDrawingColors: {
         ...state.defaultDrawingColors,
-        [ drawingType ]: color
+        [ drawingType ]: settings.getDefaultDrawingColorSetting( drawingType )
       }
     };
   } )
   .case( setDeselectToolAfterAdd, ( state, { drawingType, deselectToolAfterAdd } ) =>
   {
-    settings.setDeselectAfterAdd( drawingType, deselectToolAfterAdd );
+    settings.setDeselectToolAfterAdd( drawingType, deselectToolAfterAdd );
+
     return {
       ...state,
       deselectToolAfterAdd: {
         ...state.deselectToolAfterAdd,
-        [ drawingType ]: deselectToolAfterAdd
+        [ drawingType ]: settings.getDeselectToolAfterAdd( drawingType )
       }
     };
   } );

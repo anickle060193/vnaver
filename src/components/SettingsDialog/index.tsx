@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import Dialog from 'components/Dialog';
 import ShortcutInput from 'components/SettingsDialog/ShortcutInput';
+import NumberInput from 'components/NumberInput';
 import { hideSettings, setShortcut, setDefaultDrawingColor, setSnapToGrid, setGridIntervalX, setGridIntervalY, setDeselectToolAfterAdd } from 'store/reducers/settings';
 import { drawingToolDisplayNames, DrawingTool, DrawingTypeMap, DrawingType, Tool } from 'utils/draw';
 import { ShortcutMap } from 'utils/shortcut';
@@ -84,11 +85,11 @@ class SettingsDialog extends React.Component<Props, State>
                 <label className="col-form-label">Interval X:</label>
               </div>
               <div className="col-3">
-                <input
-                  type="number"
+                <NumberInput
                   className="form-control"
                   placeholder="x"
-                  value={this.props.gridIntervalX.toString()}
+                  min={1}
+                  value={this.props.gridIntervalX}
                   onChange={this.onGridIntervalXChange}
                 />
               </div>
@@ -96,11 +97,11 @@ class SettingsDialog extends React.Component<Props, State>
                 <label className="col-form-label">Interval Y:</label>
               </div>
               <div className="col-3">
-                <input
-                  type="number"
+                <NumberInput
                   className="form-control"
                   placeholder="y"
-                  value={this.props.gridIntervalY.toString()}
+                  min={1}
+                  value={this.props.gridIntervalY}
                   onChange={this.onGridIntervalYChange}
                 />
               </div>
@@ -190,14 +191,14 @@ class SettingsDialog extends React.Component<Props, State>
     this.props.setSnapToGrid( e.target.checked );
   }
 
-  private onGridIntervalXChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
+  private onGridIntervalXChange = ( gridIntervalX: number ) =>
   {
-    this.props.setGridIntervalX( e.target.valueAsNumber || 0 );
+    this.props.setGridIntervalX( gridIntervalX );
   }
 
-  private onGridIntervalYChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
+  private onGridIntervalYChange = ( gridIntervalY: number ) =>
   {
-    this.props.setGridIntervalY( e.target.valueAsNumber || 0 );
+    this.props.setGridIntervalY( gridIntervalY );
   }
 
   private onDeselectToolAfterAddChange = ( drawingType: DrawingType, deselectToolAfterAdd: boolean ) =>
