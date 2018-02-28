@@ -38,14 +38,16 @@ interface BasicGuideLineProps extends LineStyle
 interface VerticalGuideLineProps extends BasicGuideLineProps
 {
   x: number;
+  hitEnabled: boolean;
 }
 
 interface HorizontalGuideLineProps extends BasicGuideLineProps
 {
   y: number;
+  hitEnabled: boolean;
 }
 
-const VerticalGuideLine: React.SFC<VerticalGuideLineProps> = ( { x, color, dash, strokeWidth } ) => (
+const VerticalGuideLine: React.SFC<VerticalGuideLineProps> = ( { x, color, dash, strokeWidth, hitEnabled } ) => (
   <LineDrawing
     x1={x}
     y1={-LINE_LENGTH}
@@ -54,10 +56,11 @@ const VerticalGuideLine: React.SFC<VerticalGuideLineProps> = ( { x, color, dash,
     color={color}
     dash={dash}
     strokeWidth={strokeWidth}
+    hitEnabled={hitEnabled}
   />
 );
 
-const HorizontalGuideLine: React.SFC<HorizontalGuideLineProps> = ( { y, color, strokeWidth, dash } ) => (
+const HorizontalGuideLine: React.SFC<HorizontalGuideLineProps> = ( { y, color, strokeWidth, dash, hitEnabled } ) => (
   <LineDrawing
     x1={-LINE_LENGTH}
     y1={y}
@@ -66,6 +69,7 @@ const HorizontalGuideLine: React.SFC<HorizontalGuideLineProps> = ( { y, color, s
     color={color}
     dash={dash}
     strokeWidth={strokeWidth}
+    hitEnabled={hitEnabled}
   />
 );
 
@@ -74,13 +78,13 @@ interface GuideLineProps extends VerticalGuideLineProps, HorizontalGuideLineProp
   vertical: boolean;
 }
 
-const GuideLine: React.SFC<GuideLineProps> = ( { x, y, vertical, color, dash, strokeWidth } ) => (
+const GuideLine: React.SFC<GuideLineProps> = ( { x, y, vertical, color, dash, strokeWidth, hitEnabled } ) => (
   vertical ?
     (
-      <VerticalGuideLine x={x} color={color} strokeWidth={strokeWidth} dash={dash} />
+      <VerticalGuideLine x={x} color={color} strokeWidth={strokeWidth} dash={dash} hitEnabled={hitEnabled} />
     ) :
     (
-      <HorizontalGuideLine y={y} color={color} strokeWidth={strokeWidth} dash={dash} />
+      <HorizontalGuideLine y={y} color={color} strokeWidth={strokeWidth} dash={dash} hitEnabled={hitEnabled} />
     )
 );
 
@@ -94,6 +98,7 @@ export const Above: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Abo
         vertical={drawing.guideLine.vertical}
         strokeWidth={drawing.guideLine.strokeWidth}
         dash={drawing.guideLine.dash}
+        hitEnabled={false}
       />
     )}
     <Path
@@ -116,6 +121,7 @@ export const At: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.At>>> 
         vertical={drawing.guideLine.vertical}
         strokeWidth={drawing.guideLine.strokeWidth}
         dash={drawing.guideLine.dash}
+        hitEnabled={false}
       />
     )}
     <Path
@@ -145,6 +151,7 @@ export const Below: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Bel
         vertical={drawing.guideLine.vertical}
         strokeWidth={drawing.guideLine.strokeWidth}
         dash={drawing.guideLine.dash}
+        hitEnabled={false}
       />
     )}
     <Path
@@ -167,6 +174,7 @@ export const Between: React.SFC<DrawingComponentProps<BetweenDrawing>> = ( { dra
         vertical={drawing.guideLine.vertical}
         strokeWidth={drawing.guideLine.strokeWidth}
         dash={drawing.guideLine.dash}
+        hitEnabled={false}
       />
     )}
     <Path
@@ -193,6 +201,7 @@ export const VerticalGridLine: React.SFC<DrawingComponentProps<VerticalGridLineD
       color={drawing.color}
       strokeWidth={drawing.strokeWidth}
       dash={drawing.dash}
+      hitEnabled={true}
     />
   </Group>
 );
@@ -204,6 +213,7 @@ export const HorizontalGridLine: React.SFC<DrawingComponentProps<HorizontalGridL
       color={drawing.color}
       strokeWidth={drawing.strokeWidth}
       dash={drawing.dash}
+      hitEnabled={true}
     />
   </Group>
 );

@@ -40,6 +40,7 @@ const PathLine: React.SFC<Props> = ( { drawing, onClick, onMouseDown, drawings, 
         color={drawing.color}
         strokeWidth={drawing.strokeWidth}
         dash={drawing.dash}
+        hitEnabled={true}
       />
       {cursor && (
         <>

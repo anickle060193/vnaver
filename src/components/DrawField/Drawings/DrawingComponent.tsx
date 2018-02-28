@@ -18,20 +18,25 @@ interface LineDrawingProps extends LineStyle
   y1: number;
   x2: number;
   y2: number;
+  hitEnabled: boolean;
 }
 
-export const LineDrawing: React.SFC<LineDrawingProps> = ( { x1, y1, x2, y2, color, strokeWidth, dash } ) => (
+export const LineDrawing: React.SFC<LineDrawingProps> = ( { x1, y1, x2, y2, color, strokeWidth, dash, hitEnabled } ) => (
   <>
-    <Line
-      points={[ x1, y1, x2, y2 ]}
-      stroke="transparent"
-      strokeWidth={5}
-    />
+    {hitEnabled && (
+      <Line
+        points={[ x1, y1, x2, y2 ]}
+        stroke="transparent"
+        strokeWidth={5}
+        strokeHitEnabled={hitEnabled}
+      />
+    )}
     <Line
       points={[ x1, y1, x2, y2 ]}
       stroke={color}
       strokeWidth={strokeWidth}
       dash={dashStyles[ dash ]}
+      strokeHitEnabled={hitEnabled}
     />
   </>
 );
