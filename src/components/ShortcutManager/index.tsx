@@ -71,22 +71,7 @@ class ShortcutManager extends React.Component<Props, State>
 
     this.updateSecret( e.keyCode );
 
-    let shortcut = getShortcutFromKeyEvent( e );
-
-    if( !shortcut )
-    {
-      return;
-    }
-
-    if( shortcut === 'Ctrl+z' )
-    {
-      this.props.undo();
-    }
-    else if( shortcut === 'Ctrl+y' )
-    {
-      this.props.redo();
-    }
-    else if( e.key === 'Delete' )
+    if( e.key === 'Delete' )
     {
       if( this.props.selectedDrawingId )
       {
@@ -99,11 +84,29 @@ class ShortcutManager extends React.Component<Props, State>
     }
     else
     {
-      for( let [ tool, toolShortcut ] of Object.entries( this.props.shortcuts ) )
+      let shortcut = getShortcutFromKeyEvent( e );
+
+      if( !shortcut )
       {
-        if( toolShortcut === shortcut )
+        return;
+      }
+
+      if( shortcut === 'Ctrl+z' )
+      {
+        this.props.undo();
+      }
+      else if( shortcut === 'Ctrl+y' )
+      {
+        this.props.redo();
+      }
+      else
+      {
+        for( let [ tool, toolShortcut ] of Object.entries( this.props.shortcuts ) )
         {
-          this.props.setTool( tool as DrawingTool );
+          if( toolShortcut === shortcut )
+          {
+            this.props.setTool( tool as DrawingTool );
+          }
         }
       }
     }
