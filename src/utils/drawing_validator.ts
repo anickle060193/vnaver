@@ -1,30 +1,44 @@
 import * as Ajv from 'ajv';
 
-import { Drawing, DrawingType } from 'utils/draw';
+import { Drawing, DrawingType, dashStyles, LineDashStyle } from 'utils/draw';
 
-function createDrawingSchema( drawingType: DrawingType, properties: {} = {} )
+function createDrawingSchema( drawingType: DrawingType, properties: {} )
 {
   return {
     $id: drawingType,
-    allOf: [
-      { $ref: 'drawing' },
-      {
-        required: [ 'type', ...Object.keys( properties ) ],
-        properties: {
-          ...properties,
-          'type': { const: drawingType }
-        }
-      }
-    ],
+    type: 'object',
+    required: [ 'id', 'type', 'color', ...Object.keys( properties ) ],
+    properties: {
+      'type': { const: drawingType },
+      'id': { type: 'string', format: 'uuid' },
+      'color': { $ref: 'color', default: '#000000' },
+      ...properties
+    }
   };
 }
 
+const lineStyleSchema = {
+  type: 'object',
+  default: {},
+  required: [ 'dash', 'strokeWidth' ],
+  properties: {
+    'dash': { enum: Object.keys( dashStyles ), default: LineDashStyle.Solid },
+    'strokeWidth': { type: 'number', minimum: 0, maximum: 1000, default: 1 }
+  }
+};
+
+const guideLineProperties = {
+  'showGuideLine': { type: 'boolean', default: true },
+  'guideLine': lineStyleSchema
+};
+
 const drawingTypes: {[ key in DrawingType ]: {} } = {
-  [ DrawingType.Above ]: {},
-  [ DrawingType.At ]: {},
-  [ DrawingType.Below ]: {},
+  [ DrawingType.Above ]: guideLineProperties,
+  [ DrawingType.At ]: guideLineProperties,
+  [ DrawingType.Below ]: guideLineProperties,
   [ DrawingType.Between ]: {
-    height: { $ref: 'number', default: 0 }
+    'height': { type: 'number', default: 0, minimum: 0, maximum: 10000 },
+    ...guideLineProperties
   },
   [ DrawingType.PathLine ]: {},
   [ DrawingType.VerticalGridLine ]: {},
@@ -38,34 +52,25 @@ export const validator = new Ajv( { allErrors: true, useDefaults: true } )
   .addSchema( { type: 'boolean' }, 'boolean' )
   .addSchema( { type: 'number' }, 'number' )
   .addFormat( 'color', /^#[0-9a-fA-F]{6}/ )
-  .addSchema( { type: 'string', format: 'color' }, 'color' )
-  .addSchema( {
-    $id: 'drawing',
-    type: 'object',
-    required: [ 'type', 'id', 'color' ],
-    properties: {
-      'type': { enum: Object.keys( drawingTypes ) },
-      'id': { type: 'string', format: 'uuid' },
-      'color': { $ref: 'color', default: '#000000' }
-    }
-  } )
-  .addSchema( {
-    $id: 'guidline',
-    type: 'object',
-    required:
-  } );
+  .addSchema( { type: 'string', format: 'color' }, 'color' );
 
-Object.entries( drawingTypes ).forEach( ( [ drawingType, props ]: [ DrawingType, {} ] ) =>
+Object.entries( drawingTypes ).forEach( ( [ drawingType, properties ]: [ DrawingType, {} ] ) =>
 {
-  validator.addSchema( createDrawingSchema( drawingType, props ) );
+  validator.addSchema( createDrawingSchema( drawingType, properties ) );
 } );
+
+validator.addSchema( {
+  $id: 'drawing',
+  type: 'object',
+  anyOf: Object.keys( drawingTypes ).map( ( drawingType ) => ( { $ref: drawingType } ) )
+} );
+
+console.log( JSON.stringify( validator.getSchema( 'Above' ).schema, null, 2 ) );
 
 validator
   .addSchema( {
     type: 'array',
-    items: {
-      anyOf: Object.keys( drawingTypes ).map( ( r ) => ( { $ref: r } ) )
-    }
+    items: { $ref: 'drawing' }
   }, 'drawings' );
 
 export function parseDrawings( drawingsJson: string )
