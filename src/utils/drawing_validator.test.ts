@@ -1,21 +1,29 @@
-import { DrawingType } from './draw';
-import { validator } from './drawing_validator';
+import { DrawingType, LineDashStyle } from 'utils/draw';
+import { validator } from 'utils/drawing_validator';
 
 let data = [
   {
     type: DrawingType.Above,
     id: '35fbb386-4d65-4918-8f77-8cb43aa8581d',
+    showGuideLine: false,
     guideLine: {}
   },
   {
     type: DrawingType.At,
     id: '35fbb386-4d65-4918-8f77-8cb43aa8581d',
-    guideLine: {}
+    showGuideLine: false,
+    guideLine: {
+      dash: LineDashStyle.LooselyDashed
+    }
   },
   {
     type: DrawingType.Below,
     id: '35fbb386-4d65-4918-8f77-8cb43aa8581d',
-    guideLine: {}
+    showGuideLine: false,
+    guideLine: {
+      dash: LineDashStyle.LooselyDashed,
+      strokeWidth: 100
+    }
   },
   {
     type: DrawingType.Between,
@@ -50,12 +58,25 @@ describe( 'drawing validation', () =>
   {
     test( `Test Case: ${i}`, () =>
     {
-      expect( validator.validate( 'drawing', testCase ) ).toEqual( true );
-      console.log( testCase );
-      // expect( data ).toEqual( {
-      //   ...data,
-      //   color: '#000000'
-      // } );
+      let result = validator.validate( 'drawing', testCase );
+      if( !result )
+      {
+        console.warn( validator.errorsText() );
+      }
+      expect( result ).toBe( true );
     } );
+  } );
+} );
+
+describe( 'drawings validation', () =>
+{
+  test( 'all drawings', () =>
+  {
+    let result = validator.validate( 'drawings', data );
+    if( !result )
+    {
+      console.warn( validator.errorsText() );
+    }
+    expect( result ).toBe( true );
   } );
 } );
