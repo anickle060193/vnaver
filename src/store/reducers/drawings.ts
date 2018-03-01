@@ -10,7 +10,8 @@ import
   DrawingMap,
   DEFAULT_SCALE_LEVEL,
   DrawingType,
-  DraggingInfo
+  DraggingInfo,
+  getEndPointPosition
 } from 'utils/draw';
 import { mapToArray, arrayToMap, assertNever } from 'utils/utils';
 
@@ -71,36 +72,48 @@ const baseReducer = reducerWithInitialState( initialState )
     let selectedDrawingId = state.selectedDrawingId;
     let drawings = mapToArray( state.drawings );
 
-    let removedDrawings: string[] = [ drawingId ];
-    while( removedDrawings.length > 0 )
+    if( selectedDrawingId === drawingId )
     {
-      let removedId = removedDrawings.pop();
-      if( selectedDrawingId === removedId )
-      {
-        selectedDrawingId = null;
-      }
-      drawings = drawings.filter( ( drawing ) =>
-      {
-        if( drawing.id === removedId )
-        {
-          return false;
-        }
-        if( drawing.type === DrawingType.PathLine )
-        {
-          if( ( drawing.start.connected && drawing.start.anchorId === removedId )
-            || ( drawing.end.connected && drawing.end.anchorId === removedId ) )
-          {
-            removedDrawings.push( drawing.id );
-            return false;
-          }
-        }
-        return true;
-      } );
+      selectedDrawingId = null;
     }
+
+    drawings = drawings.map( ( drawing ) =>
+    {
+      if( drawing.type === DrawingType.PathLine )
+      {
+        if( drawing.start.connected && drawing.start.anchorId === drawingId )
+        {
+          let start = getEndPointPosition( drawing.start, state.drawings );
+          drawing = {
+            ...drawing,
+            start: {
+              connected: false,
+              x: start.x,
+              y: start.y
+            }
+          };
+        }
+
+        if( drawing.end.connected && drawing.end.anchorId === drawingId )
+        {
+          let end = getEndPointPosition( drawing.end, state.drawings );
+          drawing = {
+            ...drawing,
+            end: {
+              connected: false,
+              x: end.x,
+              y: end.y
+            }
+          };
+        }
+      }
+
+      return drawing;
+    } );
 
     return {
       ...state,
-      drawings: arrayToMap( drawings ),
+      drawings: arrayToMap( drawings.filter( ( drawing ) => drawing.id !== drawingId ) ),
       selectedDrawingId
     };
   } )
