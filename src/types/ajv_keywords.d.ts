@@ -23,6 +23,5 @@ declare module 'ajv-keywords'
     | 'formatExclusiveMinimum'
     | 'dynamicDefaults';
 
-  function defineKeywords( ajv: Ajv, include?: AdditionalKeywords | AdditionalKeywords[] ): Ajv;
-  export = defineKeywords;
+  export default function defineKeywords( ajv: Ajv, include?: AdditionalKeywords | AdditionalKeywords[] ): Ajv;
 }

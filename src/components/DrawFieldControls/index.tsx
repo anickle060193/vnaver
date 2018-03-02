@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Tooltip from 'components/Tooltip';
 import { resetScaleLevel, resetOrigin, incrementScaleLevel, decrementScaleLevel } from 'store/reducers/editor';
 import { showSettings, setGridOn } from 'store/reducers/settings';
+import { loadDrawings } from 'store/reducers/drawings';
 import { getScale, DrawingMap } from 'utils/draw';
 import { exportImage, saveDiagram, openDiagram } from 'utils/electron';
 
@@ -26,6 +27,7 @@ interface PropsFromDispatch
   resetOrigin: typeof resetOrigin;
   setGridOn: typeof setGridOn;
   showSettings: typeof showSettings;
+  loadDrawings: typeof loadDrawings;
 }
 
 type Props = PropsFromState & PropsFromDispatch;
@@ -171,8 +173,11 @@ class DrawFieldControls extends React.Component<Props>
 
   private onOpenDiagram = async () =>
   {
-    let diagramData = await openDiagram();
-    console.log( 'DIAGRAM:', diagramData );
+    let result = await openDiagram();
+    if( result )
+    {
+      this.props.loadDrawings( result );
+    }
   }
 }
 
@@ -190,6 +195,7 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     resetScaleLevel,
     resetOrigin,
     setGridOn,
-    showSettings
+    showSettings,
+    loadDrawings
   }
 )( DrawFieldControls );

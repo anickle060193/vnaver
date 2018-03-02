@@ -1,9 +1,10 @@
 import * as FsModule from 'mz/fs';
 
+const electron = window.require( 'electron' );
+
 import { DrawingMap } from 'utils/draw';
 import { mapToArray } from 'utils/utils';
-
-const electron = window.require( 'electron' );
+import { DrawingsParseResult, parseDrawings } from 'utils/drawing_validator';
 
 const fs = electron.remote.require( 'mz/fs' ) as typeof FsModule;
 
@@ -49,7 +50,7 @@ export function saveDiagram( drawings: DrawingMap )
     } );
 }
 
-export function openDiagram(): Promise<string | undefined>
+export function openDiagram(): Promise<DrawingsParseResult | undefined>
 {
   return new Promise( async ( resolve ) =>
   {
@@ -68,7 +69,8 @@ export function openDiagram(): Promise<string | undefined>
 
       let contentBuffer = await fs.readFile( filename );
       let content = contentBuffer.toString();
-      resolve( content );
+      let result = parseDrawings( content );
+      resolve( result );
     }
     resolve();
   } );
