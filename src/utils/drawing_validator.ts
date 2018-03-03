@@ -3,7 +3,8 @@ import DefineKeywords from 'ajv-keywords';
 
 const defineKeywords = require( 'ajv-keywords' ) as typeof DefineKeywords;
 
-import { Drawing, DrawingType, dashStyles, HorizontalAlign, VerticalAlign } from 'utils/draw';
+import { Drawing, DrawingType, dashStyles, HorizontalAlign, VerticalAlign, DrawingMap } from 'utils/draw';
+import { arrayToMap, mapToArray } from 'utils/utils';
 
 const MIN_COORDINATE = -1000000;
 const MAX_COORDINATE = +1000000;
@@ -124,7 +125,10 @@ export const validator = defineKeywords( new Ajv( {
     properties: {
       'type': { const: DrawingType.Between },
       'height': { type: 'number', minimum: 0, maximum: MAX_COORDINATE }
-    }
+    },
+    allOf: [
+      { $ref: Schemas.ContainsGuideLineDrawing }
+    ]
   } )
   .addSchema( {
     $id: Schemas.ConnectedPathLineEndPoint,
@@ -266,9 +270,11 @@ validator
     selectDefault: false
   } );
 
+( window as any ).validator = validator; // tslint:disable-line no-any
+
 export interface DrawingsParseResult
 {
-  drawings?: Drawing[];
+  drawings?: DrawingMap;
   errors?: string[];
 }
 
@@ -298,7 +304,12 @@ export function parseDrawings( drawingsJson: string ): DrawingsParseResult
         errors.push( `There was an error with drawing ${i}: ${validator.errorsText()}` );
       }
     } );
-    return { drawings, errors };
+
+    let drawingMap = arrayToMap( drawings );
+
+    validatePathLineDrawings( drawingMap, errors );
+
+    return { drawings: drawingMap, errors };
   }
   catch( e )
   {
@@ -309,4 +320,72 @@ export function parseDrawings( drawingsJson: string ): DrawingsParseResult
   return {
     errors: [ error ? error.toString() : 'Failed to parse drawings.' ]
   };
+}
+
+function validatePathLineDrawings( drawings: DrawingMap, errors: string[] )
+{
+  let removedIds: string[] = [];
+
+  for( let drawing of mapToArray( drawings ) )
+  {
+    if( drawing.type === DrawingType.PathLine )
+    {
+      if( drawing.start.connected )
+      {
+        let anchor = drawings[ drawing.start.anchorId ];
+        if( !anchor )
+        {
+          removedIds.push( drawing.id );
+          errors.push( `Drawing {${drawing.id}} removed as start-point connected anchor drawing (${drawing.start.anchorId}) does not exist.` );
+        }
+        else if( anchor.id === drawing.id )
+        {
+          removedIds.push( drawing.id );
+          errors.push( `Drawing {${drawing.id}} removed due to circular reference.` );
+        }
+      }
+
+      if( drawing.end.connected )
+      {
+        let anchor = drawings[ drawing.end.anchorId ];
+        if( !anchor )
+        {
+          removedIds.push( drawing.id );
+          errors.push( `Drawing {${drawing.id}} removed as end-point connected anchor drawing (${drawing.end.anchorId}) does not exist.` );
+        }
+        else if( anchor.id === drawing.id )
+        {
+          removedIds.push( drawing.id );
+          errors.push( `Drawing {${drawing.id}} removed due to circular reference.` );
+        }
+      }
+    }
+  }
+
+  let firstRemovalPass = true;
+  while( removedIds.length > 0 )
+  {
+    let removedId = removedIds.pop()!;
+
+    delete drawings[ removedId ];
+
+    if( !firstRemovalPass )
+    {
+      errors.push( `Drawing {${removedId}} removed due to removal of dependent drawing.` );
+    }
+
+    for( let drawing of mapToArray( drawings ) )
+    {
+      if( drawing.type === DrawingType.PathLine )
+      {
+        if( drawing.start.connected && drawing.start.anchorId === removedId
+          || drawing.end.connected && drawing.end.anchorId === removedId )
+        {
+          removedIds.push( drawing.id );
+        }
+      }
+    }
+
+    firstRemovalPass = false;
+  }
 }

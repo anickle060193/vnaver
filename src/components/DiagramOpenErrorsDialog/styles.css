@@ -1,0 +1,16 @@
+.open-errors-dialog
+{
+  margin: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.open-errors-dialog h1
+{
+  border-bottom: 1px solid white;
+}
+
+.open-errors-dialog li
+{
+  user-select: text;
+}

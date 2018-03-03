@@ -1,6 +1,6 @@
 export function mapToArray<T>( m: { [ key: string ]: T } )
 {
-  return Object.keys( m ).map( ( key ) => m[ key ] );
+  return Object.values( m );
 }
 
 export function arrayToMap<T extends { id: string }>( arr: T[] )

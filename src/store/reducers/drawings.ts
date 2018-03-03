@@ -163,7 +163,8 @@ const baseReducer = reducerWithInitialState( initialState )
   {
     return {
       ...state,
-      drawings
+      drawings,
+      selectedDrawingId: null
     };
   } );
 

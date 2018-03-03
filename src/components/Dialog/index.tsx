@@ -6,7 +6,10 @@ import './styles.css';
 interface Props
 {
   show: boolean;
+  closeOnShadeClick: boolean;
   onClose: () => void;
+
+  style?: React.CSSProperties;
 }
 
 interface State
@@ -48,10 +51,10 @@ export default class Dialog extends React.Component<Props, State>
           'dialog-shade',
           'dialog-' + this.state.state
         ].join( ' ' )}
-        onClick={this.onClose}
+        onClick={this.onShadeClick}
         onAnimationEnd={this.onAnimationEnd}
       >
-        <div className="dialog">
+        <div className="dialog" style={this.props.style}>
           {this.props.children}
         </div>
       </div>,
@@ -59,9 +62,10 @@ export default class Dialog extends React.Component<Props, State>
     );
   }
 
-  private onClose = ( e: React.MouseEvent<HTMLElement> ) =>
+  private onShadeClick = ( e: React.MouseEvent<HTMLElement> ) =>
   {
-    if( e.target === e.currentTarget )
+    if( this.props.closeOnShadeClick
+      && e.target === e.currentTarget )
     {
       this.props.onClose();
     }

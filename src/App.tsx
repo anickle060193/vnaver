@@ -5,6 +5,7 @@ import ShortcutManager from 'components/ShortcutManager';
 import Layout from 'components/Layout';
 import UpdateNotification from 'components/UpdateNotification';
 import SettingsDialog from 'components/SettingsDialog';
+import DiagramOpenErrorsDialog from 'components/DiagramOpenErrorsDialog';
 import store from 'store';
 import { createAutoUpdater } from 'utils/auto_updater';
 import { createApplicationMenu } from 'utils/menu';
@@ -26,6 +27,7 @@ export default class App extends React.Component
           <Layout />
           <UpdateNotification />
           <SettingsDialog />
+          <DiagramOpenErrorsDialog />
         </ShortcutManager>
       </Provider>
     );

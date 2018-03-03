@@ -2,16 +2,19 @@ import { MenuItemConstructorOptions } from 'electron';
 import { Store } from 'redux';
 
 import { setDrawings } from 'store/reducers/drawings';
+import { setDiagramOpenErrors } from 'store/reducers/editor';
 import electron, { openDiagram, saveDiagram, exportImage } from 'utils/electron';
-import { arrayToMap } from 'utils/utils';
 
 async function onOpenDiagram( store: Store<RootState> )
 {
   let result = await openDiagram();
   if( result && result.drawings )
   {
-    let drawings = arrayToMap( result.drawings );
-    store.dispatch( setDrawings( drawings ) );
+    store.dispatch( setDrawings( result.drawings ) );
+  }
+  if( result && result.errors )
+  {
+    store.dispatch( setDiagramOpenErrors( result.errors ) );
   }
 }
 

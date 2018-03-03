@@ -56,6 +56,7 @@ class SettingsDialog extends React.Component<Props, State>
       <Dialog
         show={this.props.show}
         onClose={this.onClose}
+        closeOnShadeClick={true}
       >
         <div className="settings">
           <div className="container-fluid">

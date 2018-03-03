@@ -18,6 +18,7 @@ export interface State
   originX: number;
   originY: number;
   selectedDrawingId: string | null;
+  diagramOpenErrors: string[] | null;
 }
 
 const initialState: State = {
@@ -25,7 +26,8 @@ const initialState: State = {
   scaleLevel: DEFAULT_SCALE_LEVEL,
   originX: 0.0,
   originY: 0.0,
-  selectedDrawingId: null
+  selectedDrawingId: null,
+  diagramOpenErrors: null
 };
 
 const actionCreator = actionCreatorFactory();
@@ -36,6 +38,8 @@ export const decrementScaleLevel = actionCreator( 'DECREMENT_SCALE_LEVEL' );
 export const resetScaleLevel = actionCreator( 'RESET_SCALE_LEVEL' );
 export const setOrigin = actionCreator<{ originX: number, originY: number }>( 'SET_ORIGIN' );
 export const resetOrigin = actionCreator( 'RESET_ORIGIN' );
+export const setDiagramOpenErrors = actionCreator<string[]>( 'SET_DIAGRAM_OPEN_ERRORS' );
+export const clearDiagramOpenErrors = actionCreator( 'CLEAR_DIAGRAM_OPEN_ERRORS' );
 
 export const reducer = reducerWithInitialState( initialState )
   .case( setTool, ( state, tool ) =>
@@ -69,4 +73,14 @@ export const reducer = reducerWithInitialState( initialState )
       ...state,
       originX: 0.0,
       originY: 0.0
+    } ) )
+  .case( setDiagramOpenErrors, ( state, diagramOpenErrors ) =>
+    ( {
+      ...state,
+      diagramOpenErrors
+    } ) )
+  .case( clearDiagramOpenErrors, ( state ) =>
+    ( {
+      ...state,
+      diagramOpenErrors: null
     } ) );
