@@ -14,7 +14,6 @@ import
   getEndPointPosition
 } from 'utils/draw';
 import { mapToArray, arrayToMap, assertNever } from 'utils/utils';
-import { DrawingsParseResult } from 'utils/drawing_validator';
 
 export interface State
 {
@@ -43,7 +42,7 @@ export const deselectDrawing = actionCreator( 'DESELECT_DRAWING' );
 export const updateDrawing = actionCreator<Drawing>( 'UPDATE_DRAWING' );
 export const deleteDrawing = actionCreator<string>( 'DELETE_DRAWING' );
 export const moveDrawing = actionCreator<DraggingInfo>( 'MOVE_DRAWING' );
-export const loadDrawings = actionCreator<DrawingsParseResult>( 'LOAD_DRAWINGS' );
+export const setDrawings = actionCreator<DrawingMap>( 'SET_DRAWINGS' );
 
 const setDrawingInState = <D extends Drawing>( state: State, drawing: D ): State =>
   ( {
@@ -160,19 +159,12 @@ const baseReducer = reducerWithInitialState( initialState )
       throw assertNever( drawing.type );
     }
   } )
-  .case( loadDrawings, ( state, { drawings, errors } ) =>
+  .case( setDrawings, ( state, drawings ) =>
   {
-    if( drawings )
-    {
-      return {
-        ...state,
-        drawings: arrayToMap( drawings )
-      };
-    }
-    else
-    {
-      return state;
-    }
+    return {
+      ...state,
+      drawings
+    };
   } );
 
 export const reducer = undoable( baseReducer, {

@@ -4,9 +4,7 @@ import { connect } from 'react-redux';
 import Tooltip from 'components/Tooltip';
 import { resetScaleLevel, resetOrigin, incrementScaleLevel, decrementScaleLevel } from 'store/reducers/editor';
 import { showSettings, setGridOn } from 'store/reducers/settings';
-import { loadDrawings } from 'store/reducers/drawings';
 import { getScale, DrawingMap } from 'utils/draw';
-import { exportImage, saveDiagram, openDiagram } from 'utils/electron';
 
 import './styles.css';
 
@@ -27,7 +25,6 @@ interface PropsFromDispatch
   resetOrigin: typeof resetOrigin;
   setGridOn: typeof setGridOn;
   showSettings: typeof showSettings;
-  loadDrawings: typeof loadDrawings;
 }
 
 type Props = PropsFromState & PropsFromDispatch;
@@ -89,30 +86,6 @@ class DrawFieldControls extends React.Component<Props>
         </div>
 
         <div
-          className="drawing-open-diagram"
-          onClick={this.onOpenDiagram}
-        >
-          <Tooltip align="bottom" title="Open Diagram" />
-          <span className="material-icons">folder_open</span>
-        </div>
-
-        <div
-          className="drawing-save-diagram"
-          onClick={this.onSaveDiagram}
-        >
-          <Tooltip align="bottom" title="Save Diagram" />
-          <span className="material-icons">save</span>
-        </div>
-
-        <div
-          className="drawing-export-image"
-          onClick={this.onExportImage}
-        >
-          <Tooltip align="bottom" title="Export Image" />
-          <span className="material-icons">photo</span>
-        </div>
-
-        <div
           className="drawing-settings"
           onClick={this.onSettingsClick}
         >
@@ -152,32 +125,9 @@ class DrawFieldControls extends React.Component<Props>
     this.props.setGridOn( !this.props.gridOn );
   }
 
-  private onExportImage = () =>
-  {
-    let canvas = document.querySelector( 'canvas' ) as HTMLCanvasElement;
-    if( canvas )
-    {
-      exportImage( canvas );
-    }
-  }
-
   private onSettingsClick = () =>
   {
     this.props.showSettings();
-  }
-
-  private onSaveDiagram = () =>
-  {
-    saveDiagram( this.props.drawings );
-  }
-
-  private onOpenDiagram = async () =>
-  {
-    let result = await openDiagram();
-    if( result )
-    {
-      this.props.loadDrawings( result );
-    }
   }
 }
 
@@ -195,7 +145,6 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     resetScaleLevel,
     resetOrigin,
     setGridOn,
-    showSettings,
-    loadDrawings
+    showSettings
   }
 )( DrawFieldControls );
