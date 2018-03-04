@@ -8,6 +8,7 @@ import { drawingComponentMap, Between, VerticalGridLine, HorizontalGridLine, Act
 import PathLine from 'components/DrawField/Drawings/PathLine';
 import { addDrawing, selectDrawing, deselectDrawing, moveDrawing } from 'store/reducers/drawings';
 import { incrementScaleLevel, decrementScaleLevel, setOrigin, setTool } from 'store/reducers/editor';
+import { stateEditor, stateDrawings } from 'store/selectors';
 import
 {
   DrawingType,
@@ -881,18 +882,18 @@ class DrawField extends React.Component<Props, State>
 
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   ( state ) => ( {
-    tool: state.editor.tool,
-    scale: getScale( state.editor.scaleLevel ),
-    originX: state.editor.originX,
-    originY: state.editor.originY,
+    tool: stateEditor( state ).tool,
+    scale: getScale( stateEditor( state ).scaleLevel ),
+    originX: stateEditor( state ).originX,
+    originY: stateEditor( state ).originY,
     gridOn: state.settings.gridOn,
     snapToGrid: state.settings.snapToGrid,
     gridIntervalX: state.settings.gridIntervalX,
     gridIntervalY: state.settings.gridIntervalY,
-    drawings: state.drawings.present.drawings,
+    drawings: stateDrawings( state ).drawings,
     defaultDrawingColors: state.settings.defaultDrawingColors,
     deselectToolAfterAdd: state.settings.deselectToolAfterAdd,
-    selectedDrawingId: state.drawings.present.selectedDrawingId
+    selectedDrawingId: stateDrawings( state ).selectedDrawingId
   } ),
   {
     incrementScaleLevel,

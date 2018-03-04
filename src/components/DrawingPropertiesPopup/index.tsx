@@ -1,10 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { deleteDrawing, updateDrawing, deselectDrawing } from 'store/reducers/drawings';
-import { Drawing, DrawingType, DrawingMap, drawingToolDisplayNames } from 'utils/draw';
-
-import './styles.css';
 import
 {
   BasicDrawingProperties,
@@ -15,7 +11,12 @@ import
   PathLineDrawingProperties,
   TextDrawingProperties
 } from './DrawingProperties';
+import { deleteDrawing, updateDrawing, deselectDrawing } from 'store/reducers/drawings';
+import { stateDrawings } from 'store/selectors';
+import { Drawing, DrawingType, DrawingMap, drawingToolDisplayNames } from 'utils/draw';
 import { assertNever } from 'utils/utils';
+
+import './styles.css';
 
 interface PropsFromState
 {
@@ -176,8 +177,8 @@ class DrawingProperties extends React.Component<Props>
 
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   ( state ) => ( {
-    drawings: state.drawings.present.drawings,
-    selectedDrawingId: state.drawings.present.selectedDrawingId
+    drawings: stateDrawings( state ).drawings,
+    selectedDrawingId: stateDrawings( state ).selectedDrawingId
   } ),
   {
     deleteDrawing,

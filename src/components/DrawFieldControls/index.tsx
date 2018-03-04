@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Tooltip from 'components/Tooltip';
 import { resetScaleLevel, resetOrigin, incrementScaleLevel, decrementScaleLevel } from 'store/reducers/editor';
 import { showSettings, setGridOn } from 'store/reducers/settings';
+import { stateEditor, stateDrawings } from 'store/selectors';
 import { getScale, DrawingMap } from 'utils/draw';
 
 import './styles.css';
@@ -133,11 +134,11 @@ class DrawFieldControls extends React.Component<Props>
 
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   ( state ) => ( {
-    originX: state.editor.originX,
-    originY: state.editor.originY,
-    scale: getScale( state.editor.scaleLevel ),
+    originX: stateEditor( state ).originX,
+    originY: stateEditor( state ).originY,
+    scale: getScale( stateEditor( state ).scaleLevel ),
     gridOn: state.settings.gridOn,
-    drawings: state.drawings.present.drawings
+    drawings: stateDrawings( state ).drawings
   } ),
   {
     incrementScaleLevel,

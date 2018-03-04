@@ -4,6 +4,7 @@ import { ActionCreators } from 'redux-undo';
 
 import { deleteDrawing } from 'store/reducers/drawings';
 import { setTool } from 'store/reducers/editor';
+import { stateDrawings } from 'store/selectors';
 import { DrawingTool, Tool } from 'utils/draw';
 import { getShortcutFromKeyEvent, ShortcutMap } from 'utils/shortcut';
 import { launchSecret } from 'utils/electron';
@@ -138,7 +139,7 @@ class ShortcutManager extends React.Component<Props, State>
 
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   ( state ) => ( {
-    selectedDrawingId: state.drawings.present.selectedDrawingId,
+    selectedDrawingId: stateDrawings( state ).selectedDrawingId,
     shortcuts: state.settings.shortcuts,
     settingsOpen: state.settings.show
   } ),

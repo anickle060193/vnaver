@@ -4,6 +4,7 @@ import { Group, Circle } from 'react-konva';
 
 import { DrawingComponentProps, LineDrawing } from './DrawingComponent';
 import { PathLineDrawing, DrawingMap, getEndPointPosition } from 'utils/draw';
+import { stateDrawings } from 'store/selectors';
 
 const OUTER_CIRCLE_RADIUS = 4;
 const INNER_CIRCLE_RADIUS = 2;
@@ -82,7 +83,7 @@ const PathLine: React.SFC<Props> = ( { drawing, onClick, onMouseDown, drawings, 
 
 export default connect<PropsFromState, {}, OwnProps, RootState>(
   ( state ) => ( {
-    drawings: state.drawings.present.drawings
+    drawings: stateDrawings( state ).drawings
   } ),
   {
   }

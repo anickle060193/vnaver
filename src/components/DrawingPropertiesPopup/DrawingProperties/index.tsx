@@ -23,6 +23,7 @@ import
   VerticalAlign
 } from 'utils/draw';
 import { selectDrawing } from 'store/reducers/drawings';
+import { stateDrawings } from 'store/selectors';
 
 type DrawingChangeEventHandler<D extends Drawing> = ( newDrawing: D ) => void;
 
@@ -455,7 +456,7 @@ type EndPointDrawingPropertiesProps = EndPointDrawingPropertiesPropsFromState & 
 
 const endPointConnecter = connect<EndPointDrawingPropertiesPropsFromState, EndPointDrawingPropertiesPropsFromDispatch, EndPointDrawingPropertiesOwnProps, RootState>(
   ( state ) => ( {
-    drawings: state.drawings.present.drawings
+    drawings: stateDrawings( state ).drawings
   } ),
   {
     selectDrawing

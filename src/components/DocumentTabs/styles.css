@@ -1,0 +1,48 @@
+.document-tabs
+{
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  flex-direction: row;
+
+  list-style: none;
+  box-shadow: inset 0px -2px 5px 0px #D8D8D8;
+}
+
+.document-tab
+{
+  flex: 1;
+  max-width: 10rem;
+  height: 2rem;
+  line-height: 2rem;
+
+  padding: 0 0.5rem;
+
+  transition: background-color 250ms;
+  background: rgb(238, 238, 238);
+
+  border: 1px solid lightgray;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.document-tab:not( :first-child )
+{
+  border-left: none;
+  box-shadow: inset 1px -1px 4px 0px #D8D8D8;
+}
+
+.document-tab.document-tab-active
+{
+  background: white;
+  border-bottom: none;
+  box-shadow: 2px -1px 4px 0px #D8D8D8;
+}
+
+.document-tab:not( .document-tab-active ):hover
+{
+  background: rgb(245, 245, 245);
+}

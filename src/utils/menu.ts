@@ -3,6 +3,7 @@ import { Store } from 'redux';
 
 import { setDrawings } from 'store/reducers/drawings';
 import { setDiagramOpenErrors } from 'store/reducers/editor';
+import { stateDrawings } from 'store/selectors';
 import electron, { openDiagram, saveDiagram, exportImage } from 'utils/electron';
 
 async function onOpenDiagram( store: Store<RootState> )
@@ -20,7 +21,7 @@ async function onOpenDiagram( store: Store<RootState> )
 
 function onSaveDiagram( store: Store<RootState> )
 {
-  saveDiagram( store.getState().drawings.present.drawings );
+  saveDiagram( stateDrawings( store.getState() ).drawings );
 }
 
 function onExportImage()
