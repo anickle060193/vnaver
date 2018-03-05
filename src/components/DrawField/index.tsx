@@ -553,8 +553,10 @@ class DrawField extends React.Component<Props, State>
 
   private mouseToDrawing( e: { clientX: number, clientY: number } )
   {
-    let x = ( e.clientX - this.props.originX ) / this.props.scale;
-    let y = ( e.clientY - this.props.originY ) / this.props.scale;
+    let { left, top } = this.drawFieldRef!.getBoundingClientRect();
+    let x = ( e.clientX - left - this.props.originX ) / this.props.scale;
+    let y = ( e.clientY - top - this.props.originY ) / this.props.scale;
+
     if( this.props.gridOn && this.props.snapToGrid )
     {
       return {
