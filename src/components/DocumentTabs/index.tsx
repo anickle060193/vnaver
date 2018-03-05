@@ -2,7 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import { setCurrentDocument, swapDocuments, addDocument } from 'store/reducers/documents';
-import { documentNames } from 'store/selectors';
+import { documentNames, documentModifieds, DocumentAttributeMap } from 'store/selectors';
 
 import './styles.css';
 
@@ -10,7 +10,8 @@ interface PropsFromState
 {
   documentIds: string[];
   currentDocumentId: string;
-  documentNames: { [ documentId: string ]: string };
+  documentNames: DocumentAttributeMap<string>;
+  documentModifieds: DocumentAttributeMap<boolean>;
 }
 
 interface PropsFromDispatch
@@ -61,7 +62,12 @@ class DocumentTabs extends React.Component<Props, State>
             onDragOver={( e ) => this.onDragOver( documentId, e )}
             onDragEnd={( e ) => this.onDragEnd( documentId, e )}
           >
-            {this.props.documentNames[ documentId ]}
+            {this.props.documentModifieds[ documentId ] ?
+              (
+                <em>{this.props.documentNames[ documentId ]} *</em>
+              ) : (
+                this.props.documentNames[ documentId ]
+              )}
           </li>
         ) )}
         <li
@@ -112,7 +118,8 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   ( state ) => ( {
     documentIds: state.documents.order,
     currentDocumentId: state.documents.currentDocumentId,
-    documentNames: documentNames( state )
+    documentNames: documentNames( state ),
+    documentModifieds: documentModifieds( state )
   } ),
   {
     setCurrentDocument,

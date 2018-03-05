@@ -23,6 +23,7 @@ export interface State
   originY: number;
   drawings: DrawingMap;
   selectedDrawingId: string | null;
+  modified: boolean;
 }
 
 const initialState: State = {
@@ -31,7 +32,8 @@ const initialState: State = {
   originX: 0.0,
   originY: 0.0,
   drawings: {},
-  selectedDrawingId: null
+  selectedDrawingId: null,
+  modified: false
 };
 
 const actionCreator = actionCreatorFactory();
@@ -56,7 +58,8 @@ const setDrawingInState = <D extends Drawing>( state: State, drawing: D ): State
 const baseReducer = reducerWithInitialState( initialState )
   .case( addDrawing, ( state, drawing ) => ( {
     ...setDrawingInState( state, drawing ),
-    selectedDrawingId: drawing.id
+    selectedDrawingId: drawing.id,
+    modified: true
   } ) )
   .case( selectDrawing, ( state, drawingId ) =>
     ( {
@@ -115,10 +118,16 @@ const baseReducer = reducerWithInitialState( initialState )
     return {
       ...state,
       drawings: arrayToMap( drawings.filter( ( drawing ) => drawing.id !== drawingId ) ),
-      selectedDrawingId
+      selectedDrawingId,
+      modified: true
     };
   } )
-  .case( updateDrawing, setDrawingInState )
+  .case( updateDrawing, ( state, drawing ) => ( {
+    ...setDrawingInState( state, {
+      ...drawing
+    } ),
+    modified: true
+  } ) )
   .case( moveDrawing, ( state, { drawingId, x, y } ) =>
   {
     let drawing = state.drawings[ drawingId ];
@@ -133,21 +142,24 @@ const baseReducer = reducerWithInitialState( initialState )
       return setDrawingInState( state, {
         ...drawing,
         x,
-        y
+        y,
+        modified: true
       } );
     }
     else if( drawing.type === DrawingType.HorizontalGridLine )
     {
       return setDrawingInState( state, {
         ...drawing,
-        y
+        y,
+        modified: true
       } );
     }
     else if( drawing.type === DrawingType.VerticalGridLine )
     {
       return setDrawingInState( state, {
         ...drawing,
-        x
+        x,
+        modified: true
       } );
     }
     else if( drawing.type === DrawingType.PathLine )
@@ -164,7 +176,8 @@ const baseReducer = reducerWithInitialState( initialState )
     return {
       ...state,
       drawings,
-      selectedDrawingId: null
+      selectedDrawingId: null,
+      modified: false
     };
   } );
 

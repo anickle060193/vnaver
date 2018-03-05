@@ -1,3 +1,5 @@
+import { State as DocumentState } from 'store/reducers/document';
+
 export function currentDrawingsState( state: RootState )
 {
   return state.documents.docs[ state.documents.currentDocumentId ].drawings.present;
@@ -8,11 +10,23 @@ export function currentEditorState( state: RootState )
   return state.documents.docs[ state.documents.currentDocumentId ].editor;
 }
 
-export function documentNames( state: RootState )
+export type DocumentAttributeMap<T> = { [ documentId: string ]: T };
+
+function getDocumentsAttribute<T>( state: RootState, getItem: ( document: DocumentState ) => T )
 {
   return Object.entries( state.documents.docs ).reduce( ( prev, [ documentId, document ] ) =>
   {
-    prev[ documentId ] = document.info.name;
+    prev[ documentId ] = getItem( document );
     return prev;
-  }, {} as { [ documentId: string ]: string } );
+  }, {} as { [ documentId: string ]: T } );
+}
+
+export function documentNames( state: RootState )
+{
+  return getDocumentsAttribute( state, ( doc ) => doc.info.name );
+}
+
+export function documentModifieds( state: RootState )
+{
+  return getDocumentsAttribute( state, ( doc ) => doc.drawings.present.modified );
 }
