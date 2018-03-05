@@ -46,3 +46,14 @@
 {
   background: rgb(245, 245, 245);
 }
+
+.new-document-tab
+{
+  flex: unset;
+  width: auto;
+  color: gray;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}

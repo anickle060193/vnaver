@@ -1,105 +1,122 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
+import { setCurrentDocument, swapDocuments, addDocument } from 'store/reducers/documents';
+import { documentNames } from 'store/selectors';
+
 import './styles.css';
+
+interface PropsFromState
+{
+  documentIds: string[];
+  currentDocumentId: string;
+  documentNames: { [ documentId: string ]: string };
+}
+
+interface PropsFromDispatch
+{
+  setCurrentDocument: typeof setCurrentDocument;
+  swapDocuments: typeof swapDocuments;
+  addDocument: typeof addDocument;
+}
 
 interface State
 {
-  tabs: string[];
-  activeTab: number;
-  dragging: number | null;
+  draggingDocumentId: string | null;
 }
 
-class DocumentTabs extends React.Component<{}, State>
+type Props = PropsFromState & PropsFromDispatch;
+
+class DocumentTabs extends React.Component<Props, State>
 {
-  constructor( props: {} )
+  constructor( props: Props )
   {
     super( props );
 
     this.state = {
-      tabs: [ 'Tab 1', 'Tab 2', 'Tab 3', 'Tab 4', 'Tab 5Tab 5Tab 5Tab 5Tab 5Tab 5' ],
-      activeTab: 0,
-      dragging: null
+      draggingDocumentId: null
     };
   }
 
   render()
   {
-    let tabCount = this.state.tabs.length;
+    let tabCount = this.props.documentIds.length;
 
     return (
       <ul className="document-tabs">
-        {this.state.tabs.map( ( tab, i ) => (
+        {this.props.documentIds.map( ( documentId, i ) => (
           <li
-            key={i}
+            key={documentId}
             className={[
               'document-tab',
-              i === this.state.activeTab ? 'document-tab-active' : ''
+              documentId === this.props.currentDocumentId ? 'document-tab-active' : ''
             ].join( ' ' )}
             style={{
-              zIndex: i === this.state.activeTab ? tabCount : tabCount - i - 1
+              zIndex: documentId === this.props.currentDocumentId ? tabCount : tabCount - i - 1
             }}
-            onMouseDown={() => this.onMouseDown( i )}
+            onMouseDown={() => this.onMouseDown( documentId )}
             draggable={true}
-            onDragStart={( e ) => this.onDragStart( i, e )}
-            onDragEnter={( e ) => this.onDragEnter( i, e )}
-            onDragOver={( e ) => this.onDragOver( i, e )}
-            onDragEnd={( e ) => this.onDragEnd( i, e )}
+            onDragStart={( e ) => this.onDragStart( documentId, e )}
+            onDragEnter={( e ) => this.onDragEnter( documentId, e )}
+            onDragOver={( e ) => this.onDragOver( documentId, e )}
+            onDragEnd={( e ) => this.onDragEnd( documentId, e )}
           >
-            {tab}
+            {this.props.documentNames[ documentId ]}
           </li>
         ) )}
+        <li
+          className="document-tab new-document-tab"
+          onClick={this.onNewTabClick}
+        >
+          <span className="material-icons">add</span>
+        </li>
       </ul>
     );
   }
 
-  private onMouseDown = ( tabIndex: number ) =>
+  private onMouseDown = ( documentId: string ) =>
   {
-    this.setState( { activeTab: tabIndex } );
+    this.props.setCurrentDocument( documentId );
   }
 
-  private onDragStart = ( tabIndex: number, e: React.DragEvent<HTMLLIElement> ) =>
+  private onDragStart = ( documentId: string, e: React.DragEvent<HTMLLIElement> ) =>
   {
-    this.setState( { dragging: tabIndex } );
+    this.setState( { draggingDocumentId: documentId } );
   }
 
-  private onDragEnter = ( tabIndex: number, e: React.DragEvent<HTMLLIElement> ) =>
+  private onDragEnter = ( documentId: string, e: React.DragEvent<HTMLLIElement> ) =>
   {
-    this.dragTab( tabIndex );
+    if( this.state.draggingDocumentId )
+    {
+      this.props.swapDocuments( [ this.state.draggingDocumentId, documentId ] );
+    }
   }
 
-  private onDragOver = ( tabIndex: number, e: React.DragEvent<HTMLLIElement> ) =>
+  private onDragOver = ( documentId: string, e: React.DragEvent<HTMLLIElement> ) =>
   {
     e.preventDefault();
   }
 
-  private onDragEnd = ( tabIndex: number, e: React.DragEvent<HTMLLIElement> ) =>
+  private onDragEnd = ( documentId: string, e: React.DragEvent<HTMLLIElement> ) =>
   {
-    this.setState( { dragging: null } );
+    this.setState( { draggingDocumentId: null } );
   }
 
-  private dragTab( tabIndex: number )
+  private onNewTabClick = () =>
   {
-    this.setState( ( prevState ) =>
-    {
-      if( prevState.dragging !== null && prevState.dragging !== tabIndex )
-      {
-        let newTabs = [ ...prevState.tabs ];
-        let a = newTabs[ prevState.dragging ];
-        newTabs[ prevState.dragging ] = newTabs[ tabIndex ];
-        newTabs[ tabIndex ] = a;
-        return { tabs: newTabs, dragging: tabIndex, activeTab: tabIndex };
-      }
-      else
-      {
-        return { ...prevState };
-      }
-    } );
+    this.props.addDocument();
   }
 }
 
-export default connect<{}, {}, {}, RootState>(
-  ( state ) => ( {} ),
+export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
+  ( state ) => ( {
+    documentIds: state.documents.order,
+    currentDocumentId: state.documents.currentDocumentId,
+    documentNames: documentNames( state )
+  } ),
   {
+    setCurrentDocument,
+    swapDocuments,
+    addDocument
   }
 )( DocumentTabs );

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import Dialog from 'components/Dialog';
 import { clearDiagramOpenErrors } from 'store/reducers/editor';
-import { stateEditor } from 'store/selectors';
+import { currentEditorState } from 'store/selectors';
 
 import './styles.css';
 
@@ -65,7 +65,7 @@ class DiagramOpenErrorsDialog extends React.Component<Props>
 
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   ( state ) => ( {
-    diagramOpenErrors: stateEditor( state ).diagramOpenErrors
+    diagramOpenErrors: currentEditorState( state ).diagramOpenErrors
   } ),
   {
     clearDiagramOpenErrors

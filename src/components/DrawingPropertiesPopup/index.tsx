@@ -12,7 +12,7 @@ import
   TextDrawingProperties
 } from './DrawingProperties';
 import { deleteDrawing, updateDrawing, deselectDrawing } from 'store/reducers/drawings';
-import { stateDrawings } from 'store/selectors';
+import { currentDrawingsState } from 'store/selectors';
 import { Drawing, DrawingType, DrawingMap, drawingToolDisplayNames } from 'utils/draw';
 import { assertNever } from 'utils/utils';
 
@@ -177,8 +177,8 @@ class DrawingProperties extends React.Component<Props>
 
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   ( state ) => ( {
-    drawings: stateDrawings( state ).drawings,
-    selectedDrawingId: stateDrawings( state ).selectedDrawingId
+    drawings: currentDrawingsState( state ).drawings,
+    selectedDrawingId: currentDrawingsState( state ).selectedDrawingId
   } ),
   {
     deleteDrawing,
