@@ -79,12 +79,21 @@ class DocumentTabs extends React.Component<Props, State>
               onDragEnd={( e ) => this.onTabDragEnd( documentId, e )}
               title={filename}
             >
-              {modified ?
-                (
-                  <em>{baseFilename} *</em>
-                ) : (
-                  baseFilename
-                )}
+              <span
+                className={[
+                  'document-tab-filename',
+                  modified ? 'document-tab-modified' : ''
+                ].join( ' ' )}
+              >
+                {baseFilename}
+              </span>
+              <span
+                title=""
+                className="material-icons document-tab-close"
+                onClick={() => this.onCloseTabClick( documentId )}
+              >
+                close
+              </span>
             </li>
           );
         } )}
@@ -98,6 +107,18 @@ class DocumentTabs extends React.Component<Props, State>
     );
   }
 
+  private closeDocument( documentId: string )
+  {
+    if( this.props.documentIds.length === 1 )
+    {
+      exit();
+    }
+    else
+    {
+      this.props.closeDocument( documentId );
+    }
+  }
+
   private onTabMouseDown = ( documentId: string, e: React.MouseEvent<HTMLLIElement> ) =>
   {
     this.props.setCurrentDocument( documentId );
@@ -107,15 +128,13 @@ class DocumentTabs extends React.Component<Props, State>
   {
     if( e.button === 1 )
     {
-      if( this.props.documentIds.length === 1 )
-      {
-        exit();
-      }
-      else
-      {
-        this.props.closeDocument( documentId );
-      }
+      this.closeDocument( documentId );
     }
+  }
+
+  private onCloseTabClick = ( documentId: string ) =>
+  {
+    this.closeDocument( documentId );
   }
 
   private onTabDragStart = ( documentId: string, e: React.DragEvent<HTMLLIElement> ) =>

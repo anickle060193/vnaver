@@ -13,9 +13,12 @@
 .document-tab
 {
   flex: 1;
-  max-width: 10rem;
+  max-width: 12rem;
   height: 2rem;
-  line-height: 2rem;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 
   padding: 0 0.5rem;
 
@@ -23,10 +26,25 @@
   background: rgb(238, 238, 238);
 
   border: 1px solid lightgray;
+}
+
+.document-tab-filename
+{
+  flex: 1 1;
 
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.document-tab-modified
+{
+  font-style: italic;
+}
+
+.document-tab .document-tab-modified:after
+{
+  content: '*';
 }
 
 .document-tab:not( :first-child )
@@ -45,6 +63,22 @@
 .document-tab:not( .document-tab-active ):hover
 {
   background: rgb(245, 245, 245);
+}
+
+.document-tab .document-tab-close
+{
+  margin-left: auto;
+  font-size: 1rem;
+
+  border-radius: 50%;
+
+  transition: background-color 150ms, color 150ms;
+}
+
+.document-tab .document-tab-close:hover
+{
+  background: red;
+  color: white;
 }
 
 .new-document-tab
