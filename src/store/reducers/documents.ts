@@ -3,6 +3,7 @@ import { actionCreatorFactory } from 'typescript-fsa';
 import * as uuid from 'uuid/v4';
 
 import { State as DocumentState, reducer as documentReducer } from 'store/reducers/document';
+import { limit } from 'utils/utils';
 
 type DocumentStateMap = { [ documentId: string ]: DocumentState };
 
@@ -32,6 +33,7 @@ const actionCreator = actionCreatorFactory();
 export const setCurrentDocument = actionCreator<string>( 'SET_CURRENT_DOCUMENT' );
 export const addDocument = actionCreator( 'ADD_DOCUMENT' );
 export const swapDocuments = actionCreator<[ string, string ]>( 'SWAP_DOCUMENTS' );
+export const closeDocument = actionCreator<string>( 'CLOSE_DOCUMENT' );
 
 export const reducer: Reducer<State> = ( state = initialState, action: Action ) =>
 {
@@ -75,6 +77,44 @@ export const reducer: Reducer<State> = ( state = initialState, action: Action ) 
     return {
       ...state,
       order
+    };
+  }
+  else if( closeDocument.match( action ) )
+  {
+    let documentId = action.payload;
+
+    let order = [ ...state.order ];
+    let documentIndex = order.indexOf( documentId );
+    if( documentIndex !== -1 )
+    {
+      order.splice( documentIndex, 1 );
+    }
+
+    let docs = { ...state.docs };
+    delete docs[ documentId ];
+
+    let currentDocumentId = state.currentDocumentId;
+    if( currentDocumentId === documentId )
+    {
+      if( order.length === 0 )
+      {
+        throw new Error( 'Attempting to remove last document.' );
+      }
+      else if( documentIndex !== -1 )
+      {
+        let index = limit( documentIndex, 0, order.length - 1 );
+        currentDocumentId = order[ index ];
+      }
+      else
+      {
+        currentDocumentId = order[ 0 ];
+      }
+    }
+    return {
+      ...state,
+      currentDocumentId,
+      order,
+      docs
     };
   }
   else

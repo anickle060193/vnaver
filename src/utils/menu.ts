@@ -1,19 +1,29 @@
 import { MenuItemConstructorOptions } from 'electron';
 import { Store } from 'redux';
+import { ActionCreators } from 'redux-undo';
 
 import { setDrawings } from 'store/reducers/drawings';
 import { setDiagramOpenErrors } from 'store/reducers/editor';
-import { currentDrawingsState } from 'store/selectors';
-import electron, { openDiagram, saveDiagram, exportImage } from 'utils/electron';
+import { currentDrawingsState, currentDocumentInformationState } from 'store/selectors';
+import electron, { openDiagram, saveDiagramAs, exportImage, saveDiagram } from 'utils/electron';
 import { addDocument } from 'store/reducers/documents';
-import { setDocumentFileName } from 'store/reducers/documentInfo';
+import { setDocumentFileName, setSaveRevision } from 'store/reducers/documentInfo';
 
 async function onOpenDiagram( store: Store<RootState> )
 {
   let result = await openDiagram();
   if( result )
   {
-    store.dispatch( addDocument() );
+    let state = store.getState();
+    let documentInfo = currentDocumentInformationState( state );
+    let currentRevision = currentDrawingsState( state ).revision;
+    if( documentInfo.filename !== null
+      || documentInfo.saveRevision !== null
+      || currentRevision !== 0 )
+    {
+      store.dispatch( addDocument() );
+    }
+
     store.dispatch( setDocumentFileName( result.filename ) );
 
     if( result && result.drawings )
@@ -24,12 +34,48 @@ async function onOpenDiagram( store: Store<RootState> )
     {
       store.dispatch( setDiagramOpenErrors( result.errors ) );
     }
+
+    let updatedState = store.getState();
+    let revision = currentDrawingsState( updatedState ).revision;
+    store.dispatch( setSaveRevision( revision ) );
+
+    store.dispatch( ActionCreators.clearHistory() );
   }
 }
 
-function onSaveDiagram( store: Store<RootState> )
+async function onSaveDiagram( store: Store<RootState> )
 {
-  saveDiagram( currentDrawingsState( store.getState() ).drawings );
+  let state = store.getState();
+  let drawingsState = currentDrawingsState( state );
+  let drawings = drawingsState.drawings;
+  let filename = currentDocumentInformationState( state ).filename;
+
+  let newFilename = await saveDiagram( drawings, filename );
+
+  if( newFilename !== null )
+  {
+    store.dispatch( setSaveRevision( drawingsState.revision ) );
+
+    if( newFilename !== filename )
+    {
+      store.dispatch( setDocumentFileName( newFilename ) );
+    }
+  }
+}
+
+async function onSaveDiagramAs( store: Store<RootState> )
+{
+  let state = store.getState();
+  let drawingsState = currentDrawingsState( state );
+  let drawings = drawingsState.drawings;
+
+  let filename = await saveDiagramAs( drawings );
+
+  if( filename !== null )
+  {
+    store.dispatch( setSaveRevision( drawingsState.revision ) );
+    store.dispatch( setDocumentFileName( filename ) );
+  }
 }
 
 function onExportImage()
@@ -48,14 +94,25 @@ export function createApplicationMenu( store: Store<RootState> )
       label: 'File',
       submenu: [
         {
+          label: 'New',
+          accelerator: 'CmdOrCtrl+N'
+        },
+        { type: 'separator' },
+        {
           label: 'Open',
           accelerator: 'CmdOrCtrl+O',
           click: () => onOpenDiagram( store )
         },
+        { type: 'separator' },
         {
-          label: 'Save As...',
+          label: 'Save',
           accelerator: 'CmdOrCtrl+S',
           click: () => onSaveDiagram( store )
+        },
+        {
+          label: 'Save As...',
+          accelerator: 'CmdOrCtrl+Shift+S',
+          click: () => onSaveDiagramAs( store )
         },
         {
           label: 'Export as Image',

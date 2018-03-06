@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { setCurrentDocument, swapDocuments, addDocument } from 'store/reducers/documents';
-import { documentFilenames, documentModifieds, DocumentAttributeMap } from 'store/selectors';
+import { setCurrentDocument, swapDocuments, addDocument, closeDocument } from 'store/reducers/documents';
+import { DocumentAttributeMap, selectDocumentFilenames, selectDocumentSaveRevisions, selectDocumentCurrentRevision } from 'store/selectors';
+import { exit } from 'utils/electron';
 
 import './styles.css';
 
@@ -12,8 +13,9 @@ interface PropsFromState
 {
   documentIds: string[];
   currentDocumentId: string;
-  documentFilenames: DocumentAttributeMap<string>;
-  documentModifieds: DocumentAttributeMap<boolean>;
+  documentFilenames: DocumentAttributeMap<string | null>;
+  documentSaveRevisions: DocumentAttributeMap<number | null>;
+  documentCurrentRevisions: DocumentAttributeMap<number>;
 }
 
 interface PropsFromDispatch
@@ -21,6 +23,7 @@ interface PropsFromDispatch
   setCurrentDocument: typeof setCurrentDocument;
   swapDocuments: typeof swapDocuments;
   addDocument: typeof addDocument;
+  closeDocument: typeof closeDocument;
 }
 
 interface State
@@ -43,15 +46,19 @@ class DocumentTabs extends React.Component<Props, State>
 
   render()
   {
+    let { currentDocumentId, documentFilenames, documentCurrentRevisions, documentSaveRevisions } = this.props;
     let tabCount = this.props.documentIds.length;
 
     return (
       <ul className="document-tabs">
         {this.props.documentIds.map( ( documentId, i ) =>
         {
-          let active = ( documentId === this.props.currentDocumentId );
-          let filename = this.props.documentFilenames[ documentId ];
+          let active = ( documentId === currentDocumentId );
+          let filename = documentFilenames[ documentId ] || 'untitled';
           let baseFilename = filename.split( FILENAME_SEPARATOR_RE ).reverse()[ 0 ];
+
+          let modified = ( documentSaveRevisions[ documentId ] !== null || documentCurrentRevisions[ documentId ] !== 0 )
+            && documentCurrentRevisions[ documentId ] !== documentSaveRevisions[ documentId ];
 
           return (
             <li
@@ -63,15 +70,16 @@ class DocumentTabs extends React.Component<Props, State>
               style={{
                 zIndex: active ? tabCount : tabCount - i - 1
               }}
-              onMouseDown={() => this.onMouseDown( documentId )}
+              onMouseDown={( e ) => this.onTabMouseDown( documentId, e )}
+              onMouseUp={( e ) => this.onTabMouseUp( documentId, e )}
               draggable={true}
-              onDragStart={( e ) => this.onDragStart( documentId, e )}
-              onDragEnter={( e ) => this.onDragEnter( documentId, e )}
-              onDragOver={( e ) => this.onDragOver( documentId, e )}
-              onDragEnd={( e ) => this.onDragEnd( documentId, e )}
+              onDragStart={( e ) => this.onTabDragStart( documentId, e )}
+              onDragEnter={( e ) => this.onTabDragEnter( documentId, e )}
+              onDragOver={( e ) => this.onTabDragOver( documentId, e )}
+              onDragEnd={( e ) => this.onTabDragEnd( documentId, e )}
               title={filename}
             >
-              {this.props.documentModifieds[ documentId ] ?
+              {modified ?
                 (
                   <em>{baseFilename} *</em>
                 ) : (
@@ -90,17 +98,32 @@ class DocumentTabs extends React.Component<Props, State>
     );
   }
 
-  private onMouseDown = ( documentId: string ) =>
+  private onTabMouseDown = ( documentId: string, e: React.MouseEvent<HTMLLIElement> ) =>
   {
     this.props.setCurrentDocument( documentId );
   }
 
-  private onDragStart = ( documentId: string, e: React.DragEvent<HTMLLIElement> ) =>
+  private onTabMouseUp = ( documentId: string, e: React.MouseEvent<HTMLLIElement> ) =>
+  {
+    if( e.button === 1 )
+    {
+      if( this.props.documentIds.length === 1 )
+      {
+        exit();
+      }
+      else
+      {
+        this.props.closeDocument( documentId );
+      }
+    }
+  }
+
+  private onTabDragStart = ( documentId: string, e: React.DragEvent<HTMLLIElement> ) =>
   {
     this.setState( { draggingDocumentId: documentId } );
   }
 
-  private onDragEnter = ( documentId: string, e: React.DragEvent<HTMLLIElement> ) =>
+  private onTabDragEnter = ( documentId: string, e: React.DragEvent<HTMLLIElement> ) =>
   {
     if( this.state.draggingDocumentId )
     {
@@ -108,12 +131,12 @@ class DocumentTabs extends React.Component<Props, State>
     }
   }
 
-  private onDragOver = ( documentId: string, e: React.DragEvent<HTMLLIElement> ) =>
+  private onTabDragOver = ( documentId: string, e: React.DragEvent<HTMLLIElement> ) =>
   {
     e.preventDefault();
   }
 
-  private onDragEnd = ( documentId: string, e: React.DragEvent<HTMLLIElement> ) =>
+  private onTabDragEnd = ( documentId: string, e: React.DragEvent<HTMLLIElement> ) =>
   {
     this.setState( { draggingDocumentId: null } );
   }
@@ -128,12 +151,14 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   ( state ) => ( {
     documentIds: state.documents.order,
     currentDocumentId: state.documents.currentDocumentId,
-    documentFilenames: documentFilenames( state ),
-    documentModifieds: documentModifieds( state )
+    documentFilenames: selectDocumentFilenames( state ),
+    documentSaveRevisions: selectDocumentSaveRevisions( state ),
+    documentCurrentRevisions: selectDocumentCurrentRevision( state )
   } ),
   {
     setCurrentDocument,
     swapDocuments,
-    addDocument
+    addDocument,
+    closeDocument
   }
 )( DocumentTabs );

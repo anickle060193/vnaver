@@ -32,22 +32,48 @@ export function exportImage( canvas: HTMLCanvasElement )
     } );
 }
 
-export function saveDiagram( drawings: DrawingMap )
+export async function saveDrawingsToFile( drawings: DrawingMap, filename: string )
 {
-  electron.remote.dialog.showSaveDialog( electron.remote.getCurrentWindow(), {
-    title: 'Save Diagram',
-    filters: [
-      { name: 'JSON Files', extensions: [ 'json' ] }
-    ]
-  }, async ( filename: string | null ) =>
-    {
-      if( filename )
+  let drawingsArray = mapToArray( drawings );
+  let output = JSON.stringify( drawingsArray, null, 2 );
+  await fs.writeFile( filename, output );
+}
+
+export async function saveDiagram( drawings: DrawingMap, filename: string | null )
+{
+  if( filename === null )
+  {
+    return await saveDiagramAs( drawings );
+  }
+  else
+  {
+    await saveDrawingsToFile( drawings, filename );
+    return filename;
+  }
+}
+
+export async function saveDiagramAs( drawings: DrawingMap )
+{
+  return new Promise<string | null>( ( resolve ) =>
+  {
+    electron.remote.dialog.showSaveDialog( electron.remote.getCurrentWindow(), {
+      title: 'Save Diagram',
+      filters: [
+        { name: 'JSON Files', extensions: [ 'json' ] }
+      ]
+    }, async ( filename: string | null ) =>
       {
-        let drawingsArray = mapToArray( drawings );
-        let output = JSON.stringify( drawingsArray, null, 2 );
-        await fs.writeFile( filename, output );
-      }
-    } );
+        if( filename )
+        {
+          await saveDrawingsToFile( drawings, filename );
+          resolve( filename );
+        }
+        else
+        {
+          resolve( null );
+        }
+      } );
+  } );
 }
 
 interface DocumentOpenResult extends DrawingsParseResult
@@ -87,4 +113,9 @@ export function openDiagram(): Promise<DocumentOpenResult | undefined>
 export function launchSecret()
 {
   electron.remote.getCurrentWebContents().openDevTools( { mode: 'right', } );
+}
+
+export function exit()
+{
+  electron.remote.app.quit();
 }

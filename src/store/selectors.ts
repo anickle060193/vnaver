@@ -2,17 +2,34 @@ import { State as DocumentState } from 'store/reducers/document';
 
 export function currentDrawingsState( state: RootState )
 {
+  if( !state.documents.currentDocumentId )
+  {
+    throw new Error( 'Current document is null. Cannot retrieve drawings state.' );
+  }
   return state.documents.docs[ state.documents.currentDocumentId ].drawings.present;
 }
 
 export function currentEditorState( state: RootState )
 {
+  if( !state.documents.currentDocumentId )
+  {
+    throw new Error( 'Current document is null. Cannot retrieve editor state.' );
+  }
   return state.documents.docs[ state.documents.currentDocumentId ].editor;
+}
+
+export function currentDocumentInformationState( state: RootState )
+{
+  if( !state.documents.currentDocumentId )
+  {
+    throw new Error( 'Current document is null. Cannot retrieve document state.' );
+  }
+  return state.documents.docs[ state.documents.currentDocumentId ].info;
 }
 
 export type DocumentAttributeMap<T> = { [ documentId: string ]: T };
 
-function getDocumentsAttribute<T>( state: RootState, getItem: ( document: DocumentState ) => T )
+function selectDocumentsAttribute<T>( state: RootState, getItem: ( document: DocumentState ) => T )
 {
   return Object.entries( state.documents.docs ).reduce( ( prev, [ documentId, document ] ) =>
   {
@@ -21,12 +38,17 @@ function getDocumentsAttribute<T>( state: RootState, getItem: ( document: Docume
   }, {} as { [ documentId: string ]: T } );
 }
 
-export function documentFilenames( state: RootState )
+export function selectDocumentFilenames( state: RootState )
 {
-  return getDocumentsAttribute( state, ( doc ) => doc.info.filename );
+  return selectDocumentsAttribute( state, ( doc ) => doc.info.filename );
 }
 
-export function documentModifieds( state: RootState )
+export function selectDocumentSaveRevisions( state: RootState )
 {
-  return getDocumentsAttribute( state, ( doc ) => doc.drawings.present.modified );
+  return selectDocumentsAttribute( state, ( doc ) => doc.info.saveRevision );
+}
+
+export function selectDocumentCurrentRevision( state: RootState )
+{
+  return selectDocumentsAttribute( state, ( doc ) => doc.drawings.present.revision );
 }

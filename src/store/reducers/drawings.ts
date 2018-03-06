@@ -1,4 +1,4 @@
-import undoable, { groupByActionTypes } from 'redux-undo';
+import undoable, { groupByActionTypes, excludeAction } from 'redux-undo';
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
 import actionCreatorFactory from 'typescript-fsa';
 
@@ -23,7 +23,7 @@ export interface State
   originY: number;
   drawings: DrawingMap;
   selectedDrawingId: string | null;
-  modified: boolean;
+  revision: number;
 }
 
 const initialState: State = {
@@ -33,7 +33,7 @@ const initialState: State = {
   originY: 0.0,
   drawings: {},
   selectedDrawingId: null,
-  modified: false
+  revision: 0
 };
 
 const actionCreator = actionCreatorFactory();
@@ -59,7 +59,7 @@ const baseReducer = reducerWithInitialState( initialState )
   .case( addDrawing, ( state, drawing ) => ( {
     ...setDrawingInState( state, drawing ),
     selectedDrawingId: drawing.id,
-    modified: true
+    revision: state.revision + 1
   } ) )
   .case( selectDrawing, ( state, drawingId ) =>
     ( {
@@ -119,14 +119,14 @@ const baseReducer = reducerWithInitialState( initialState )
       ...state,
       drawings: arrayToMap( drawings.filter( ( drawing ) => drawing.id !== drawingId ) ),
       selectedDrawingId,
-      modified: true
+      revision: state.revision + 1
     };
   } )
   .case( updateDrawing, ( state, drawing ) => ( {
     ...setDrawingInState( state, {
       ...drawing
     } ),
-    modified: true
+    revision: state.revision + 1
   } ) )
   .case( moveDrawing, ( state, { drawingId, x, y } ) =>
   {
@@ -143,7 +143,7 @@ const baseReducer = reducerWithInitialState( initialState )
         ...drawing,
         x,
         y,
-        modified: true
+        revision: state.revision + 1
       } );
     }
     else if( drawing.type === DrawingType.HorizontalGridLine )
@@ -151,7 +151,7 @@ const baseReducer = reducerWithInitialState( initialState )
       return setDrawingInState( state, {
         ...drawing,
         y,
-        modified: true
+        revision: state.revision + 1
       } );
     }
     else if( drawing.type === DrawingType.VerticalGridLine )
@@ -159,7 +159,7 @@ const baseReducer = reducerWithInitialState( initialState )
       return setDrawingInState( state, {
         ...drawing,
         x,
-        modified: true
+        revision: state.revision + 1
       } );
     }
     else if( drawing.type === DrawingType.PathLine )
@@ -177,10 +177,11 @@ const baseReducer = reducerWithInitialState( initialState )
       ...state,
       drawings,
       selectedDrawingId: null,
-      modified: false
+      revision: 0
     };
   } );
 
 export const reducer = undoable( baseReducer, {
-  groupBy: groupByActionTypes( [ moveDrawing ].map( ( a ) => a.type ) )
+  groupBy: groupByActionTypes( [ moveDrawing ].map( ( a ) => a.type ) ),
+  filter: excludeAction( [ setDrawings ].map( ( a ) => a.type ) )
 } );
