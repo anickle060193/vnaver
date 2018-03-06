@@ -21,9 +21,9 @@ function getDocumentsAttribute<T>( state: RootState, getItem: ( document: Docume
   }, {} as { [ documentId: string ]: T } );
 }
 
-export function documentNames( state: RootState )
+export function documentFilenames( state: RootState )
 {
-  return getDocumentsAttribute( state, ( doc ) => doc.info.name );
+  return getDocumentsAttribute( state, ( doc ) => doc.info.filename );
 }
 
 export function documentModifieds( state: RootState )

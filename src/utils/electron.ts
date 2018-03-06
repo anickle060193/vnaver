@@ -50,7 +50,12 @@ export function saveDiagram( drawings: DrawingMap )
     } );
 }
 
-export function openDiagram(): Promise<DrawingsParseResult | undefined>
+interface DocumentOpenResult extends DrawingsParseResult
+{
+  filename: string;
+}
+
+export function openDiagram(): Promise<DocumentOpenResult | undefined>
 {
   return new Promise( async ( resolve ) =>
   {
@@ -70,7 +75,10 @@ export function openDiagram(): Promise<DrawingsParseResult | undefined>
       let contentBuffer = await fs.readFile( filename );
       let content = contentBuffer.toString();
       let result = parseDrawings( content );
-      resolve( result );
+      resolve( {
+        ...result,
+        filename
+      } );
     }
     resolve();
   } );

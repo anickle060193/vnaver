@@ -5,17 +5,25 @@ import { setDrawings } from 'store/reducers/drawings';
 import { setDiagramOpenErrors } from 'store/reducers/editor';
 import { currentDrawingsState } from 'store/selectors';
 import electron, { openDiagram, saveDiagram, exportImage } from 'utils/electron';
+import { addDocument } from 'store/reducers/documents';
+import { setDocumentFileName } from 'store/reducers/documentInfo';
 
 async function onOpenDiagram( store: Store<RootState> )
 {
   let result = await openDiagram();
-  if( result && result.drawings )
+  if( result )
   {
-    store.dispatch( setDrawings( result.drawings ) );
-  }
-  if( result && result.errors )
-  {
-    store.dispatch( setDiagramOpenErrors( result.errors ) );
+    store.dispatch( addDocument() );
+    store.dispatch( setDocumentFileName( result.filename ) );
+
+    if( result && result.drawings )
+    {
+      store.dispatch( setDrawings( result.drawings ) );
+    }
+    if( result && result.errors )
+    {
+      store.dispatch( setDiagramOpenErrors( result.errors ) );
+    }
   }
 }
 

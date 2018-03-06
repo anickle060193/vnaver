@@ -1,15 +1,22 @@
-// import actionCreatorFactory from 'typescript-fsa';
+import actionCreatorFactory from 'typescript-fsa';
 import { reducerWithInitialState } from 'typescript-fsa-reducers/dist';
 
 export interface State
 {
-  name: string;
+  filename: string;
 }
 
 const initialState: State = {
-  name: 'untitled'
+  filename: 'untitled'
 };
 
-// const actionCreator = actionCreatorFactory();
+const actionCreator = actionCreatorFactory();
 
-export const reducer = reducerWithInitialState( initialState );
+export const setDocumentFileName = actionCreator<string>( 'SET_DOCUMENT_FILENAME' );
+
+export const reducer = reducerWithInitialState( initialState )
+  .case( setDocumentFileName, ( state, filename ) =>
+    ( {
+      ...state,
+      filename
+    } ) );

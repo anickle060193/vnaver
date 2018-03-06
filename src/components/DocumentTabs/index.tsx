@@ -2,15 +2,17 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import { setCurrentDocument, swapDocuments, addDocument } from 'store/reducers/documents';
-import { documentNames, documentModifieds, DocumentAttributeMap } from 'store/selectors';
+import { documentFilenames, documentModifieds, DocumentAttributeMap } from 'store/selectors';
 
 import './styles.css';
+
+const FILENAME_SEPARATOR_RE = /[\\\/]/;
 
 interface PropsFromState
 {
   documentIds: string[];
   currentDocumentId: string;
-  documentNames: DocumentAttributeMap<string>;
+  documentFilenames: DocumentAttributeMap<string>;
   documentModifieds: DocumentAttributeMap<boolean>;
 }
 
@@ -45,31 +47,39 @@ class DocumentTabs extends React.Component<Props, State>
 
     return (
       <ul className="document-tabs">
-        {this.props.documentIds.map( ( documentId, i ) => (
-          <li
-            key={documentId}
-            className={[
-              'document-tab',
-              documentId === this.props.currentDocumentId ? 'document-tab-active' : ''
-            ].join( ' ' )}
-            style={{
-              zIndex: documentId === this.props.currentDocumentId ? tabCount : tabCount - i - 1
-            }}
-            onMouseDown={() => this.onMouseDown( documentId )}
-            draggable={true}
-            onDragStart={( e ) => this.onDragStart( documentId, e )}
-            onDragEnter={( e ) => this.onDragEnter( documentId, e )}
-            onDragOver={( e ) => this.onDragOver( documentId, e )}
-            onDragEnd={( e ) => this.onDragEnd( documentId, e )}
-          >
-            {this.props.documentModifieds[ documentId ] ?
-              (
-                <em>{this.props.documentNames[ documentId ]} *</em>
-              ) : (
-                this.props.documentNames[ documentId ]
-              )}
-          </li>
-        ) )}
+        {this.props.documentIds.map( ( documentId, i ) =>
+        {
+          let active = ( documentId === this.props.currentDocumentId );
+          let filename = this.props.documentFilenames[ documentId ];
+          let baseFilename = filename.split( FILENAME_SEPARATOR_RE ).reverse()[ 0 ];
+
+          return (
+            <li
+              key={documentId}
+              className={[
+                'document-tab',
+                active ? 'document-tab-active' : ''
+              ].join( ' ' )}
+              style={{
+                zIndex: active ? tabCount : tabCount - i - 1
+              }}
+              onMouseDown={() => this.onMouseDown( documentId )}
+              draggable={true}
+              onDragStart={( e ) => this.onDragStart( documentId, e )}
+              onDragEnter={( e ) => this.onDragEnter( documentId, e )}
+              onDragOver={( e ) => this.onDragOver( documentId, e )}
+              onDragEnd={( e ) => this.onDragEnd( documentId, e )}
+              title={filename}
+            >
+              {this.props.documentModifieds[ documentId ] ?
+                (
+                  <em>{baseFilename} *</em>
+                ) : (
+                  baseFilename
+                )}
+            </li>
+          );
+        } )}
         <li
           className="document-tab new-document-tab"
           onClick={this.onNewTabClick}
@@ -118,7 +128,7 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   ( state ) => ( {
     documentIds: state.documents.order,
     currentDocumentId: state.documents.currentDocumentId,
-    documentNames: documentNames( state ),
+    documentFilenames: documentFilenames( state ),
     documentModifieds: documentModifieds( state )
   } ),
   {
