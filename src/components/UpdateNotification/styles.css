@@ -23,6 +23,40 @@
   transform: translateY( calc( -100% - 2rem ) );
 }
 
+.update-notification-content
+{
+}
+
+.update-notification-close
+{
+  -webkit-appearance: none;
+  background: none;
+  border: none;
+  outline: none;
+  color: white;
+  opacity: 0.5;
+  line-height: 1;
+
+  padding: 0;
+  margin: 0;
+
+  margin-left: 0.75rem;
+  margin-right: -0.25rem;
+  margin-bottom: -3px;
+  cursor: pointer;
+}
+
+.update-notification-close > span.material-icons
+{
+  font-size: 20px;
+}
+
+.update-notification-close:active,
+.update-notification-close:focus
+{
+  outline: none;
+}
+
 .restart-button
 {
   margin-left: 0.5rem;
