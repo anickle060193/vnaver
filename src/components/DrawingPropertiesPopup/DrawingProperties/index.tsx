@@ -665,6 +665,7 @@ export class TextDrawingProperties extends DrawingPropertiesComponent<TextDrawin
             className="form-control"
             rows={4}
             cols={35}
+            autoFocus={true}
             value={this.props.drawing.text}
             onChange={this.onTextChange}
           />
