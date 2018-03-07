@@ -18,10 +18,12 @@ const enum Schemas
   ContainsGuideLineDrawing = 'ContainsGuideLineDrawing',
   BasicDrawing = 'BasicDrawing',
   BetweenDrawing = 'BetweenDrawing',
-  ConnectedPathLineEndPoint = 'ConnectedPathLineEndPoint',
-  FloatingPathLineEndPoint = 'FloatingPathLineEndPoint',
+  ConnectedEndPoint = 'ConnectedEndPoint',
+  FloatingEndPoint = 'FloatingEndPoint',
+  ConnectedLine = 'ConnectedLine',
   EndPoint = 'EndPoint',
   PathLineDrawing = 'PathLineDrawing',
+  CurvedLineDrawing = 'CurvedLineDrawing',
   VerticalGridLineDrawing = 'VerticalGridLineDrawing',
   HorizontalGridLineDrawing = 'HorizontalGridLineDrawing',
   PlaneDrawing = 'PlaneDrawing',
@@ -52,6 +54,7 @@ const drawingTypes: {[ key in DrawingType ]: Schemas } = {
   [ DrawingType.Below ]: Schemas.BasicDrawing,
   [ DrawingType.Between ]: Schemas.BetweenDrawing,
   [ DrawingType.PathLine ]: Schemas.PathLineDrawing,
+  [ DrawingType.CurvedLine ]: Schemas.CurvedLineDrawing,
   [ DrawingType.VerticalGridLine ]: Schemas.VerticalGridLineDrawing,
   [ DrawingType.HorizontalGridLine ]: Schemas.HorizontalGridLineDrawing,
   [ DrawingType.Plane ]: Schemas.PlaneDrawing,
@@ -131,7 +134,7 @@ export const validator = defineKeywords( new Ajv( {
     ]
   } )
   .addSchema( {
-    $id: Schemas.ConnectedPathLineEndPoint,
+    $id: Schemas.ConnectedEndPoint,
     type: 'object',
     required: [ 'connected', 'anchorId', 'topOfBetween', 'startOfPathLine' ],
     properties: {
@@ -142,7 +145,7 @@ export const validator = defineKeywords( new Ajv( {
     }
   } )
   .addSchema( {
-    $id: Schemas.FloatingPathLineEndPoint,
+    $id: Schemas.FloatingEndPoint,
     type: 'object',
     required: [ 'connected', 'x', 'y' ],
     properties: {
@@ -160,22 +163,43 @@ export const validator = defineKeywords( new Ajv( {
     },
     select: { $data: '0/connected' },
     selectCases: {
-      [ true.toString() ]: { $ref: Schemas.ConnectedPathLineEndPoint },
-      [ false.toString() ]: { $ref: Schemas.FloatingPathLineEndPoint },
+      [ true.toString() ]: { $ref: Schemas.ConnectedEndPoint },
+      [ false.toString() ]: { $ref: Schemas.FloatingEndPoint },
     },
     selectDefault: false
   } )
   .addSchema( {
-    $id: Schemas.PathLineDrawing,
+    $id: Schemas.ConnectedLine,
     type: 'object',
-    required: [ 'type', 'start', 'end' ],
+    required: [ 'start', 'end' ],
     properties: {
-      'type': { const: DrawingType.PathLine },
       'start': { $ref: Schemas.EndPoint },
       'end': { $ref: Schemas.EndPoint }
+    }
+  } )
+  .addSchema( {
+    $id: Schemas.PathLineDrawing,
+    type: 'object',
+    required: [ 'type' ],
+    properties: {
+      'type': { const: DrawingType.PathLine }
     },
     allOf: [
       { $ref: Schemas.DrawingBase },
+      { $ref: Schemas.ConnectedLine },
+      { $ref: Schemas.LineStyle }
+    ]
+  } )
+  .addSchema( {
+    $id: Schemas.CurvedLineDrawing,
+    type: 'object',
+    required: [ 'type' ],
+    properties: {
+      'type': { const: DrawingType.CurvedLine }
+    },
+    allOf: [
+      { $ref: Schemas.DrawingBase },
+      { $ref: Schemas.ConnectedLine },
       { $ref: Schemas.LineStyle }
     ]
   } )

@@ -9,7 +9,8 @@ import
   HorizontalGridLineDrawingProperties,
   PlaneDrawingProperties,
   PathLineDrawingProperties,
-  TextDrawingProperties
+  TextDrawingProperties,
+  CurvedLineDrawingProperties
 } from './DrawingProperties';
 import { deleteDrawing, updateDrawing, deselectDrawing } from 'store/reducers/drawings';
 import { currentDrawingsState } from 'store/selectors';
@@ -72,6 +73,16 @@ class DrawingProperties extends React.Component<Props>
     {
       drawingProperties = (
         <PathLineDrawingProperties
+          drawing={selectedDrawing}
+          onChange={this.onDrawingChange}
+          onColorChange={( color ) => this.onColorChange( selectedDrawing, color )}
+        />
+      );
+    }
+    else if( selectedDrawing.type === DrawingType.CurvedLine )
+    {
+      drawingProperties = (
+        <CurvedLineDrawingProperties
           drawing={selectedDrawing}
           onChange={this.onDrawingChange}
           onColorChange={( color ) => this.onColorChange( selectedDrawing, color )}

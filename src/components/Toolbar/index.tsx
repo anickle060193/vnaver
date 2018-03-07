@@ -154,11 +154,26 @@ class Toolbar extends React.Component<Props>
             onClick={this.onToolClick}
           >
             <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
-              <line x1={10} y1={10} x2={80} y2={80} stroke={this.props.defaultDrawingColors[ DrawingType.PathLine ]} strokeWidth={6} />
+              <line x1={10} y1={10} x2={90} y2={90} stroke={this.props.defaultDrawingColors[ DrawingType.PathLine ]} strokeWidth={6} />
               <circle cx={10} cy={10} r={10} fill={this.props.defaultDrawingColors[ DrawingType.PathLine ]} />
               <circle cx={10} cy={10} r={6} fill="white" />
-              <circle cx={80} cy={80} r={10} fill={this.props.defaultDrawingColors[ DrawingType.PathLine ]} />
-              <circle cx={80} cy={80} r={6} fill="white" />
+              <circle cx={90} cy={90} r={10} fill={this.props.defaultDrawingColors[ DrawingType.PathLine ]} />
+              <circle cx={90} cy={90} r={6} fill="white" />
+            </svg>
+          </DrawingToolToolbarItem>
+
+          <DrawingToolToolbarItem
+            tool={DrawingType.CurvedLine}
+            selectedTool={this.props.tool}
+            shortcuts={this.props.shortcuts}
+            onClick={this.onToolClick}
+          >
+            <svg viewBox="0 0 100 100" style={{ width: '2rem', height: '2rem' }}>
+              <path d="M 10 90 C 45 10, 55 90, 90 10" stroke={this.props.defaultDrawingColors[ DrawingType.CurvedLine ]} fill="transparent" strokeWidth={6} />
+              <circle cx={10} cy={90} r={10} fill={this.props.defaultDrawingColors[ DrawingType.CurvedLine ]} />
+              <circle cx={10} cy={90} r={6} fill="white" />
+              <circle cx={90} cy={10} r={10} fill={this.props.defaultDrawingColors[ DrawingType.CurvedLine ]} />
+              <circle cx={90} cy={10} r={6} fill="white" />
             </svg>
           </DrawingToolToolbarItem>
 

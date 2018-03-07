@@ -7,6 +7,7 @@ export const enum DrawingType
   Below = 'Below',
   Between = 'Between',
   PathLine = 'PathLine',
+  CurvedLine = 'CurvedLine',
   VerticalGridLine = 'VerticalGridLine',
   HorizontalGridLine = 'HorizontalGridLine',
   Plane = 'Plane',
@@ -27,6 +28,7 @@ export const drawingToolDisplayNames: {[ key in DrawingTool ]: string } = {
   [ DrawingType.Below ]: 'Below Constraint',
   [ DrawingType.Between ]: 'Between Constraint',
   [ DrawingType.PathLine ]: 'Path Line',
+  [ DrawingType.CurvedLine ]: 'Curved Line',
   [ DrawingType.VerticalGridLine ]: 'Vertical Grid Line',
   [ DrawingType.HorizontalGridLine ]: 'Horizontal Grid Line',
   [ DrawingType.Plane ]: 'Plane',
@@ -106,7 +108,7 @@ export interface BetweenDrawing extends ContainsGuideLineDrawing<DrawingType.Bet
   height: number;
 }
 
-interface ConnectedPathLineEndPoint
+interface ConnectedEndPoint
 {
   connected: true;
   anchorId: string;
@@ -114,19 +116,27 @@ interface ConnectedPathLineEndPoint
   startOfPathLine: boolean;
 }
 
-interface FloatingPathLineEndPoint
+interface FloatingEndPoint
 {
   connected: false;
   x: number;
   y: number;
 }
 
-export type EndPoint = ConnectedPathLineEndPoint | FloatingPathLineEndPoint;
+export type EndPoint = ConnectedEndPoint | FloatingEndPoint;
 
-export interface PathLineDrawing extends DrawingBase<DrawingType.PathLine>, LineStyle
+interface ConnectedLineDrawing
 {
   start: EndPoint;
   end: EndPoint;
+}
+
+export interface PathLineDrawing extends DrawingBase<DrawingType.PathLine>, ConnectedLineDrawing, LineStyle
+{
+}
+
+export interface CurvedLineDrawing extends DrawingBase<DrawingType.CurvedLine>, ConnectedLineDrawing, LineStyle
+{
 }
 
 export interface VerticalGridLineDrawing extends DrawingBase<DrawingType.VerticalGridLine>, LineStyle
@@ -175,6 +185,7 @@ export type Drawing = (
   BasicDrawing<BasicDrawingTypes> |
   BetweenDrawing |
   PathLineDrawing |
+  CurvedLineDrawing |
   VerticalGridLineDrawing |
   HorizontalGridLineDrawing |
   PlaneDrawing |
@@ -184,7 +195,8 @@ export type Drawing = (
 export type AnchorDrawing = (
   BasicDrawing<BasicDrawingTypes> |
   BetweenDrawing |
-  PathLineDrawing
+  PathLineDrawing |
+  CurvedLineDrawing
 );
 
 export interface DrawingMap
@@ -216,7 +228,8 @@ export function isValidAnchor( drawing: Drawing | null ): drawing is AnchorDrawi
       || drawing.type === DrawingType.Above
       || drawing.type === DrawingType.Below
       || drawing.type === DrawingType.Between
-      || drawing.type === DrawingType.PathLine )
+      || drawing.type === DrawingType.PathLine
+      || drawing.type === DrawingType.CurvedLine )
   );
 }
 
@@ -264,7 +277,8 @@ export const getEndPointPosition = ( endPoint: EndPoint, drawings: DrawingMap ):
         };
       }
     }
-    else if( anchor.type === DrawingType.PathLine )
+    else if( anchor.type === DrawingType.PathLine
+      || anchor.type === DrawingType.CurvedLine )
     {
       return getEndPointPosition(
         endPoint.startOfPathLine ? anchor.start : anchor.end,

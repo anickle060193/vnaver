@@ -3,6 +3,7 @@ import { Path, Text as KText, Group, Rect } from 'react-konva';
 
 import { DrawingComponentProps, LineDrawing } from './DrawingComponent';
 import PathLine from './PathLine';
+import CurvedLine from './CurvedLine';
 import
 {
   DrawingType,
@@ -285,6 +286,7 @@ export const drawingComponentMap: DrawingTypeMap<React.SFC<DrawingComponentProps
   [ DrawingType.Below ]: Below,
   [ DrawingType.Between ]: Between,
   [ DrawingType.PathLine ]: PathLine,
+  [ DrawingType.CurvedLine ]: CurvedLine,
   [ DrawingType.VerticalGridLine ]: VerticalGridLine,
   [ DrawingType.HorizontalGridLine ]: HorizontalGridLine,
   [ DrawingType.Plane ]: Plane,
@@ -342,7 +344,8 @@ export const ActiveIndication: React.SFC<{
       width = ARROW_SIZE;
       height = ARROW_SIZE + drawing.height;
     }
-    else if( drawing.type === DrawingType.PathLine )
+    else if( drawing.type === DrawingType.PathLine
+      || drawing.type === DrawingType.CurvedLine )
     {
       let start = getEndPointPosition( drawing.start, drawings );
       let end = getEndPointPosition( drawing.end, drawings );

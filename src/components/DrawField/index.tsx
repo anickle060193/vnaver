@@ -5,7 +5,6 @@ import * as uuid from 'uuid/v4';
 
 import Grid from 'components/DrawField/Grid';
 import { drawingComponentMap, Between, VerticalGridLine, HorizontalGridLine, ActiveIndication, Plane, Text } from 'components/DrawField/Drawings';
-import PathLine from 'components/DrawField/Drawings/PathLine';
 import { addDrawing, selectDrawing, deselectDrawing, moveDrawing } from 'store/reducers/drawings';
 import { incrementScaleLevel, decrementScaleLevel, setOrigin, setTool } from 'store/reducers/editor';
 import { currentEditorState, currentDrawingsState } from 'store/selectors';
@@ -216,18 +215,20 @@ class DrawField extends React.Component<Props, State>
           );
         }
       }
-      else if( this.props.tool === DrawingType.PathLine )
+      else if( this.props.tool === DrawingType.PathLine
+        || this.props.tool === DrawingType.CurvedLine )
       {
+        let DrawingComponent = drawingComponentMap[ this.props.tool ];
         let endPoint = this.findEndPoint( this.state.mouseX, this.state.mouseY );
         if( this.state.startEndPoint !== null )
         {
           cursor = (
-            <PathLine
+            <DrawingComponent
               cursor={true}
               drawing={{
                 ...DEFAULT_PATH_LINE_STYLE,
                 id: '',
-                type: this.props.tool,
+                type: this.props.tool as DrawingType.PathLine,
                 color: this.props.defaultDrawingColors[ this.props.tool ],
                 start: this.state.startEndPoint,
                 end: endPoint
@@ -238,12 +239,12 @@ class DrawField extends React.Component<Props, State>
         else
         {
           cursor = (
-            <PathLine
+            <DrawingComponent
               cursor={true}
               drawing={{
                 ...DEFAULT_PATH_LINE_STYLE,
                 id: '',
-                type: this.props.tool,
+                type: this.props.tool as DrawingType.PathLine,
                 color: this.props.defaultDrawingColors[ this.props.tool ],
                 start: endPoint,
                 end: {
@@ -432,16 +433,18 @@ class DrawField extends React.Component<Props, State>
 
   private sortedDrawings()
   {
+    let order = 0;
     const sortOrderMap: DrawingTypeMap<number> = {
-      [ DrawingType.VerticalGridLine ]: 0,
-      [ DrawingType.HorizontalGridLine ]: 1,
-      [ DrawingType.PathLine ]: 2,
-      [ DrawingType.Above ]: 3,
-      [ DrawingType.At ]: 4,
-      [ DrawingType.Below ]: 5,
-      [ DrawingType.Between ]: 6,
-      [ DrawingType.Plane ]: 7,
-      [ DrawingType.Text ]: 8
+      [ DrawingType.VerticalGridLine ]: order++,
+      [ DrawingType.HorizontalGridLine ]: order++,
+      [ DrawingType.PathLine ]: order++,
+      [ DrawingType.CurvedLine ]: order++,
+      [ DrawingType.Above ]: order++,
+      [ DrawingType.At ]: order++,
+      [ DrawingType.Below ]: order++,
+      [ DrawingType.Between ]: order++,
+      [ DrawingType.Plane ]: order++,
+      [ DrawingType.Text ]: order++,
     };
     return mapToArray( this.props.drawings ).sort( ( d1, d2 ) =>
     {
@@ -492,7 +495,8 @@ class DrawField extends React.Component<Props, State>
             };
           }
         }
-        else if( drawing.type === DrawingType.PathLine )
+        else if( drawing.type === DrawingType.PathLine
+          || drawing.type === DrawingType.CurvedLine )
         {
           let start = getEndPointPosition( drawing.start, this.props.drawings );
           if( start )
@@ -603,7 +607,8 @@ class DrawField extends React.Component<Props, State>
       {
         this.moved = true;
 
-        if( this.state.mouseDownDrawing.type !== DrawingType.PathLine )
+        if( this.state.mouseDownDrawing.type !== DrawingType.PathLine
+          && this.state.mouseDownDrawing.type !== DrawingType.CurvedLine )
         {
           this.setState( { dragging: true } );
 
@@ -675,7 +680,8 @@ class DrawField extends React.Component<Props, State>
           startY: y
         } );
       }
-      else if( this.props.tool === DrawingType.PathLine )
+      else if( this.props.tool === DrawingType.PathLine
+        || this.props.tool === DrawingType.CurvedLine )
       {
         this.setState( {
           startEndPoint: this.findEndPoint( x, y )
@@ -726,7 +732,8 @@ class DrawField extends React.Component<Props, State>
             } );
           }
         }
-        else if( this.props.tool === DrawingType.PathLine )
+        else if( this.props.tool === DrawingType.PathLine
+          || this.props.tool === DrawingType.CurvedLine )
         {
           if( this.state.startEndPoint !== null )
           {
@@ -743,7 +750,7 @@ class DrawField extends React.Component<Props, State>
                 this.props.addDrawing( {
                   ...DEFAULT_PATH_LINE_STYLE,
                   id: uuid(),
-                  type: this.props.tool,
+                  type: this.props.tool as DrawingType.PathLine,
                   color: this.props.defaultDrawingColors[ this.props.tool ],
                   start: this.state.startEndPoint,
                   end: endEndPoint
@@ -873,7 +880,8 @@ class DrawField extends React.Component<Props, State>
       {
         this.props.selectDrawing( drawing.id );
 
-        if( drawing.type !== DrawingType.PathLine )
+        if( drawing.type !== DrawingType.PathLine
+          && drawing.type !== DrawingType.CurvedLine )
         {
           this.setState( { mouseDownDrawing: drawing } );
         }

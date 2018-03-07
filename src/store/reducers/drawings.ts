@@ -162,7 +162,8 @@ const baseReducer = reducerWithInitialState( initialState )
         revision: state.revision + 1
       } );
     }
-    else if( drawing.type === DrawingType.PathLine )
+    else if( drawing.type === DrawingType.PathLine
+      || drawing.type === DrawingType.CurvedLine )
     {
       return state;
     }

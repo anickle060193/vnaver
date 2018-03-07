@@ -20,7 +20,8 @@ import
   LineDashStyle,
   TextDrawing,
   HorizontalAlign,
-  VerticalAlign
+  VerticalAlign,
+  CurvedLineDrawing
 } from 'utils/draw';
 import { selectDrawing } from 'store/reducers/drawings';
 import { currentDrawingsState } from 'store/selectors';
@@ -448,8 +449,8 @@ interface EndPointDrawingPropertiesPropsFromDispatch
 interface EndPointDrawingPropertiesOwnProps
 {
   start: boolean;
-  drawing: PathLineDrawing;
-  onDrawingChange: DrawingChangeEventHandler<PathLineDrawing>;
+  drawing: PathLineDrawing | CurvedLineDrawing;
+  onDrawingChange: DrawingChangeEventHandler<PathLineDrawing | CurvedLineDrawing>;
 }
 
 type EndPointDrawingPropertiesProps = EndPointDrawingPropertiesPropsFromState & EndPointDrawingPropertiesPropsFromDispatch & EndPointDrawingPropertiesOwnProps;
@@ -614,6 +615,46 @@ const EndPointDrawingProperties = endPointConnecter( class extends React.Compone
 } );
 
 export class PathLineDrawingProperties extends DrawingPropertiesComponent<PathLineDrawing>
+{
+  render()
+  {
+    return (
+      <form>
+        <b>Start:</b>
+        <EndPointDrawingProperties
+          start={true}
+          drawing={this.props.drawing}
+          onDrawingChange={this.props.onChange}
+        />
+        <b>End:</b>
+        <EndPointDrawingProperties
+          start={false}
+          drawing={this.props.drawing}
+          onDrawingChange={this.props.onChange}
+        />
+        <ColorInput
+          color={this.props.drawing.color}
+          onChange={this.props.onColorChange}
+        />
+        <LineStyleInputs
+          dash={this.props.drawing.dash}
+          strokeWidth={this.props.drawing.strokeWidth}
+          onLineStyleChange={this.onLineStyleChange}
+        />
+      </form>
+    );
+  }
+
+  private onLineStyleChange = ( lineStyle: LineStyle ) =>
+  {
+    this.props.onChange( {
+      ...this.props.drawing,
+      ...lineStyle
+    } );
+  }
+}
+
+export class CurvedLineDrawingProperties extends DrawingPropertiesComponent<CurvedLineDrawing>
 {
   render()
   {
