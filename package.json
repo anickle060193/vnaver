@@ -18,7 +18,8 @@
       "publish": "github"
     },
     "nsis": {
-      "perMachine": true
+      "perMachine": true,
+      "createDesktopShortcut": false
     },
     "directories": {
       "buildResources": "public"
