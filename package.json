@@ -17,8 +17,16 @@
       "icon": "./build/icon.ico",
       "publish": "github"
     },
+    "nsis": {
+      "perMachine": true
+    },
     "directories": {
       "buildResources": "public"
+    },
+    "fileAssociations": {
+      "ext": "vnav",
+      "name": "VNAV",
+      "description": "VNAVer Document"
     }
   },
   "scripts": {

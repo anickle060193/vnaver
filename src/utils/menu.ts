@@ -1,45 +1,18 @@
 import { MenuItemConstructorOptions } from 'electron';
 import { Store } from 'redux';
-import { ActionCreators } from 'redux-undo';
 
-import { setDrawings } from 'store/reducers/drawings';
-import { setDiagramOpenErrors } from 'store/reducers/editor';
 import { currentDrawingsState, currentDocumentInformationState } from 'store/selectors';
-import electron, { openDiagram, saveDiagramAs, exportImage, saveDiagram } from 'utils/electron';
-import { addDocument } from 'store/reducers/documents';
 import { setDocumentFileName, setSaveRevision } from 'store/reducers/documentInfo';
+
+import electron, { exportImage, showSaveDiagramDialog, showOpenDiagramDialog, showSaveDiagramAsDialog } from 'utils/electron';
+import { openDiagram } from 'utils/document';
 
 async function onOpenDiagram( store: Store<RootState> )
 {
-  let result = await openDiagram();
+  let result = await showOpenDiagramDialog();
   if( result )
   {
-    let state = store.getState();
-    let documentInfo = currentDocumentInformationState( state );
-    let currentRevision = currentDrawingsState( state ).revision;
-    if( documentInfo.filename !== null
-      || documentInfo.saveRevision !== null
-      || currentRevision !== 0 )
-    {
-      store.dispatch( addDocument() );
-    }
-
-    store.dispatch( setDocumentFileName( result.filename ) );
-
-    if( result && result.drawings )
-    {
-      store.dispatch( setDrawings( result.drawings ) );
-    }
-    if( result && result.errors )
-    {
-      store.dispatch( setDiagramOpenErrors( result.errors ) );
-    }
-
-    let updatedState = store.getState();
-    let revision = currentDrawingsState( updatedState ).revision;
-    store.dispatch( setSaveRevision( revision ) );
-
-    store.dispatch( ActionCreators.clearHistory() );
+    openDiagram( store, result );
   }
 }
 
@@ -50,7 +23,7 @@ async function onSaveDiagram( store: Store<RootState> )
   let drawings = drawingsState.drawings;
   let filename = currentDocumentInformationState( state ).filename;
 
-  let newFilename = await saveDiagram( drawings, filename );
+  let newFilename = await showSaveDiagramDialog( drawings, filename );
 
   if( newFilename !== null )
   {
@@ -69,7 +42,7 @@ async function onSaveDiagramAs( store: Store<RootState> )
   let drawingsState = currentDrawingsState( state );
   let drawings = drawingsState.drawings;
 
-  let filename = await saveDiagramAs( drawings );
+  let filename = await showSaveDiagramAsDialog( drawings );
 
   if( filename !== null )
   {
