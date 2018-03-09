@@ -138,6 +138,7 @@ class DrawingProperties extends React.Component<Props>
       <div
         className="drawing-properties"
       >
+        <b className="drawing-properties-title">{drawingToolDisplayNames[ selectedDrawing.type ]}</b>
         <button
           type="button"
           className="close drawing-properties-close"
@@ -145,8 +146,6 @@ class DrawingProperties extends React.Component<Props>
         >
           &times;
         </button>
-        <b className="d-block text-center">{drawingToolDisplayNames[ selectedDrawing.type ]}</b>
-        <div style={{ borderTop: '1px solid lightgray', margin: '0.5rem -1rem 0.5rem' }} />
         {drawingProperties}
         <button
           type="button"
