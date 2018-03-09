@@ -25,7 +25,6 @@ export async function openCommandLineFile( store: Store<RootState> )
   if( electron.remote.process )
   {
     let commandLineArgs: string[] = electron.remote.process.argv;
-    console.log( 'Arguments:', commandLineArgs );
     for( let arg of commandLineArgs.slice( 1 ) )
     {
       if( await isValidDiagramFilename( arg ) )
