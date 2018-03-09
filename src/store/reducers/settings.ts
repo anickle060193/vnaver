@@ -16,6 +16,7 @@ export interface State
   defaultDrawingColors: DrawingTypeMap<string>;
   deselectToolAfterAdd: DrawingTypeMap<boolean>;
   transparentDrawingProperties: boolean;
+  autoHideToolbar: boolean;
 }
 
 const initialState: State = {
@@ -27,7 +28,8 @@ const initialState: State = {
   shortcuts: settings.getAllShortcutSettings(),
   defaultDrawingColors: settings.getAllDefaultDrawingColorSettings(),
   deselectToolAfterAdd: settings.getAllDeselectToolAfterAdd(),
-  transparentDrawingProperties: settings.transparentDrawingProperties
+  transparentDrawingProperties: settings.transparentDrawingProperties,
+  autoHideToolbar: settings.autoHideToolbar
 };
 
 const actionCreator = actionCreatorFactory();
@@ -42,6 +44,7 @@ export const setShortcut = actionCreator<{ tool: DrawingTool, shortcut: string }
 export const setDefaultDrawingColor = actionCreator<{ drawingType: DrawingType, color: string }>( 'SET_DEFAULT_DRAWING_COLOR' );
 export const setDeselectToolAfterAdd = actionCreator<{ drawingType: DrawingType, deselectToolAfterAdd: boolean }>( 'SET_CLEAR_TOOL_AFTER_ADD' );
 export const setTransparentDrawingProperties = actionCreator<boolean>( 'SET_TRANSPARENT_DRAWING_PROPERTIES' );
+export const setAutoHideToolbar = actionCreator<boolean>( 'SET_AUTO_HIDE_TOOLBAR' );
 
 export const reducer = reducerWithInitialState( initialState )
   .case( showSettings, ( state ) =>
@@ -142,5 +145,14 @@ export const reducer = reducerWithInitialState( initialState )
     return {
       ...state,
       transparentDrawingProperties: settings.transparentDrawingProperties
+    };
+  } )
+  .case( setAutoHideToolbar, ( state, autoHideToolbar ) =>
+  {
+    settings.autoHideToolbar = autoHideToolbar;
+
+    return {
+      ...state,
+      autoHideToolbar: settings.autoHideToolbar
     };
   } );

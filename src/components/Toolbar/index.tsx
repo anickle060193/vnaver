@@ -16,6 +16,7 @@ interface PropsFromState
   tool: DrawingTool;
   shortcuts: ShortcutMap;
   defaultDrawingColors: DrawingTypeMap<string>;
+  autoHideToolbar: boolean;
 }
 
 interface PropsFromDispatch
@@ -46,7 +47,14 @@ class Toolbar extends React.Component<Props>
   render()
   {
     return (
-      <div className="toolbars">
+      <div
+        className={[
+          'toolbars',
+          this.props.autoHideToolbar ? 'auto-hide-toolbars' : ''
+        ].join( ' ' )}
+      >
+
+        <span className="material-icons toolbar-indicator">build</span>
 
         <div className="toolbar">
 
@@ -223,7 +231,8 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   ( state ) => ( {
     tool: currentEditorState( state ).tool,
     shortcuts: state.settings.shortcuts,
-    defaultDrawingColors: state.settings.defaultDrawingColors
+    defaultDrawingColors: state.settings.defaultDrawingColors,
+    autoHideToolbar: state.settings.autoHideToolbar
   } ),
   {
     setTool

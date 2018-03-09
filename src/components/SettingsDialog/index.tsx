@@ -13,7 +13,8 @@ import
   setGridIntervalX,
   setGridIntervalY,
   setDeselectToolAfterAdd,
-  setTransparentDrawingProperties
+  setTransparentDrawingProperties,
+  setAutoHideToolbar
 } from 'store/reducers/settings';
 import { drawingToolDisplayNames, DrawingTool, DrawingTypeMap, DrawingType, Tool } from 'utils/draw';
 import { ShortcutMap } from 'utils/shortcut';
@@ -30,6 +31,7 @@ interface PropsFromState
   gridIntervalY: number;
   snapToGrid: boolean;
   transparentDrawingProperties: boolean;
+  autoHideToolbar: boolean;
 }
 
 interface PropsFromDispatch
@@ -42,6 +44,7 @@ interface PropsFromDispatch
   setGridIntervalY: typeof setGridIntervalY;
   setSnapToGrid: typeof setSnapToGrid;
   setTransparentDrawingProperties: typeof setTransparentDrawingProperties;
+  setAutoHideToolbar: typeof setAutoHideToolbar;
 }
 
 type Props = PropsFromState & PropsFromDispatch;
@@ -193,6 +196,22 @@ class SettingsDialog extends React.Component<Props, State>
               </div>
             </div>
 
+            <div className="form-row">
+              <div className="col-auto">
+                <div className="form-check">
+                  <label className="form-check-label">
+                    <input
+                      type="checkbox"
+                      className="form-check-input"
+                      checked={this.props.autoHideToolbar}
+                      onChange={this.onAutoHideToolbarChange}
+                    />
+                    Hide toolbar when not hovering
+                  </label>
+                </div>
+              </div>
+            </div>
+
             <div className="row mt-4">
               <button className="btn btn-primary ml-auto" onClick={this.onClose}>Close</button>
             </div>
@@ -243,6 +262,11 @@ class SettingsDialog extends React.Component<Props, State>
   {
     this.props.setTransparentDrawingProperties( e.target.checked );
   }
+
+  private onAutoHideToolbarChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
+  {
+    this.props.setAutoHideToolbar( e.target.checked );
+  }
 }
 
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
@@ -254,7 +278,8 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     gridIntervalX: state.settings.gridIntervalX,
     gridIntervalY: state.settings.gridIntervalY,
     snapToGrid: state.settings.snapToGrid,
-    transparentDrawingProperties: state.settings.transparentDrawingProperties
+    transparentDrawingProperties: state.settings.transparentDrawingProperties,
+    autoHideToolbar: state.settings.autoHideToolbar
   } ),
   {
     hideSettings,
@@ -264,6 +289,7 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     setGridIntervalX,
     setGridIntervalY,
     setSnapToGrid,
-    setTransparentDrawingProperties
+    setTransparentDrawingProperties,
+    setAutoHideToolbar
   }
 )( SettingsDialog );
