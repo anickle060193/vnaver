@@ -29,6 +29,8 @@ import { mapToArray, assertNever, distance, roundToNearest } from 'utils/utils';
 
 import './styles.css';
 
+const DEFAULT_PLANE_SIZE = 40;
+
 const DEFAULT_LINE_STYLE: LineStyle = {
   dash: LineDashStyle.LooselyDashed,
   strokeWidth: 2
@@ -298,7 +300,7 @@ class DrawField extends React.Component<Props, State>
               color: this.props.defaultDrawingColors[ this.props.tool ],
               x: this.state.mouseX,
               y: this.state.mouseY,
-              size: 65,
+              size: DEFAULT_PLANE_SIZE,
               rotation: 0
             }}
           />
@@ -790,7 +792,7 @@ class DrawField extends React.Component<Props, State>
             color: this.props.defaultDrawingColors[ this.props.tool ],
             x: x,
             y: y,
-            size: 65,
+            size: DEFAULT_PLANE_SIZE,
             rotation: 0
           } );
         }
