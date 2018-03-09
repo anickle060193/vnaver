@@ -11,7 +11,8 @@ const enum SettingKey
   GridOn = 'grid_on',
   GridIntervalX = 'grid_interval_x',
   GridIntervalY = 'grid_interval_y',
-  SnapToGrid = 'snap_to_grid'
+  SnapToGrid = 'snap_to_grid',
+  TransparentDrawingProperties = 'transparent_drawing_properties'
 }
 
 function k( ...subkeys: ( SettingKey | DrawingTool )[] )
@@ -194,6 +195,16 @@ class Settings
   get snapToGrid()
   {
     return getValidItem( k( SettingKey.SnapToGrid ), SettingType.Boolean, true );
+  }
+
+  set transparentDrawingProperties( transparentDrawingProperties: boolean )
+  {
+    setValidItem( k( SettingKey.TransparentDrawingProperties ), SettingType.Boolean, transparentDrawingProperties );
+  }
+
+  get transparentDrawingProperties()
+  {
+    return getValidItem( k( SettingKey.TransparentDrawingProperties ), SettingType.Boolean, true );
   }
 }
 

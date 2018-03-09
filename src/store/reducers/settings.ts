@@ -15,6 +15,7 @@ export interface State
   shortcuts: ShortcutMap;
   defaultDrawingColors: DrawingTypeMap<string>;
   deselectToolAfterAdd: DrawingTypeMap<boolean>;
+  transparentDrawingProperties: boolean;
 }
 
 const initialState: State = {
@@ -25,7 +26,8 @@ const initialState: State = {
   gridIntervalY: settings.gridIntervalY,
   shortcuts: settings.getAllShortcutSettings(),
   defaultDrawingColors: settings.getAllDefaultDrawingColorSettings(),
-  deselectToolAfterAdd: settings.getAllDeselectToolAfterAdd()
+  deselectToolAfterAdd: settings.getAllDeselectToolAfterAdd(),
+  transparentDrawingProperties: settings.transparentDrawingProperties
 };
 
 const actionCreator = actionCreatorFactory();
@@ -39,6 +41,7 @@ export const setGridIntervalY = actionCreator<number>( 'SET_GRID_INTERVAL_Y' );
 export const setShortcut = actionCreator<{ tool: DrawingTool, shortcut: string }>( 'SET_SHORTCUT' );
 export const setDefaultDrawingColor = actionCreator<{ drawingType: DrawingType, color: string }>( 'SET_DEFAULT_DRAWING_COLOR' );
 export const setDeselectToolAfterAdd = actionCreator<{ drawingType: DrawingType, deselectToolAfterAdd: boolean }>( 'SET_CLEAR_TOOL_AFTER_ADD' );
+export const setTransparentDrawingProperties = actionCreator<boolean>( 'SET_TRANSPARENT_DRAWING_PROPERTIES' );
 
 export const reducer = reducerWithInitialState( initialState )
   .case( showSettings, ( state ) =>
@@ -130,5 +133,14 @@ export const reducer = reducerWithInitialState( initialState )
         ...state.deselectToolAfterAdd,
         [ drawingType ]: settings.getDeselectToolAfterAdd( drawingType )
       }
+    };
+  } )
+  .case( setTransparentDrawingProperties, ( state, transparentDrawingProperties ) =>
+  {
+    settings.transparentDrawingProperties = transparentDrawingProperties;
+
+    return {
+      ...state,
+      transparentDrawingProperties: settings.transparentDrawingProperties
     };
   } );

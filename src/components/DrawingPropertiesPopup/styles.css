@@ -7,6 +7,21 @@
   box-shadow: 1px 1px 5px 1px rgba(131, 131, 131, 0.774);
 }
 
+.drawing-properties-transparent
+{
+  opacity: 0.5;
+}
+
+.drawing-properties-transparent:focus-within
+{
+  opacity: 1.0;
+}
+
+.drawing-properties-transparent:hover
+{
+  opacity: 1.0;
+}
+
 .drawing-properties-title
 {
   display: block;

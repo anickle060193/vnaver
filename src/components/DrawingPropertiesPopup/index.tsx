@@ -23,6 +23,7 @@ interface PropsFromState
 {
   drawings: DrawingMap;
   selectedDrawingId: string | null;
+  transparentDrawingProperties: boolean;
 }
 
 interface PropsFromDispatch
@@ -136,7 +137,10 @@ class DrawingProperties extends React.Component<Props>
 
     return (
       <div
-        className="drawing-properties"
+        className={[
+          'drawing-properties',
+          this.props.transparentDrawingProperties ? 'drawing-properties-transparent' : ''
+        ].join( ' ' )}
       >
         <b className="drawing-properties-title">{drawingToolDisplayNames[ selectedDrawing.type ]}</b>
         <button
@@ -188,7 +192,8 @@ class DrawingProperties extends React.Component<Props>
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   ( state ) => ( {
     drawings: currentDrawingsState( state ).drawings,
-    selectedDrawingId: currentDrawingsState( state ).selectedDrawingId
+    selectedDrawingId: currentDrawingsState( state ).selectedDrawingId,
+    transparentDrawingProperties: state.settings.transparentDrawingProperties
   } ),
   {
     deleteDrawing,

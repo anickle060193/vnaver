@@ -4,7 +4,17 @@ import { connect } from 'react-redux';
 import Dialog from 'components/Dialog';
 import ShortcutInput from 'components/SettingsDialog/ShortcutInput';
 import NumberInput from 'components/NumberInput';
-import { hideSettings, setShortcut, setDefaultDrawingColor, setSnapToGrid, setGridIntervalX, setGridIntervalY, setDeselectToolAfterAdd } from 'store/reducers/settings';
+import
+{
+  hideSettings,
+  setShortcut,
+  setDefaultDrawingColor,
+  setSnapToGrid,
+  setGridIntervalX,
+  setGridIntervalY,
+  setDeselectToolAfterAdd,
+  setTransparentDrawingProperties
+} from 'store/reducers/settings';
 import { drawingToolDisplayNames, DrawingTool, DrawingTypeMap, DrawingType, Tool } from 'utils/draw';
 import { ShortcutMap } from 'utils/shortcut';
 
@@ -19,6 +29,7 @@ interface PropsFromState
   gridIntervalX: number;
   gridIntervalY: number;
   snapToGrid: boolean;
+  transparentDrawingProperties: boolean;
 }
 
 interface PropsFromDispatch
@@ -30,6 +41,7 @@ interface PropsFromDispatch
   setGridIntervalX: typeof setGridIntervalX;
   setGridIntervalY: typeof setGridIntervalY;
   setSnapToGrid: typeof setSnapToGrid;
+  setTransparentDrawingProperties: typeof setTransparentDrawingProperties;
 }
 
 type Props = PropsFromState & PropsFromDispatch;
@@ -161,6 +173,26 @@ class SettingsDialog extends React.Component<Props, State>
               </div>
             ) )}
 
+            <div className="row mt-2">
+              <h5>Other Settings:</h5>
+            </div>
+
+            <div className="form-row">
+              <div className="col-auto">
+                <div className="form-check">
+                  <label className="form-check-label">
+                    <input
+                      type="checkbox"
+                      className="form-check-input"
+                      checked={this.props.transparentDrawingProperties}
+                      onChange={this.onTransparentDrawingPropertiesChange}
+                    />
+                    Display drawing properties dialog as transparent unless hovering
+                  </label>
+                </div>
+              </div>
+            </div>
+
             <div className="row mt-4">
               <button className="btn btn-primary ml-auto" onClick={this.onClose}>Close</button>
             </div>
@@ -206,6 +238,11 @@ class SettingsDialog extends React.Component<Props, State>
   {
     this.props.setDeselectToolAfterAdd( { drawingType, deselectToolAfterAdd } );
   }
+
+  private onTransparentDrawingPropertiesChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
+  {
+    this.props.setTransparentDrawingProperties( e.target.checked );
+  }
 }
 
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
@@ -216,7 +253,8 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     deselectToolAfterAdd: state.settings.deselectToolAfterAdd,
     gridIntervalX: state.settings.gridIntervalX,
     gridIntervalY: state.settings.gridIntervalY,
-    snapToGrid: state.settings.snapToGrid
+    snapToGrid: state.settings.snapToGrid,
+    transparentDrawingProperties: state.settings.transparentDrawingProperties
   } ),
   {
     hideSettings,
@@ -225,6 +263,7 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     setDeselectToolAfterAdd,
     setGridIntervalX,
     setGridIntervalY,
-    setSnapToGrid
+    setSnapToGrid,
+    setTransparentDrawingProperties
   }
 )( SettingsDialog );
