@@ -18,7 +18,7 @@ type OwnProps = DrawingComponentProps<PathLineDrawing>;
 
 type Props = PropsFromState & OwnProps;
 
-const PathLine: React.SFC<Props> = ( { drawing, onClick, onMouseDown, drawings, cursor = false } ) =>
+const PathLine: React.SFC<Props> = ( { drawing, onMouseDown, onMouseUp, drawings, cursor = false } ) =>
 {
   let start = getEndPointPosition( drawing.start, drawings );
   if( !start )
@@ -32,7 +32,7 @@ const PathLine: React.SFC<Props> = ( { drawing, onClick, onMouseDown, drawings, 
   }
 
   return (
-    <Group onClick={onClick} onMouseDown={onMouseDown}>
+    <Group onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
       <LineDrawing
         x1={start.x}
         y1={start.y}

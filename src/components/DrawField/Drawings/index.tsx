@@ -89,8 +89,8 @@ const GuideLine: React.SFC<GuideLineProps> = ( { x, y, vertical, color, dash, st
     )
 );
 
-export const Above: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Above>>> = ( { drawing, onClick, onMouseDown } ) => (
-  <Group onClick={onClick} onMouseDown={onMouseDown}>
+export const Above: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Above>>> = ( { drawing, onMouseDown, onMouseUp } ) => (
+  <Group onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
     {drawing.showGuideLine && (
       <GuideLine
         x={drawing.x}
@@ -112,8 +112,8 @@ export const Above: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Abo
   </Group>
 );
 
-export const At: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.At>>> = ( { drawing, onClick, onMouseDown } ) => (
-  <Group onClick={onClick} onMouseDown={onMouseDown}>
+export const At: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.At>>> = ( { drawing, onMouseDown, onMouseUp } ) => (
+  <Group onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
     {drawing.showGuideLine && (
       <GuideLine
         x={drawing.x}
@@ -142,8 +142,8 @@ export const At: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.At>>> 
   </Group>
 );
 
-export const Below: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Below>>> = ( { drawing, onClick, onMouseDown } ) => (
-  <Group onClick={onClick} onMouseDown={onMouseDown}>
+export const Below: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Below>>> = ( { drawing, onMouseDown, onMouseUp } ) => (
+  <Group onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
     {drawing.showGuideLine && (
       <GuideLine
         x={drawing.x}
@@ -165,8 +165,8 @@ export const Below: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Bel
   </Group>
 );
 
-export const Between: React.SFC<DrawingComponentProps<BetweenDrawing>> = ( { drawing, onClick, onMouseDown } ) => (
-  <Group onClick={onClick} onMouseDown={onMouseDown}>
+export const Between: React.SFC<DrawingComponentProps<BetweenDrawing>> = ( { drawing, onMouseDown, onMouseUp } ) => (
+  <Group onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
     {drawing.showGuideLine && (
       <GuideLine
         x={drawing.x}
@@ -195,8 +195,8 @@ export const Between: React.SFC<DrawingComponentProps<BetweenDrawing>> = ( { dra
   </Group>
 );
 
-export const VerticalGridLine: React.SFC<DrawingComponentProps<VerticalGridLineDrawing>> = ( { drawing, onClick, onMouseDown } ) => (
-  <Group onClick={onClick} onMouseDown={onMouseDown}>
+export const VerticalGridLine: React.SFC<DrawingComponentProps<VerticalGridLineDrawing>> = ( { drawing, onMouseDown, onMouseUp } ) => (
+  <Group onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
     <VerticalGuideLine
       x={drawing.x}
       color={drawing.color}
@@ -207,8 +207,8 @@ export const VerticalGridLine: React.SFC<DrawingComponentProps<VerticalGridLineD
   </Group>
 );
 
-export const HorizontalGridLine: React.SFC<DrawingComponentProps<HorizontalGridLineDrawing>> = ( { drawing, onClick, onMouseDown } ) => (
-  <Group onClick={onClick} onMouseDown={onMouseDown}>
+export const HorizontalGridLine: React.SFC<DrawingComponentProps<HorizontalGridLineDrawing>> = ( { drawing, onMouseDown, onMouseUp } ) => (
+  <Group onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
     <HorizontalGuideLine
       y={drawing.y}
       color={drawing.color}
@@ -221,10 +221,10 @@ export const HorizontalGridLine: React.SFC<DrawingComponentProps<HorizontalGridL
 
 const PLANE_PATH_SIZE = 100;
 
-export const Plane: React.SFC<DrawingComponentProps<PlaneDrawing>> = ( { drawing, onClick, onMouseDown } ) => (
+export const Plane: React.SFC<DrawingComponentProps<PlaneDrawing>> = ( { drawing, onMouseDown, onMouseUp } ) => (
   <Path
-    onClick={onClick}
     onMouseDown={onMouseDown}
+    onMouseUp={onMouseUp}
     x={drawing.x}
     y={drawing.y}
     scale={{ x: drawing.size / PLANE_PATH_SIZE, y: drawing.size / PLANE_PATH_SIZE }}
@@ -265,7 +265,7 @@ const calculateTextY = ( text: string, fontSize: number, y: number, verticalAlig
   }
 };
 
-export const Text: React.SFC<DrawingComponentProps<TextDrawing>> = ( { drawing, onClick, onMouseDown } ) => (
+export const Text: React.SFC<DrawingComponentProps<TextDrawing>> = ( { drawing, onMouseDown, onMouseUp } ) => (
   <KText
     x={drawing.x}
     y={calculateTextY( drawing.text, drawing.fontSize, drawing.y, drawing.verticalAlign )}
@@ -275,8 +275,8 @@ export const Text: React.SFC<DrawingComponentProps<TextDrawing>> = ( { drawing, 
     fill={drawing.color}
     align={horizontalAlignMap[ drawing.horizontalAlign ]}
     wrap="none"
-    onClick={onClick}
     onMouseDown={onMouseDown}
+    onMouseUp={onMouseUp}
   />
 );
 

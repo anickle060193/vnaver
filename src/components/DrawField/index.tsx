@@ -110,7 +110,7 @@ class DrawField extends React.Component<Props, State>
 
   mouseDown: boolean;
   moved: boolean;
-  clickHandled: boolean;
+  mouseUpHandled: boolean;
 
   constructor( props: Props )
   {
@@ -138,7 +138,7 @@ class DrawField extends React.Component<Props, State>
 
     this.mouseDown = false;
     this.moved = false;
-    this.clickHandled = false;
+    this.mouseUpHandled = false;
   }
 
   async componentDidMount()
@@ -380,7 +380,6 @@ class DrawField extends React.Component<Props, State>
           x={this.props.originX}
           y={this.props.originY}
           onContentMouseDown={this.onContentMouseDown}
-          onContentClick={this.onContentClick}
           onContentMouseUp={this.onContentMouseUp}
         >
           <Layer>
@@ -421,8 +420,8 @@ class DrawField extends React.Component<Props, State>
                   key={i}
                   cursor={false}
                   drawing={drawing}
-                  onClick={( e ) => this.onDrawingClick( drawing, e )}
                   onMouseDown={( e ) => this.onDrawingMouseDown( drawing, e )}
+                  onMouseUp={( e ) => this.onDrawingMouseUp( drawing, e )}
                 />
               );
             } )}
@@ -650,26 +649,27 @@ class DrawField extends React.Component<Props, State>
 
   private onDocumentMouseOut = () =>
   {
-    this.setState( {
-      mouseX: null,
-      mouseY: null,
-      startX: null,
-      startY: null,
-      startEndPoint: null
-    } );
+    if( !this.mouseDown )
+    {
+      this.setState( {
+        mouseX: null,
+        mouseY: null,
+        startX: null,
+        startY: null,
+        startEndPoint: null
+      } );
+    }
   }
 
   private onDocumentMouseUp = ( e: MouseEvent ) =>
   {
-    if( e.button === 0 )
-    {
-      this.mouseDown = false;
-    }
+    let { x, y } = this.mouseToDrawing( e );
+    this.onMouseUp( x, y, e.button );
   }
 
   private onContentMouseDown = ( e: KonvaMouseEvent<{}> ) =>
   {
-    if( e.evt.button === 0 ) // tslint:disable-line no-bitwise
+    if( e.evt.button === 0 )
     {
       this.moved = false;
       this.mouseDown = true;
@@ -692,24 +692,38 @@ class DrawField extends React.Component<Props, State>
     }
   }
 
-  private onContentClick = ( e: KonvaMouseEvent<{}> ) =>
+  private onContentMouseUp = ( e: KonvaMouseEvent<{}> ) =>
   {
-    if( e.evt.button === 0 )
+    let { x, y } = this.mouseToDrawing( e.evt );
+    this.onMouseUp( x, y, e.evt.button );
+  }
+
+  private onMouseUp = ( x: number, y: number, button: number ) =>
+  {
+    if( button === 0 )
     {
-      if( this.clickHandled )
+      if( !this.mouseDown )
       {
-        this.clickHandled = false;
+        this.clearStart();
+        return;
+      }
+
+      this.mouseDown = false;
+
+      if( this.mouseUpHandled )
+      {
+        this.mouseUpHandled = false;
+        this.clearStart();
         return;
       }
 
       if( this.moved )
       {
+        this.clearStart();
         return;
       }
 
       let added = false;
-
-      let { x, y } = this.mouseToDrawing( e.evt );
 
       if( this.props.tool !== Tool.Cursor )
       {
@@ -846,22 +860,21 @@ class DrawField extends React.Component<Props, State>
       }
     }
 
+    this.clearStart();
+  }
+
+  private clearStart()
+  {
     this.setState( {
       startX: null,
       startY: null,
-      startEndPoint: null
-    } );
-  }
-
-  private onContentMouseUp = ( e: KonvaMouseEvent<{}> ) =>
-  {
-    this.setState( {
+      startEndPoint: null,
       mouseDownDrawing: null,
       dragging: false
     } );
   }
 
-  private onDrawingClick = ( drawing: Drawing, e: KonvaMouseEvent<{}> ) =>
+  private onDrawingMouseUp = ( drawing: Drawing, e: KonvaMouseEvent<{}> ) =>
   {
     if( e.evt.button === 0 )
     {
@@ -870,7 +883,7 @@ class DrawField extends React.Component<Props, State>
         return;
       }
 
-      this.clickHandled = true;
+      this.mouseUpHandled = true;
     }
   }
 

@@ -52,7 +52,7 @@ const BezierCurve: React.SFC<{
   />
 );
 
-const CurvedLine: React.SFC<Props> = ( { drawing, onClick, onMouseDown, drawings, cursor = false } ) =>
+const CurvedLine: React.SFC<Props> = ( { drawing, onMouseDown, onMouseUp, drawings, cursor = false } ) =>
 {
   let start = getEndPointPosition( drawing.start, drawings );
   if( !start )
@@ -66,7 +66,7 @@ const CurvedLine: React.SFC<Props> = ( { drawing, onClick, onMouseDown, drawings
   }
 
   return (
-    <Group onClick={onClick} onMouseDown={onMouseDown}>
+    <Group onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
       <BezierCurve
         color="transparent"
         strokeWidth={5}
