@@ -19,9 +19,7 @@ export default class Layout extends React.Component
           <div className="draw-field-container">
             <DrawField />
           </div>
-          <div className="toolbar-container">
-            <Toolbar />
-          </div>
+          <Toolbar />
           <div className="drawing-properties-container">
             <DrawingPropertiesPopup />
           </div>

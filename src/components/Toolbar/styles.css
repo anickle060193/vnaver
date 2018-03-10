@@ -1,5 +1,10 @@
 .toolbars
 {
+  position: absolute;
+  padding: 1rem;
+  left: 0%;
+  top: 0%;
+
   display: flex;
   flex-direction: column;
 }
@@ -33,6 +38,11 @@
   transform: translateX( calc( -100% - 1rem ) );
 }
 
+body:hover .auto-hide-toolbars:not( :hover ) .toolbar
+{
+  transition: transform 150ms ease-in-out 500ms;
+}
+
 .toolbar-indicator
 {
   position: absolute;
@@ -54,4 +64,9 @@
 .auto-hide-toolbars:not( :hover ) .toolbar-indicator
 {
   transform: translateX( 0 );
+}
+
+body:hover .auto-hide-toolbars:not( :hover ) .toolbar-indicator
+{
+  transition: transform 150ms ease-in-out 500ms;
 }
