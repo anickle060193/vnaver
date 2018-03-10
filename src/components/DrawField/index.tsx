@@ -5,7 +5,7 @@ import * as uuid from 'uuid/v4';
 
 import Grid from 'components/DrawField/Grid';
 import { drawingComponentMap, Between, VerticalGridLine, HorizontalGridLine, ActiveIndication, Plane, Text } from 'components/DrawField/Drawings';
-import { addDrawing, selectDrawing, deselectDrawing, moveDrawing } from 'store/reducers/drawings';
+import { addDrawing, selectDrawing, deselectDrawing, moveDrawing, setDrawingPosition } from 'store/reducers/drawings';
 import { incrementScaleLevel, decrementScaleLevel, setOrigin, setTool } from 'store/reducers/editor';
 import { currentEditorState, currentDrawingsState } from 'store/selectors';
 import
@@ -80,6 +80,7 @@ interface PropsFromDispatch
   selectDrawing: typeof selectDrawing;
   deselectDrawing: typeof deselectDrawing;
   moveDrawing: typeof moveDrawing;
+  setDrawingPosition: typeof setDrawingPosition;
   setTool: typeof setTool;
 }
 
@@ -613,11 +614,22 @@ class DrawField extends React.Component<Props, State>
         {
           this.setState( { dragging: true } );
 
-          this.props.moveDrawing( {
-            drawingId: this.state.mouseDownDrawing.id,
-            x,
-            y
-          } );
+          if( this.props.gridOn )
+          {
+            this.props.setDrawingPosition( {
+              drawingId: this.state.mouseDownDrawing.id,
+              x,
+              y
+            } );
+          }
+          else
+          {
+            this.props.moveDrawing( {
+              drawingId: this.state.mouseDownDrawing.id,
+              xDelta: e.movementX,
+              yDelta: e.movementY
+            } );
+          }
         }
       }
       else if( this.props.tool === Tool.Cursor )
@@ -928,6 +940,7 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     selectDrawing,
     deselectDrawing,
     moveDrawing,
+    setDrawingPosition,
     setTool
   }
 )( DrawField );

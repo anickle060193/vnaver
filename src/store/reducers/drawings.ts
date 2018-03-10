@@ -10,7 +10,6 @@ import
   DrawingMap,
   DEFAULT_SCALE_LEVEL,
   DrawingType,
-  DraggingInfo,
   getEndPointPosition
 } from 'utils/draw';
 import { mapToArray, arrayToMap, assertNever } from 'utils/utils';
@@ -43,7 +42,8 @@ export const selectDrawing = actionCreator<string>( 'SELECT_DRAWING' );
 export const deselectDrawing = actionCreator( 'DESELECT_DRAWING' );
 export const updateDrawing = actionCreator<Drawing>( 'UPDATE_DRAWING' );
 export const deleteDrawing = actionCreator<string>( 'DELETE_DRAWING' );
-export const moveDrawing = actionCreator<DraggingInfo>( 'MOVE_DRAWING' );
+export const moveDrawing = actionCreator<{ drawingId: string, xDelta: number, yDelta: number }>( 'MOVE_DRAWING' );
+export const setDrawingPosition = actionCreator<{ drawingId: string, x: number, y: number }>( 'SET_DRAWING_POSITION' );
 export const setDrawings = actionCreator<DrawingMap>( 'SET_DRAWINGS' );
 
 const setDrawingInState = <D extends Drawing>( state: State, drawing: D ): State =>
@@ -128,7 +128,51 @@ const baseReducer = reducerWithInitialState( initialState )
     } ),
     revision: state.revision + 1
   } ) )
-  .case( moveDrawing, ( state, { drawingId, x, y } ) =>
+  .case( moveDrawing, ( state, { drawingId, xDelta, yDelta } ) =>
+  {
+    let drawing = state.drawings[ drawingId ];
+
+    if( drawing.type === DrawingType.Above
+      || drawing.type === DrawingType.At
+      || drawing.type === DrawingType.Below
+      || drawing.type === DrawingType.Between
+      || drawing.type === DrawingType.Plane
+      || drawing.type === DrawingType.Text )
+    {
+      return setDrawingInState( state, {
+        ...drawing,
+        x: drawing.x + xDelta,
+        y: drawing.y + yDelta,
+        revision: state.revision + 1
+      } );
+    }
+    else if( drawing.type === DrawingType.HorizontalGridLine )
+    {
+      return setDrawingInState( state, {
+        ...drawing,
+        y: drawing.y + yDelta,
+        revision: state.revision + 1
+      } );
+    }
+    else if( drawing.type === DrawingType.VerticalGridLine )
+    {
+      return setDrawingInState( state, {
+        ...drawing,
+        x: drawing.x + xDelta,
+        revision: state.revision + 1
+      } );
+    }
+    else if( drawing.type === DrawingType.PathLine
+      || drawing.type === DrawingType.CurvedLine )
+    {
+      return state;
+    }
+    else
+    {
+      throw assertNever( drawing.type );
+    }
+  } )
+  .case( setDrawingPosition, ( state, { drawingId, x, y } ) =>
   {
     let drawing = state.drawings[ drawingId ];
 
@@ -183,6 +227,6 @@ const baseReducer = reducerWithInitialState( initialState )
   } );
 
 export const reducer = undoable( baseReducer, {
-  groupBy: groupByActionTypes( [ moveDrawing ].map( ( a ) => a.type ) ),
+  groupBy: groupByActionTypes( [ moveDrawing, setDrawingPosition ].map( ( a ) => a.type ) ),
   filter: excludeAction( [ setDrawings ].map( ( a ) => a.type ) )
 } );

@@ -291,10 +291,3 @@ export const getEndPointPosition = ( endPoint: EndPoint, drawings: DrawingMap ):
     }
   }
 };
-
-export interface DraggingInfo
-{
-  drawingId: string;
-  x: number;
-  y: number;
-}
