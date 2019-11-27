@@ -13,6 +13,8 @@ import { createAutoUpdater } from 'utils/auto_updater';
 import { createApplicationMenu } from 'utils/menu';
 import { openCommandLineFile } from 'utils/electron';
 
+import './App.css';
+
 if( process.env.NODE_ENV !== 'development' )
 {
   createAutoUpdater( store );

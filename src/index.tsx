@@ -10,8 +10,6 @@ import 'bootstrap-css-only';
 
 import App from './App';
 
-import './index.css';
-
 ReactDOM.render(
   <App />,
   document.getElementById( 'root' ) as HTMLElement
