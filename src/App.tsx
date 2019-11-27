@@ -26,12 +26,11 @@ const App: React.SFC = () =>
 {
   return (
     <Provider store={store}>
-      <ShortcutManager>
-        <Layout />
-        <UpdateNotification />
-        <SettingsDialog />
-        <DiagramOpenErrorsDialog />
-      </ShortcutManager>
+      <ShortcutManager />
+      <Layout />
+      <UpdateNotification />
+      <SettingsDialog />
+      <DiagramOpenErrorsDialog />
     </Provider>
   );
 };
