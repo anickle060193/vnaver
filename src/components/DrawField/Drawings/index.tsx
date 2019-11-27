@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Path, Text as KText, Group, Rect } from 'react-konva';
 
 import { DrawingComponentProps, LineDrawing } from './DrawingComponent';
@@ -234,7 +234,7 @@ export const Plane: React.SFC<DrawingComponentProps<PlaneDrawing>> = ( { drawing
   />
 );
 
-const horizontalAlignMap: {[ key in HorizontalAlign ]: string } = {
+const horizontalAlignMap: { [ key in HorizontalAlign ]: string } = {
   [ HorizontalAlign.Left ]: 'left',
   [ HorizontalAlign.Center ]: 'center',
   [ HorizontalAlign.Right ]: 'right'
@@ -280,17 +280,19 @@ export const Text: React.SFC<DrawingComponentProps<TextDrawing>> = ( { drawing, 
   />
 );
 
-export const drawingComponentMap: DrawingTypeMap<React.SFC<DrawingComponentProps<Drawing>> | React.ComponentClass<DrawingComponentProps<Drawing>>> = {
-  [ DrawingType.Above ]: Above,
-  [ DrawingType.At ]: At,
-  [ DrawingType.Below ]: Below,
-  [ DrawingType.Between ]: Between,
-  [ DrawingType.PathLine ]: PathLine,
-  [ DrawingType.CurvedLine ]: CurvedLine,
-  [ DrawingType.VerticalGridLine ]: VerticalGridLine,
-  [ DrawingType.HorizontalGridLine ]: HorizontalGridLine,
-  [ DrawingType.Plane ]: Plane,
-  [ DrawingType.Text ]: Text
+type DrawingComponentType = React.ComponentType<DrawingComponentProps<Drawing>>;
+
+export const drawingComponentMap: DrawingTypeMap<DrawingComponentType> = {
+  [ DrawingType.Above ]: Above as DrawingComponentType,
+  [ DrawingType.At ]: At as DrawingComponentType,
+  [ DrawingType.Below ]: Below as DrawingComponentType,
+  [ DrawingType.Between ]: Between as DrawingComponentType,
+  [ DrawingType.PathLine ]: PathLine as DrawingComponentType,
+  [ DrawingType.CurvedLine ]: CurvedLine as DrawingComponentType,
+  [ DrawingType.VerticalGridLine ]: VerticalGridLine as DrawingComponentType,
+  [ DrawingType.HorizontalGridLine ]: HorizontalGridLine as DrawingComponentType,
+  [ DrawingType.Plane ]: Plane as DrawingComponentType,
+  [ DrawingType.Text ]: Text as DrawingComponentType,
 };
 
 export const ActiveIndication: React.SFC<{

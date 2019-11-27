@@ -27,15 +27,18 @@ export function currentDocumentInformationState( state: RootState )
   return state.documents.docs[ state.documents.currentDocumentId ].info;
 }
 
-export type DocumentAttributeMap<T> = { [ documentId: string ]: T };
+export interface DocumentAttributeMap<T>
+{
+  [ documentId: string ]: T;
+}
 
 function selectDocumentsAttribute<T>( state: RootState, getItem: ( document: DocumentState ) => T )
 {
-  return Object.entries( state.documents.docs ).reduce( ( prev, [ documentId, document ] ) =>
+  return Object.entries( state.documents.docs ).reduce<DocumentAttributeMap<T>>( ( prev, [ documentId, document ] ) =>
   {
     prev[ documentId ] = getItem( document );
     return prev;
-  }, {} as { [ documentId: string ]: T } );
+  }, {} );
 }
 
 export function selectDocumentFilenames( state: RootState )

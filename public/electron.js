@@ -6,8 +6,8 @@ const { autoUpdater } = require( 'electron-updater' );
 const path = require( 'path' );
 const url = require( 'url' );
 
-/** @type {BrowserWindow | null} */
-let window = null;
+/** @type {?BrowserWindow} */
+let win = null;
 
 log.transports.file.level = 'info';
 
@@ -21,49 +21,49 @@ function setupAutoUpdater()
 
   autoUpdater.on( 'checking-for-update', () =>
   {
-    if( window )
+    if( win )
     {
-      window.webContents.send( 'checking-for-update' );
+      win.webContents.send( 'checking-for-update' );
     }
   } );
 
   autoUpdater.on( 'update-available', ( updateInfo ) =>
   {
-    if( window )
+    if( win )
     {
-      window.webContents.send( 'update-available', updateInfo );
+      win.webContents.send( 'update-available', updateInfo );
     }
   } );
 
   autoUpdater.on( 'update-not-available', ( updateInfo ) =>
   {
-    if( window )
+    if( win )
     {
-      window.webContents.send( 'update-not-available', updateInfo );
+      win.webContents.send( 'update-not-available', updateInfo );
     }
   } );
 
   autoUpdater.on( 'error', ( error ) =>
   {
-    if( window )
+    if( win )
     {
-      window.webContents.send( 'error', error );
+      win.webContents.send( 'error', error );
     }
   } );
 
   autoUpdater.on( 'download-progress', ( progress ) =>
   {
-    if( window )
+    if( win )
     {
-      window.webContents.send( 'download-progress', progress );
+      win.webContents.send( 'download-progress', progress );
     }
   } );
 
   autoUpdater.on( 'update-downloaded', ( updateInfo ) =>
   {
-    if( window )
+    if( win )
     {
-      window.webContents.send( 'update-downloaded', updateInfo );
+      win.webContents.send( 'update-downloaded', updateInfo );
     }
   } );
 
@@ -77,16 +77,19 @@ function setupAutoUpdater()
 
 function createWindow()
 {
-  window = new BrowserWindow( {
+  win = new BrowserWindow( {
     width: 1000,
     height: 800,
     minWidth: 600,
     minHeight: 750,
     show: false,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
+    webPreferences: {
+      nodeIntegration: true,
+    },
   } );
 
-  window.loadURL(
+  win.loadURL(
     process.env.NODE_ENV === 'development' ?
       'http://localhost:3000'
       :
@@ -97,16 +100,16 @@ function createWindow()
       } )
   );
 
-  window.on( 'closed', () =>
+  win.on( 'closed', () =>
   {
-    window = null;
+    win = null;
   } );
 
-  window.once( 'ready-to-show', () =>
+  win.once( 'ready-to-show', () =>
   {
-    if( window )
+    if( win )
     {
-      window.show();
+      win.show();
 
       if( process.env.NODE_ENV !== 'development' )
       {
@@ -133,7 +136,7 @@ app.on( 'window-all-closed', () =>
 
 app.on( 'activate', () =>
 {
-  if( window === null )
+  if( win === null )
   {
     createWindow();
   }

@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 
 import './styles.css';
 
@@ -28,7 +28,7 @@ export default class Dialog extends React.Component<Props, State>
     };
   }
 
-  componentWillReceiveProps( newProps: Props )
+  public componentWillReceiveProps( newProps: Props )
   {
     if( newProps.show !== this.props.show )
     {
@@ -43,21 +43,23 @@ export default class Dialog extends React.Component<Props, State>
     }
   }
 
-  render()
+  public render()
   {
     return ReactDOM.createPortal(
-      <div
-        className={[
-          'dialog-shade',
-          'dialog-' + this.state.state
-        ].join( ' ' )}
-        onClick={this.onShadeClick}
-        onAnimationEnd={this.onAnimationEnd}
-      >
-        <div className="dialog" style={this.props.style}>
-          {this.props.children}
+      (
+        <div
+          className={[
+            'dialog-shade',
+            'dialog-' + this.state.state
+          ].join( ' ' )}
+          onClick={this.onShadeClick}
+          onAnimationEnd={this.onAnimationEnd}
+        >
+          <div className="dialog" style={this.props.style}>
+            {this.props.children}
+          </div>
         </div>
-      </div>,
+      ),
       document.body
     );
   }

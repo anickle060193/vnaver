@@ -1,7 +1,7 @@
-import * as React from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { Stage, Layer, Rect } from 'react-konva';
-import * as uuid from 'uuid/v4';
+import uuid from 'uuid/v4';
 
 import Grid from 'components/DrawField/Grid';
 import { drawingComponentMap, Between, VerticalGridLine, HorizontalGridLine, ActiveIndication, Plane, Text } from 'components/DrawField/Drawings';
@@ -28,6 +28,7 @@ import
 import { mapToArray, assertNever, distance, roundToNearest } from 'utils/utils';
 
 import './styles.css';
+import Konva from 'konva';
 
 const DEFAULT_PLANE_SIZE = 40;
 
@@ -107,11 +108,11 @@ interface State
 
 class DrawField extends React.Component<Props, State>
 {
-  drawFieldRef: HTMLDivElement | null;
+  private drawFieldRef: HTMLDivElement | null;
 
-  mouseDown: boolean;
-  moved: boolean;
-  mouseUpHandled: boolean;
+  private mouseDown: boolean;
+  private moved: boolean;
+  private mouseUpHandled: boolean;
 
   constructor( props: Props )
   {
@@ -142,7 +143,7 @@ class DrawField extends React.Component<Props, State>
     this.mouseUpHandled = false;
   }
 
-  async componentDidMount()
+  public async componentDidMount()
   {
     window.addEventListener( 'resize', this.onResize );
     document.addEventListener( 'mousemove', this.onDocumentMouseMove );
@@ -154,7 +155,7 @@ class DrawField extends React.Component<Props, State>
     this.onResize();
   }
 
-  componentWillUnmount()
+  public componentWillUnmount()
   {
     window.removeEventListener( 'resize', this.onResize );
     document.removeEventListener( 'mousemove', this.onDocumentMouseMove );
@@ -164,7 +165,7 @@ class DrawField extends React.Component<Props, State>
     document.removeEventListener( 'keyup', this.onDocumentKeyUpDown );
   }
 
-  render()
+  public render()
   {
     let cursor: React.ReactNode | null = null;
 
@@ -886,7 +887,7 @@ class DrawField extends React.Component<Props, State>
     } );
   }
 
-  private onDrawingMouseUp = ( drawing: Drawing, e: KonvaMouseEvent<{}> ) =>
+  private onDrawingMouseUp = ( drawing: Drawing, e: Konva.KonvaEventObject<MouseEvent> ) =>
   {
     if( e.evt.button === 0 )
     {
@@ -899,7 +900,7 @@ class DrawField extends React.Component<Props, State>
     }
   }
 
-  private onDrawingMouseDown = ( drawing: Drawing, e: KonvaMouseEvent<{}> ) =>
+  private onDrawingMouseDown = ( drawing: Drawing, e: Konva.KonvaEventObject<MouseEvent> ) =>
   {
     if( e.evt.button === 0 )
     {

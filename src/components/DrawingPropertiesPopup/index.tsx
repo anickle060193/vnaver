@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import
@@ -37,7 +37,7 @@ type Props = PropsFromState & PropsFromDispatch;
 
 class DrawingProperties extends React.Component<Props>
 {
-  render()
+  public render()
   {
     if( !this.props.selectedDrawingId )
     {

@@ -1,6 +1,6 @@
 import { assertNever } from 'utils/utils';
 
-export const enum DrawingType
+export enum DrawingType
 {
   Above = 'Above',
   At = 'At',
@@ -14,14 +14,14 @@ export const enum DrawingType
   Text = 'Text'
 }
 
-export const enum Tool
+export enum Tool
 {
   Cursor = 'Cursor'
 }
 
 export type DrawingTool = DrawingType | Tool;
 
-export const drawingToolDisplayNames: {[ key in DrawingTool ]: string } = {
+export const drawingToolDisplayNames: { [ key in DrawingTool ]: string } = {
   [ Tool.Cursor ]: 'Cursor',
   [ DrawingType.Above ]: 'Above Constraint',
   [ DrawingType.At ]: 'At Constraint',
@@ -42,7 +42,7 @@ export interface DrawingBase<T extends DrawingType>
   color: string;
 }
 
-export const enum LineDashStyle
+export enum LineDashStyle
 {
   Solid = 'Solid',
   Dotted = 'Dotted',
@@ -63,7 +63,7 @@ const DENSE = 6;
 const NORMAL = 10;
 const LOOSE = 20;
 
-export const dashStyles: {[ key in LineDashStyle ]: number[]} = {
+export const dashStyles: { [ key in LineDashStyle ]: number[] } = {
   [ LineDashStyle.Solid ]: [],
 
   [ LineDashStyle.DenselyDotted ]: [ DOT_LENGTH, DENSE ],
@@ -204,11 +204,11 @@ export interface DrawingMap
   [ id: string ]: Drawing;
 }
 
-export type DrawingTypeMap<T> = {[ key in DrawingType ]: T };
+export type DrawingTypeMap<T> = { [ key in DrawingType ]: T };
 
 export const UP_ARROW_PATH = 'M97.969 73.984l-47.969-47.969L2.031 73.984H97.969z';
 export const DOWN_ARROW_PATH = 'M2.031 26.016l47.969 47.969L97.969 26.016H2.031z';
-export const PLANE_PATH = `m-20.64 45.98 9.68 0 24.2-38.72 26.62 0c4.017 0 7.26-3.243 7.26-7.26s-3.243-7.26-7.26-7.26l-26.62 0-24.2-38.72-9.68 0 12.1 38.72-26.62 0-7.26-9.68-7.26 0 4.84 16.94-4.84 16.94 7.26 0 7.26-9.68 26.62 0-12.1 38.72z`;
+export const PLANE_PATH = 'm-20.64 45.98 9.68 0 24.2-38.72 26.62 0c4.017 0 7.26-3.243 7.26-7.26s-3.243-7.26-7.26-7.26l-26.62 0-24.2-38.72-9.68 0 12.1 38.72-26.62 0-7.26-9.68-7.26 0 4.84 16.94-4.84 16.94 7.26 0 7.26-9.68 26.62 0-12.1 38.72z';
 
 const SCALE_LEVELS = [ 0.25, 1 / 3, 0.5, 2 / 3, 0.75, 0.8, 0.9, 1.0, 1.1, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0, 4.0, 5.0 ];
 export const MIN_SCALE_LEVEL = 0;

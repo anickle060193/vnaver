@@ -7,6 +7,7 @@ const middleWares: Middleware[] = [];
 
 if( process.env.NODE_ENV === 'development' )
 {
+  // tslint:disable-next-line: no-var-requires
   const { createLogger } = require( 'redux-logger' ) as typeof ReduxLogger;
   middleWares.unshift( createLogger( {
     collapsed: true,
@@ -15,7 +16,7 @@ if( process.env.NODE_ENV === 'development' )
   } ) );
 }
 
-const store = createStore<RootState>( rootReducer, applyMiddleware( ...middleWares ) );
+const store = createStore( rootReducer, applyMiddleware( ...middleWares ) );
 
 if( process.env.NODE_ENV === 'development' )
 {
@@ -23,7 +24,7 @@ if( process.env.NODE_ENV === 'development' )
   {
     module.hot.accept( 'store/reducers', () =>
     {
-      console.log( `---------- %cSTORE HOT RELOAD%c ----------`, 'color: red; font-weight: bold;', '' );
+      console.log( '---------- %cSTORE HOT RELOAD%c ----------', 'color: red; font-weight: bold;', '' );
 
       store.replaceReducer( rootReducer );
     } );

@@ -1,11 +1,14 @@
 import { Reducer, Action } from 'redux';
 import { actionCreatorFactory } from 'typescript-fsa';
-import * as uuid from 'uuid/v4';
+import uuid from 'uuid/v4';
 
 import { State as DocumentState, reducer as documentReducer } from 'store/reducers/document';
 import { limit } from 'utils/utils';
 
-type DocumentStateMap = { [ documentId: string ]: DocumentState };
+interface DocumentStateMap
+{
+  [ documentId: string ]: DocumentState;
+}
 
 const initDocument = () => documentReducer( undefined!, { type: '' } );
 

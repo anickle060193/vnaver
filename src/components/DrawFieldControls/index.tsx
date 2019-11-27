@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import Tooltip from 'components/Tooltip';
@@ -32,7 +32,7 @@ type Props = PropsFromState & PropsFromDispatch;
 
 class DrawFieldControls extends React.Component<Props>
 {
-  render()
+  public render()
   {
     let centered = ( this.props.originX === 0 && this.props.originY === 0 );
 

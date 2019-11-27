@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import Dialog from 'components/Dialog';
@@ -21,7 +21,7 @@ type Props = PropsFromState & PropsFromDispatch;
 
 class DiagramOpenErrorsDialog extends React.Component<Props>
 {
-  render()
+  public render()
   {
     return (
       <Dialog

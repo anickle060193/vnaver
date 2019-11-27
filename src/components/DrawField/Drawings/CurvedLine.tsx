@@ -1,7 +1,8 @@
-import * as React from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { Group, Circle, Shape } from 'react-konva';
-import { Shape as KShape, Context } from 'konva';
+import Konva from 'konva';
+import { Context } from 'konva/types/Context';
 
 import { DrawingComponentProps } from './DrawingComponent';
 import { CurvedLineDrawing, DrawingMap, getEndPointPosition, dashStyles, LineDashStyle } from 'utils/draw';
@@ -33,7 +34,7 @@ const BezierCurve: React.SFC<{
     stroke={color}
     strokeWidth={strokeWidth}
     dash={dashStyles[ dash ]}
-    sceneFunc={function( this: KShape, context: Context )
+    sceneFunc={function( this: Konva.Shape, context: Context )
     {
       const width = endX - startX;
       const height = endY - startY;
@@ -89,7 +90,8 @@ const CurvedLine: React.SFC<Props> = ( { drawing, onMouseDown, onMouseUp, drawin
               y={end.y}
               radius={OUTER_CIRCLE_RADIUS}
               fill={drawing.color}
-            /> )}
+            />
+          )}
           {!drawing.end.connected && (
             <Circle
               x={end.x}
@@ -98,13 +100,14 @@ const CurvedLine: React.SFC<Props> = ( { drawing, onMouseDown, onMouseUp, drawin
               fill="white"
             />
           )}
-          {!isNaN( start.x ) && !isNaN( start.y ) &&
+          {!isNaN( start.x ) && !isNaN( start.y ) && (
             <Circle
               x={start.x}
               y={start.y}
               radius={OUTER_CIRCLE_RADIUS}
               fill={drawing.color}
-            />}
+            />
+          )}
           {!drawing.start.connected && (
             <Circle
               x={start.x}

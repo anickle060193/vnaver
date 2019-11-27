@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Provider } from 'react-redux';
 
 import ShortcutManager from 'components/ShortcutManager';
@@ -22,19 +22,18 @@ createApplicationMenu( store );
 
 openCommandLineFile( store );
 
-export default class App extends React.Component
+const App: React.SFC = () =>
 {
-  render()
-  {
-    return (
-      <Provider store={store}>
-        <ShortcutManager>
-          <Layout />
-          <UpdateNotification />
-          <SettingsDialog />
-          <DiagramOpenErrorsDialog />
-        </ShortcutManager>
-      </Provider>
-    );
-  }
-}
+  return (
+    <Provider store={store}>
+      <ShortcutManager>
+        <Layout />
+        <UpdateNotification />
+        <SettingsDialog />
+        <DiagramOpenErrorsDialog />
+      </ShortcutManager>
+    </Provider>
+  );
+};
+
+export default App;

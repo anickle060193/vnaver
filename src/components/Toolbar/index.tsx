@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import ToolbarItem from 'components/Toolbar/ToolbarItem';
@@ -44,7 +44,7 @@ const DrawingToolToolbarItem: React.SFC<{
 
 class Toolbar extends React.Component<Props>
 {
-  render()
+  public render()
   {
     return (
       <div

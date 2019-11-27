@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import './styles.css';
 
@@ -24,7 +24,7 @@ export default class Tooltip extends React.Component<Props, State>
     };
   }
 
-  render()
+  public render()
   {
     let { title, align } = this.props;
 

@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 interface Props
 {
@@ -15,11 +15,11 @@ interface Props
 
 export default class NumberInput extends React.Component<Props>
 {
-  static defaultProps: Partial<Props> = {
+  public static defaultProps: Partial<Props> = {
     increment: 1
   };
 
-  render()
+  public render()
   {
     return (
       <input

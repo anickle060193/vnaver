@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { Group, Circle } from 'react-konva';
 
@@ -51,7 +51,8 @@ const PathLine: React.SFC<Props> = ( { drawing, onMouseDown, onMouseUp, drawings
               y={end.y}
               radius={OUTER_CIRCLE_RADIUS}
               fill={drawing.color}
-            /> )}
+            />
+          )}
           {!drawing.end.connected && (
             <Circle
               x={end.x}
@@ -60,13 +61,14 @@ const PathLine: React.SFC<Props> = ( { drawing, onMouseDown, onMouseUp, drawings
               fill="white"
             />
           )}
-          {!isNaN( start.x ) && !isNaN( start.y ) &&
+          {!isNaN( start.x ) && !isNaN( start.y ) && (
             <Circle
               x={start.x}
               y={start.y}
               radius={OUTER_CIRCLE_RADIUS}
               fill={drawing.color}
-            />}
+            />
+          )}
           {!drawing.start.connected && (
             <Circle
               x={start.x}

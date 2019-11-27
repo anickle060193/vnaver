@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { Line } from 'react-konva';
 
 import { floorToNearest, ceilingToNearest } from 'utils/utils';

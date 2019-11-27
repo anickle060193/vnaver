@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import { setCurrentDocument, swapDocuments, addDocument, closeDocument } from 'store/reducers/documents';
@@ -7,7 +7,7 @@ import { exit } from 'utils/electron';
 
 import './styles.css';
 
-const FILENAME_SEPARATOR_RE = /[\\\/]/;
+const FILENAME_SEPARATOR_RE = /[\\/]/;
 
 interface PropsFromState
 {
@@ -44,7 +44,7 @@ class DocumentTabs extends React.Component<Props, State>
     };
   }
 
-  render()
+  public render()
   {
     let { currentDocumentId, documentFilenames, documentCurrentRevisions, documentSaveRevisions } = this.props;
     let tabCount = this.props.documentIds.length;

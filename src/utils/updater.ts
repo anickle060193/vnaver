@@ -1,4 +1,4 @@
-export const enum UpdaterState
+export enum UpdaterState
 {
   None = 'None',
   CheckingForUpdate = 'CheckingForUpdate',

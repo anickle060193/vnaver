@@ -1,5 +1,6 @@
-import * as React from 'react';
+import React from 'react';
 import { Line } from 'react-konva';
+import Konva from 'konva';
 
 import { Drawing, LineStyle, dashStyles } from 'utils/draw';
 
@@ -7,8 +8,8 @@ export interface DrawingComponentProps<D extends Drawing>
 {
   drawing: D;
   cursor: boolean;
-  onMouseDown?: ( e: KonvaMouseEvent<{}> ) => void;
-  onMouseUp?: ( e: KonvaMouseEvent<{}> ) => void;
+  onMouseDown?: ( e: Konva.KonvaEventObject<MouseEvent> ) => void;
+  onMouseUp?: ( e: Konva.KonvaEventObject<MouseEvent> ) => void;
 }
 
 interface LineDrawingProps extends LineStyle

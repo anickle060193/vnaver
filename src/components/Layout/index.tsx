@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import DocumentTabs from 'components/DocumentTabs';
 import Toolbar from 'components/Toolbar';
@@ -10,7 +10,7 @@ import './styles.css';
 
 export default class Layout extends React.Component
 {
-  render()
+  public render()
   {
     return (
       <div className="main-layout">

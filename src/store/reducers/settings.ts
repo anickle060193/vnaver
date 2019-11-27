@@ -100,12 +100,12 @@ export const reducer = reducerWithInitialState( initialState )
     settings.setShortcutSetting( tool, shortcut );
     shortcuts[ tool ] = shortcut;
 
-    Object.keys( shortcuts ).forEach( ( t: DrawingTool ) =>
+    Object.keys( shortcuts ).forEach( ( t ) =>
     {
-      if( t !== tool && shortcuts[ t ] === shortcut )
+      if( t !== tool && shortcuts[ t as DrawingTool ] === shortcut )
       {
-        shortcuts[ t ] = '';
-        settings.setShortcutSetting( t, '' );
+        shortcuts[ t as DrawingTool ] = '';
+        settings.setShortcutSetting( t as DrawingTool, '' );
       }
     } );
 

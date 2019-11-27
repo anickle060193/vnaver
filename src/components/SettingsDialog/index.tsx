@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import Dialog from 'components/Dialog';
@@ -65,7 +65,7 @@ class SettingsDialog extends React.Component<Props, State>
     };
   }
 
-  render()
+  public render()
   {
     return (
       <Dialog
@@ -141,14 +141,14 @@ class SettingsDialog extends React.Component<Props, State>
                 <b>Deselect Tool After Add</b>
               </div>
             </div>
-            {Object.entries( drawingToolDisplayNames ).map( ( [ tool, name ]: [ DrawingTool, string ] ) => (
+            {Object.entries( drawingToolDisplayNames ).map( ( [ tool, name ] ) => (
               <div key={tool} className="form-group form-row">
                 <label className="col-4 col-form-label">{name}:</label>
                 <div className="col-3">
                   <ShortcutInput
                     className="form-control"
-                    shortcut={this.props.shortcuts[ tool ]}
-                    onChange={( shortcut ) => this.onShortcutChange( tool, shortcut )}
+                    shortcut={this.props.shortcuts[ tool as DrawingTool ]}
+                    onChange={( shortcut ) => this.onShortcutChange( tool as DrawingTool, shortcut )}
                   />
                 </div>
                 {( tool !== Tool.Cursor ) && (
@@ -157,8 +157,8 @@ class SettingsDialog extends React.Component<Props, State>
                       <input
                         type="color"
                         className="form-control"
-                        value={this.props.defaultDrawingColors[ tool ]}
-                        onChange={( e ) => this.onDefaultDrawingColorChange( tool, e.target.value )}
+                        value={this.props.defaultDrawingColors[ tool as DrawingType ]}
+                        onChange={( e ) => this.onDefaultDrawingColorChange( tool as DrawingType, e.target.value )}
                       />
                     </div>
                     <div className="col-2 d-flex justify-content-center">
@@ -166,8 +166,8 @@ class SettingsDialog extends React.Component<Props, State>
                         <input
                           type="checkbox"
                           className="form-check-input"
-                          checked={this.props.deselectToolAfterAdd[ tool ]}
-                          onChange={( e ) => this.onDeselectToolAfterAddChange( tool, e.target.checked )}
+                          checked={this.props.deselectToolAfterAdd[ tool as DrawingType ]}
+                          onChange={( e ) => this.onDeselectToolAfterAddChange( tool as DrawingType, e.target.checked )}
                         />
                       </div>
                     </div>

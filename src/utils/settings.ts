@@ -1,9 +1,9 @@
-import * as Ajv from 'ajv';
+import Ajv from 'ajv';
 
 import { DrawingTool, Tool, DrawingType, DrawingTypeMap } from 'utils/draw';
 import { ShortcutMap } from 'utils/shortcut';
 
-const enum SettingKey
+enum SettingKey
 {
   Shortcut = 'shortcuts',
   DefaultDrawingColor = 'default_color',
@@ -16,12 +16,12 @@ const enum SettingKey
   AutoHideToolbar = 'auto_hide_toolbar'
 }
 
-function k( ...subkeys: ( SettingKey | DrawingTool )[] )
+function k( ...subkeys: Array<SettingKey | DrawingTool> )
 {
   return 'settings.' + subkeys.join( '.' );
 }
 
-const enum SettingType
+enum SettingType
 {
   String = 'String',
   Boolean = 'Boolean',
@@ -79,17 +79,17 @@ function getValidItem<T>( key: string, settingType: SettingType, defaultValue: T
 
 class Settings
 {
-  setShortcutSetting( tool: DrawingTool, shortcut: string )
+  public setShortcutSetting( tool: DrawingTool, shortcut: string )
   {
     setValidItem( k( SettingKey.Shortcut, tool ), SettingType.Shortcut, shortcut );
   }
 
-  getShortcutSetting( tool: DrawingTool )
+  public getShortcutSetting( tool: DrawingTool )
   {
     return getValidItem( k( SettingKey.Shortcut, tool ), SettingType.Shortcut, '' );
   }
 
-  getAllShortcutSettings(): ShortcutMap
+  public getAllShortcutSettings(): ShortcutMap
   {
     return {
       [ Tool.Cursor ]: this.getShortcutSetting( Tool.Cursor ),
@@ -106,17 +106,17 @@ class Settings
     };
   }
 
-  setDefaultDrawingColorSetting( drawingType: DrawingType, color: string )
+  public setDefaultDrawingColorSetting( drawingType: DrawingType, color: string )
   {
     setValidItem( k( SettingKey.DefaultDrawingColor, drawingType ), SettingType.Color, color );
   }
 
-  getDefaultDrawingColorSetting( drawingType: DrawingType )
+  public getDefaultDrawingColorSetting( drawingType: DrawingType )
   {
     return getValidItem( k( SettingKey.DefaultDrawingColor, drawingType ), SettingType.Color, '#000000' );
   }
 
-  getAllDefaultDrawingColorSettings(): DrawingTypeMap<string>
+  public getAllDefaultDrawingColorSettings(): DrawingTypeMap<string>
   {
     return {
       [ DrawingType.Above ]: this.getDefaultDrawingColorSetting( DrawingType.Above ),
@@ -132,17 +132,17 @@ class Settings
     };
   }
 
-  setDeselectToolAfterAdd( drawingType: DrawingType, deselectAfterAdd: boolean )
+  public setDeselectToolAfterAdd( drawingType: DrawingType, deselectAfterAdd: boolean )
   {
     setValidItem( k( SettingKey.DeselectToolAfterAdd, drawingType ), SettingType.Boolean, deselectAfterAdd );
   }
 
-  getDeselectToolAfterAdd( drawingType: DrawingType )
+  public getDeselectToolAfterAdd( drawingType: DrawingType )
   {
     return getValidItem( k( SettingKey.DeselectToolAfterAdd, drawingType ), SettingType.Boolean, true );
   }
 
-  getAllDeselectToolAfterAdd(): DrawingTypeMap<boolean>
+  public getAllDeselectToolAfterAdd(): DrawingTypeMap<boolean>
   {
     return {
       [ DrawingType.Above ]: this.getDeselectToolAfterAdd( DrawingType.Above ),

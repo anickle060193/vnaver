@@ -1,7 +1,5 @@
-import * as Ajv from 'ajv';
-import DefineKeywords from 'ajv-keywords';
-
-const defineKeywords = require( 'ajv-keywords' ) as typeof DefineKeywords;
+import Ajv from 'ajv';
+import defineKeywords from 'ajv-keywords';
 
 import { Drawing, DrawingType, dashStyles, HorizontalAlign, VerticalAlign, DrawingMap } from 'utils/draw';
 import { arrayToMap, mapToArray } from 'utils/utils';
@@ -9,7 +7,7 @@ import { arrayToMap, mapToArray } from 'utils/utils';
 const MIN_COORDINATE = -1000000;
 const MAX_COORDINATE = +1000000;
 
-const enum Schemas
+enum Schemas
 {
   Array = 'Array',
   Color = 'Color',
@@ -40,7 +38,7 @@ function createDrawingSchema( drawingType: DrawingType, schema: Schemas )
     type: 'object',
     required: [ 'type' ],
     properties: {
-      'type': { const: drawingType }
+      type: { const: drawingType }
     },
     allOf: [
       { $ref: schema }
@@ -48,7 +46,7 @@ function createDrawingSchema( drawingType: DrawingType, schema: Schemas )
   };
 }
 
-const drawingTypes: {[ key in DrawingType ]: Schemas } = {
+const drawingTypes: { [ key in DrawingType ]: Schemas } = {
   [ DrawingType.Above ]: Schemas.BasicDrawing,
   [ DrawingType.At ]: Schemas.BasicDrawing,
   [ DrawingType.Below ]: Schemas.BasicDrawing,
@@ -82,9 +80,9 @@ export const validator = defineKeywords( new Ajv( {
     type: 'object',
     required: [ 'id', 'type', 'color' ],
     properties: {
-      'type': { enum: Object.keys( drawingTypes ) },
-      'id': { type: 'string', format: 'uuid' },
-      'color': { $ref: Schemas.Color }
+      type: { enum: Object.keys( drawingTypes ) },
+      id: { type: 'string', format: 'uuid' },
+      color: { $ref: Schemas.Color }
     }
   } )
   .addSchema( {
@@ -92,8 +90,8 @@ export const validator = defineKeywords( new Ajv( {
     type: 'object',
     required: [ 'dash', 'strokeWidth' ],
     properties: {
-      'dash': { enum: Object.keys( dashStyles ) },
-      'strokeWidth': { type: 'number', minimum: 0, maximum: 1000 }
+      dash: { enum: Object.keys( dashStyles ) },
+      strokeWidth: { type: 'number', minimum: 0, maximum: 1000 }
     }
   } )
   .addSchema( {
@@ -101,8 +99,8 @@ export const validator = defineKeywords( new Ajv( {
     type: 'object',
     required: [ 'showGuideLine', 'guideLine' ],
     properties: {
-      'showGuideLine': { type: 'boolean' },
-      'guideLine': { $ref: Schemas.LineStyle }
+      showGuideLine: { type: 'boolean' },
+      guideLine: { $ref: Schemas.LineStyle }
     },
     allOf: [
       { $ref: Schemas.DrawingBase }
@@ -113,9 +111,9 @@ export const validator = defineKeywords( new Ajv( {
     type: 'object',
     required: [ 'type', 'x', 'y' ],
     properties: {
-      'type': { enum: [ DrawingType.Above, DrawingType.At, DrawingType.Below ] },
-      'x': { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE },
-      'y': { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE }
+      type: { enum: [ DrawingType.Above, DrawingType.At, DrawingType.Below ] },
+      x: { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE },
+      y: { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE }
     },
     allOf: [
       { $ref: Schemas.ContainsGuideLineDrawing }
@@ -126,8 +124,8 @@ export const validator = defineKeywords( new Ajv( {
     type: 'object',
     required: [ 'type', 'height' ],
     properties: {
-      'type': { const: DrawingType.Between },
-      'height': { type: 'number', minimum: 0, maximum: MAX_COORDINATE }
+      type: { const: DrawingType.Between },
+      height: { type: 'number', minimum: 0, maximum: MAX_COORDINATE }
     },
     allOf: [
       { $ref: Schemas.ContainsGuideLineDrawing }
@@ -138,10 +136,10 @@ export const validator = defineKeywords( new Ajv( {
     type: 'object',
     required: [ 'connected', 'anchorId', 'topOfBetween', 'startOfPathLine' ],
     properties: {
-      'connected': { const: true },
-      'anchorId': { type: 'string', format: 'uuid' },
-      'topOfBetween': { type: 'boolean' },
-      'startOfPathLine': { type: 'boolean' }
+      connected: { const: true },
+      anchorId: { type: 'string', format: 'uuid' },
+      topOfBetween: { type: 'boolean' },
+      startOfPathLine: { type: 'boolean' }
     }
   } )
   .addSchema( {
@@ -149,9 +147,9 @@ export const validator = defineKeywords( new Ajv( {
     type: 'object',
     required: [ 'connected', 'x', 'y' ],
     properties: {
-      'connected': { const: false },
-      'x': { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE },
-      'y': { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE }
+      connected: { const: false },
+      x: { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE },
+      y: { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE }
     }
   } )
   .addSchema( {
@@ -159,7 +157,7 @@ export const validator = defineKeywords( new Ajv( {
     type: 'object',
     required: [ 'connected' ],
     properties: {
-      'connected': { type: 'boolean' }
+      connected: { type: 'boolean' }
     },
     select: { $data: '0/connected' },
     selectCases: {
@@ -173,8 +171,8 @@ export const validator = defineKeywords( new Ajv( {
     type: 'object',
     required: [ 'start', 'end' ],
     properties: {
-      'start': { $ref: Schemas.EndPoint },
-      'end': { $ref: Schemas.EndPoint }
+      start: { $ref: Schemas.EndPoint },
+      end: { $ref: Schemas.EndPoint }
     }
   } )
   .addSchema( {
@@ -182,7 +180,7 @@ export const validator = defineKeywords( new Ajv( {
     type: 'object',
     required: [ 'type' ],
     properties: {
-      'type': { const: DrawingType.PathLine }
+      type: { const: DrawingType.PathLine }
     },
     allOf: [
       { $ref: Schemas.DrawingBase },
@@ -195,7 +193,7 @@ export const validator = defineKeywords( new Ajv( {
     type: 'object',
     required: [ 'type' ],
     properties: {
-      'type': { const: DrawingType.CurvedLine }
+      type: { const: DrawingType.CurvedLine }
     },
     allOf: [
       { $ref: Schemas.DrawingBase },
@@ -208,8 +206,8 @@ export const validator = defineKeywords( new Ajv( {
     type: 'object',
     required: [ 'type', 'x' ],
     properties: {
-      'type': { const: DrawingType.VerticalGridLine },
-      'x': { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE }
+      type: { const: DrawingType.VerticalGridLine },
+      x: { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE }
     },
     allOf: [
       { $ref: Schemas.DrawingBase },
@@ -221,8 +219,8 @@ export const validator = defineKeywords( new Ajv( {
     type: 'object',
     required: [ 'type', 'y' ],
     properties: {
-      'type': { const: DrawingType.HorizontalGridLine },
-      'y': { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE }
+      type: { const: DrawingType.HorizontalGridLine },
+      y: { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE }
     },
     allOf: [
       { $ref: Schemas.DrawingBase },
@@ -234,11 +232,11 @@ export const validator = defineKeywords( new Ajv( {
     type: 'object',
     required: [ 'type', 'x', 'y', 'size', 'rotation' ],
     properties: {
-      'type': { const: DrawingType.Plane },
-      'x': { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE },
-      'y': { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE },
-      'size': { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE },
-      'rotation': { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE }
+      type: { const: DrawingType.Plane },
+      x: { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE },
+      y: { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE },
+      size: { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE },
+      rotation: { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE }
     },
     allOf: [
       { $ref: Schemas.DrawingBase }
@@ -257,28 +255,28 @@ export const validator = defineKeywords( new Ajv( {
     type: 'object',
     required: [ 'type', 'x', 'y', 'horizontalAlign', 'verticalAlign', 'text', 'fontSize' ],
     properties: {
-      'type': { const: DrawingType.Text },
-      'x': { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE },
-      'y': { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE },
-      'horizontalAlign': { enum: Object.keys( HorizontalAlign ) },
-      'verticalAlign': { enum: Object.keys( VerticalAlign ) },
-      'text': { type: 'string' },
-      'fontSize': { type: 'number', minimum: 0, maximum: 1000 }
+      type: { const: DrawingType.Text },
+      x: { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE },
+      y: { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE },
+      horizontalAlign: { enum: Object.keys( HorizontalAlign ) },
+      verticalAlign: { enum: Object.keys( VerticalAlign ) },
+      text: { type: 'string' },
+      fontSize: { type: 'number', minimum: 0, maximum: 1000 }
     },
     allOf: [
       { $ref: Schemas.DrawingBase }
     ]
   } );
 
-Object.entries( drawingTypes ).forEach( ( [ drawingType, schema ]: [ DrawingType, Schemas ] ) =>
+Object.entries( drawingTypes ).forEach( ( [ drawingType, schema ] ) =>
 {
-  validator.addSchema( createDrawingSchema( drawingType, schema ) );
+  validator.addSchema( createDrawingSchema( drawingType as DrawingType, schema ) );
 } );
 
-let selectCases = {};
+let selectCases: { [ key: string ]: { $ref: DrawingType } } = {};
 Object.keys( drawingTypes ).forEach( ( drawingType ) =>
 {
-  selectCases[ drawingType ] = { $ref: drawingType };
+  selectCases[ drawingType as DrawingType ] = { $ref: drawingType as DrawingType };
 } );
 
 validator
@@ -287,7 +285,7 @@ validator
     type: 'object',
     required: [ 'type' ],
     properties: {
-      'type': { enum: Object.keys( drawingTypes ) },
+      type: { enum: Object.keys( drawingTypes ) },
     },
     select: { $data: '0/type' },
     selectCases: selectCases,
@@ -317,7 +315,7 @@ export function parseDrawings( drawingsJson: string ): DrawingsParseResult
 
     let drawings: Drawing[] = [];
     let errors: string[] = [];
-    ( parsedDrawings as {}[] ).forEach( ( parsedDrawing, i ) =>
+    ( parsedDrawings as Array<{}> ).forEach( ( parsedDrawing, i ) =>
     {
       if( validator.validate( Schemas.Drawing, parsedDrawing ) )
       {
@@ -402,8 +400,8 @@ function validatePathLineDrawings( drawings: DrawingMap, errors: string[] )
     {
       if( drawing.type === DrawingType.PathLine )
       {
-        if( drawing.start.connected && drawing.start.anchorId === removedId
-          || drawing.end.connected && drawing.end.anchorId === removedId )
+        if( ( drawing.start.connected && drawing.start.anchorId === removedId )
+          || ( drawing.end.connected && drawing.end.anchorId === removedId ) )
         {
           removedIds.push( drawing.id );
         }

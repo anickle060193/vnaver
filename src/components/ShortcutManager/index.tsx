@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { ActionCreators } from 'redux-undo';
 
@@ -42,17 +42,17 @@ class ShortcutManager extends React.Component<Props, State>
     };
   }
 
-  componentDidMount()
+  public componentDidMount()
   {
     document.addEventListener( 'keydown', this.onKeyDown );
   }
 
-  componentWillUnmount()
+  public componentWillUnmount()
   {
     document.removeEventListener( 'keydown', this.onKeyDown );
   }
 
-  render()
+  public render()
   {
     return this.props.children;
   }
@@ -116,12 +116,12 @@ class ShortcutManager extends React.Component<Props, State>
   private updateSecret( secret: number )
   {
     if( secret === 68
-      || this.state.secret === 68 && secret === 69
-      || this.state.secret === 69 && secret === 86
-      || this.state.secret === 86 && secret === 84
-      || this.state.secret === 84 && secret === 79
-      || this.state.secret === 79 && secret === 79
-      || this.state.secret === 79 && secret === 76 )
+      || ( this.state.secret === 68 && secret === 69 )
+      || ( this.state.secret === 69 && secret === 86 )
+      || ( this.state.secret === 86 && secret === 84 )
+      || ( this.state.secret === 84 && secret === 79 )
+      || ( this.state.secret === 79 && secret === 79 )
+      || ( this.state.secret === 79 && secret === 76 ) )
     {
       this.setState( { secret } );
     }

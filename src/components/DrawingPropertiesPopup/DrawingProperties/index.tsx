@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import NumberInput from 'components/NumberInput';
@@ -156,7 +156,7 @@ const ColorInput: React.SFC<{
 
 export class BasicDrawingProperties extends DrawingPropertiesComponent<BasicDrawing<BasicDrawingTypes>>
 {
-  render()
+  public render()
   {
     return (
       <form>
@@ -205,7 +205,7 @@ export class BasicDrawingProperties extends DrawingPropertiesComponent<BasicDraw
     } );
   }
 
-  private onLineStyleChange = ( lineStyle: LineStyle ) =>
+  private onLineStyleChange = ( lineStyle: Partial<LineStyle> ) =>
   {
     this.props.onChange( {
       ...this.props.drawing,
@@ -219,7 +219,7 @@ export class BasicDrawingProperties extends DrawingPropertiesComponent<BasicDraw
 
 export class BetweenDrawingProperties extends DrawingPropertiesComponent<BetweenDrawing>
 {
-  render()
+  public render()
   {
     return (
       <form>
@@ -281,7 +281,7 @@ export class BetweenDrawingProperties extends DrawingPropertiesComponent<Between
     } );
   }
 
-  private onLineStyleChange = ( lineStyle: LineStyle ) =>
+  private onLineStyleChange = ( lineStyle: Partial<LineStyle> ) =>
   {
     this.props.onChange( {
       ...this.props.drawing,
@@ -295,7 +295,7 @@ export class BetweenDrawingProperties extends DrawingPropertiesComponent<Between
 
 export class VerticalGridLineDrawingProperties extends DrawingPropertiesComponent<VerticalGridLineDrawing>
 {
-  render()
+  public render()
   {
     return (
       <form>
@@ -324,7 +324,7 @@ export class VerticalGridLineDrawingProperties extends DrawingPropertiesComponen
     } );
   }
 
-  private onLineStyleChange = ( lineStyle: LineStyle ) =>
+  private onLineStyleChange = ( lineStyle: Partial<LineStyle> ) =>
   {
     this.props.onChange( {
       ...this.props.drawing,
@@ -335,7 +335,7 @@ export class VerticalGridLineDrawingProperties extends DrawingPropertiesComponen
 
 export class HorizontalGridLineDrawingProperties extends DrawingPropertiesComponent<HorizontalGridLineDrawing>
 {
-  render()
+  public render()
   {
     return (
       <form>
@@ -364,7 +364,7 @@ export class HorizontalGridLineDrawingProperties extends DrawingPropertiesCompon
     } );
   }
 
-  private onLineStyleChange = ( lineStyle: LineStyle ) =>
+  private onLineStyleChange = ( lineStyle: Partial<LineStyle> ) =>
   {
     this.props.onChange( {
       ...this.props.drawing,
@@ -375,7 +375,7 @@ export class HorizontalGridLineDrawingProperties extends DrawingPropertiesCompon
 
 export class PlaneDrawingProperties extends DrawingPropertiesComponent<PlaneDrawing>
 {
-  render()
+  public render()
   {
     return (
       <form>
@@ -446,11 +446,13 @@ interface EndPointDrawingPropertiesPropsFromDispatch
   selectDrawing: typeof selectDrawing;
 }
 
+type EndPointDrawingChangeEventHandler = DrawingChangeEventHandler<PathLineDrawing | CurvedLineDrawing>;
+
 interface EndPointDrawingPropertiesOwnProps
 {
   start: boolean;
   drawing: PathLineDrawing | CurvedLineDrawing;
-  onDrawingChange: DrawingChangeEventHandler<PathLineDrawing | CurvedLineDrawing>;
+  onDrawingChange: EndPointDrawingChangeEventHandler;
 }
 
 type EndPointDrawingPropertiesProps = EndPointDrawingPropertiesPropsFromState & EndPointDrawingPropertiesPropsFromDispatch & EndPointDrawingPropertiesOwnProps;
@@ -466,7 +468,7 @@ const endPointConnecter = connect<EndPointDrawingPropertiesPropsFromState, EndPo
 
 const EndPointDrawingProperties = endPointConnecter( class extends React.Component<EndPointDrawingPropertiesProps>
 {
-  render()
+  public render()
   {
     let endPoint = this.props.start ? this.props.drawing.start : this.props.drawing.end;
 
@@ -616,7 +618,7 @@ const EndPointDrawingProperties = endPointConnecter( class extends React.Compone
 
 export class PathLineDrawingProperties extends DrawingPropertiesComponent<PathLineDrawing>
 {
-  render()
+  public render()
   {
     return (
       <form>
@@ -624,13 +626,13 @@ export class PathLineDrawingProperties extends DrawingPropertiesComponent<PathLi
         <EndPointDrawingProperties
           start={true}
           drawing={this.props.drawing}
-          onDrawingChange={this.props.onChange}
+          onDrawingChange={this.props.onChange as EndPointDrawingChangeEventHandler}
         />
         <b>End:</b>
         <EndPointDrawingProperties
           start={false}
           drawing={this.props.drawing}
-          onDrawingChange={this.props.onChange}
+          onDrawingChange={this.props.onChange as EndPointDrawingChangeEventHandler}
         />
         <ColorInput
           color={this.props.drawing.color}
@@ -645,7 +647,7 @@ export class PathLineDrawingProperties extends DrawingPropertiesComponent<PathLi
     );
   }
 
-  private onLineStyleChange = ( lineStyle: LineStyle ) =>
+  private onLineStyleChange = ( lineStyle: Partial<LineStyle> ) =>
   {
     this.props.onChange( {
       ...this.props.drawing,
@@ -656,7 +658,7 @@ export class PathLineDrawingProperties extends DrawingPropertiesComponent<PathLi
 
 export class CurvedLineDrawingProperties extends DrawingPropertiesComponent<CurvedLineDrawing>
 {
-  render()
+  public render()
   {
     return (
       <form>
@@ -664,13 +666,13 @@ export class CurvedLineDrawingProperties extends DrawingPropertiesComponent<Curv
         <EndPointDrawingProperties
           start={true}
           drawing={this.props.drawing}
-          onDrawingChange={this.props.onChange}
+          onDrawingChange={this.props.onChange as EndPointDrawingChangeEventHandler}
         />
         <b>End:</b>
         <EndPointDrawingProperties
           start={false}
           drawing={this.props.drawing}
-          onDrawingChange={this.props.onChange}
+          onDrawingChange={this.props.onChange as EndPointDrawingChangeEventHandler}
         />
         <ColorInput
           color={this.props.drawing.color}
@@ -685,7 +687,7 @@ export class CurvedLineDrawingProperties extends DrawingPropertiesComponent<Curv
     );
   }
 
-  private onLineStyleChange = ( lineStyle: LineStyle ) =>
+  private onLineStyleChange = ( lineStyle: Partial<LineStyle> ) =>
   {
     this.props.onChange( {
       ...this.props.drawing,
@@ -696,7 +698,7 @@ export class CurvedLineDrawingProperties extends DrawingPropertiesComponent<Curv
 
 export class TextDrawingProperties extends DrawingPropertiesComponent<TextDrawing>
 {
-  render()
+  public render()
   {
     return (
       <form>

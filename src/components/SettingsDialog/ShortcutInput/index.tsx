@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { getShortcutFromKeyEvent } from 'utils/shortcut';
 
 interface Props extends Omit<React.HTMLProps<HTMLInputElement>, 'onChange'>
@@ -9,7 +9,7 @@ interface Props extends Omit<React.HTMLProps<HTMLInputElement>, 'onChange'>
 
 export default class ShortcutInput extends React.Component<Props>
 {
-  render()
+  public render()
   {
     let { shortcut, style, onChange, ...inputProps } = this.props;
     return (

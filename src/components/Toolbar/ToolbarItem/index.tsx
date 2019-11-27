@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import Tooltip from 'components/Tooltip';
 
@@ -14,7 +14,7 @@ interface Props
 
 export default class ToolbarItem extends React.Component<Props>
 {
-  render()
+  public render()
   {
     return (
       <div

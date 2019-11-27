@@ -103,8 +103,8 @@ export function createApplicationMenu( store: Store<RootState> )
       label: 'Developer',
       submenu: [
         { role: 'reload' },
-        { role: 'forcereload' },
-        { role: 'toggledevtools' }
+        { role: 'forceReload' },
+        { role: 'toggleDevTools' },
       ]
     } );
   }

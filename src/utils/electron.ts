@@ -1,14 +1,12 @@
 import { Store } from 'redux';
-import * as FsModule from 'mz/fs';
-
-const electron = window.require( 'electron' );
+import fs from 'mz/fs';
 
 import { DrawingMap } from 'utils/draw';
 import { mapToArray } from 'utils/utils';
 import { DrawingsParseResult, parseDrawings } from 'utils/drawing_validator';
 import { openDiagram } from 'utils/document';
 
-const fs = electron.remote.require( 'mz/fs' ) as typeof FsModule;
+const electron = window.require( 'electron' );
 
 export default electron;
 
@@ -17,7 +15,7 @@ async function isValidDiagramFilename( filename: string )
   return filename
     && ( filename.endsWith( '.vnav' )
       || filename.endsWith( '.json' ) )
-    && ( await fs.exists( filename ) );
+    && fs.exists( filename );
 }
 
 export async function openCommandLineFile( store: Store<RootState> )
@@ -37,26 +35,25 @@ export async function openCommandLineFile( store: Store<RootState> )
   }
 }
 
-export function exportImage( canvas: HTMLCanvasElement )
+export async function exportImage( canvas: HTMLCanvasElement )
 {
-  electron.remote.dialog.showSaveDialog( electron.remote.getCurrentWindow(), {
+  const { filePath } = await electron.remote.dialog.showSaveDialog( electron.remote.getCurrentWindow(), {
     title: 'Export image...',
     filters: [
       { name: 'PNG Images', extensions: [ 'png' ] }
     ]
-  }, async ( filename: string | null ) =>
-    {
-      if( filename )
-      {
-        console.log( 'Exporting to:', filename );
+  } );
 
-        let data = canvas.toDataURL( 'image/png' );
-        let image = electron.nativeImage.createFromDataURL( data );
-        let buffer = image.toPNG();
+  if( filePath )
+  {
+    console.log( 'Exporting to:', filePath );
 
-        await fs.writeFile( filename, buffer );
-      }
-    } );
+    let data = canvas.toDataURL( 'image/png' );
+    let image = electron.nativeImage.createFromDataURL( data );
+    let buffer = image.toPNG();
+
+    await fs.writeFile( filePath, buffer );
+  }
 }
 
 export async function saveDrawingsToFile( drawings: DrawingMap, filename: string )
@@ -70,7 +67,7 @@ export async function showSaveDiagramDialog( drawings: DrawingMap, filename: str
 {
   if( filename === null )
   {
-    return await showSaveDiagramAsDialog( drawings );
+    return showSaveDiagramAsDialog( drawings );
   }
   else
   {
@@ -81,27 +78,23 @@ export async function showSaveDiagramDialog( drawings: DrawingMap, filename: str
 
 export async function showSaveDiagramAsDialog( drawings: DrawingMap )
 {
-  return new Promise<string | null>( ( resolve ) =>
-  {
-    electron.remote.dialog.showSaveDialog( electron.remote.getCurrentWindow(), {
-      title: 'Save Diagram',
-      filters: [
-        { name: 'VNAVer Document', extensions: [ 'vnav' ] },
-        { name: 'JSON Files', extensions: [ 'json' ] }
-      ]
-    }, async ( filename: string | null ) =>
-      {
-        if( filename )
-        {
-          await saveDrawingsToFile( drawings, filename );
-          resolve( filename );
-        }
-        else
-        {
-          resolve( null );
-        }
-      } );
+  const { filePath } = await electron.remote.dialog.showSaveDialog( electron.remote.getCurrentWindow(), {
+    title: 'Save Diagram',
+    filters: [
+      { name: 'VNAVer Document', extensions: [ 'vnav' ] },
+      { name: 'JSON Files', extensions: [ 'json' ] }
+    ]
   } );
+
+  if( filePath )
+  {
+    await saveDrawingsToFile( drawings, filePath );
+    return filePath;
+  }
+  else
+  {
+    return null;
+  }
 }
 
 export interface DocumentOpenResult extends DrawingsParseResult
@@ -119,29 +112,26 @@ export async function readDiagramFile( filename: string ): Promise<DocumentOpenR
   };
 }
 
-export function showOpenDiagramDialog(): Promise<DocumentOpenResult | undefined>
+export async function showOpenDiagramDialog(): Promise<DocumentOpenResult | null>
 {
-  return new Promise( async ( resolve ) =>
-  {
-    let filenames = electron.remote.dialog.showOpenDialog( electron.remote.getCurrentWindow(), {
-      title: 'Open Diagram',
-      filters: [
-        { name: 'VNAVer Document', extensions: [ 'vnav' ] },
-        { name: 'JSON Files', extensions: [ 'json' ] }
-      ],
-      properties: [ 'openFile' ]
-    } );
-
-    if( filenames && filenames.length )
-    {
-      let filename = filenames[ 0 ];
-      console.log( 'Opening diagram:', filename );
-
-      let result = await readDiagramFile( filename );
-      resolve( result );
-    }
-    resolve();
+  const { filePaths } = await electron.remote.dialog.showOpenDialog( electron.remote.getCurrentWindow(), {
+    title: 'Open Diagram',
+    filters: [
+      { name: 'VNAVer Document', extensions: [ 'vnav' ] },
+      { name: 'JSON Files', extensions: [ 'json' ] }
+    ],
+    properties: [ 'openFile' ]
   } );
+
+  if( filePaths && filePaths.length )
+  {
+    let filename = filePaths[ 0 ];
+    console.log( 'Opening diagram:', filename );
+
+    return readDiagramFile( filename );
+  }
+
+  return null;
 }
 
 export function launchSecret()

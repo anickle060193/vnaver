@@ -1,5 +1,5 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import React from 'react';
+import ReactDOM from 'react-dom';
 
 import 'typeface-roboto';
 import 'typeface-roboto-mono';
@@ -23,7 +23,7 @@ if( process.env.NODE_ENV === 'development' )
   {
     module.hot.accept( './App', () =>
     {
-      console.log( `---------- %cAPP HOT RELOAD%c ----------`, 'color: blue; font-weight: bold;', '' );
+      console.log( '---------- %cAPP HOT RELOAD%c ----------', 'color: lightblue; font-weight: bold;', '' );
 
       ReactDOM.render(
         <App />,
