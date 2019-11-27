@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Tooltip } from '@material-ui/core';
 
-import Tooltip from 'components/Tooltip';
 import { resetScaleLevel, resetOrigin, incrementScaleLevel, decrementScaleLevel } from 'store/reducers/editor';
 import { showSettings, setGridOn } from 'store/reducers/settings';
 import { currentEditorState, currentDrawingsState } from 'store/selectors';
@@ -41,58 +41,66 @@ class DrawFieldControls extends React.Component<Props>
         <div
           className="drawing-scale"
         >
-          <div onClick={this.onZoomOutClick}>
-            <Tooltip align="bottom" title="Zoom Out" />
+          <Tooltip placement="bottom" title="Zoom Out">
+            <div onClick={this.onZoomOutClick}>
+              <span className="material-icons">
+                remove
+              </span>
+            </div>
+          </Tooltip>
+
+          <Tooltip placement="bottom" title="Reset Zoom">
+            <div onClick={this.onResetScale}>
+              <span className="drawing-scale-percentage">
+                {( this.props.scale * 100 ).toFixed( 0 )}%
+              </span>
+            </div>
+          </Tooltip>
+
+          <Tooltip placement="bottom" title="Zoom In">
+            <div onClick={this.onZoomInClick}>
+              <span className="material-icons">
+                add
+              </span>
+            </div>
+          </Tooltip>
+
+        </div>
+
+        <Tooltip placement="bottom" title="Re-center">
+          <div
+            className={[
+              'drawing-position',
+              centered ? 'drawing-position-centered' : ''
+            ].join( ' ' )}
+            onClick={this.onResetOrigin}
+          >
             <span className="material-icons">
-              remove
+              {centered ? 'gps_fixed' : 'gps_not_fixed'}
             </span>
           </div>
+        </Tooltip>
 
-          <div onClick={this.onResetScale}>
-            <Tooltip align="bottom" title="Reset Zoom" />
-            <span className="drawing-scale-percentage">
-              {( this.props.scale * 100 ).toFixed( 0 )}%
-            </span>
-          </div>
-
-          <div onClick={this.onZoomInClick}>
-            <Tooltip align="bottom" title="Zoom In" />
+        <Tooltip placement="bottom" title={this.props.gridOn ? 'Hide Grid' : 'Display Grid'}>
+          <div
+            className="drawing-grid"
+            onClick={this.onToggleGridOn}
+          >
             <span className="material-icons">
-              add
+              {!this.props.gridOn ? 'grid_off' : 'grid_on'}
             </span>
           </div>
-        </div>
+        </Tooltip>
 
-        <div
-          className={[
-            'drawing-position',
-            centered ? 'drawing-position-centered' : ''
-          ].join( ' ' )}
-          onClick={this.onResetOrigin}
-        >
-          <Tooltip align="bottom" title="Re-center" />
-          <span className="material-icons">
-            {centered ? 'gps_fixed' : 'gps_not_fixed'}
-          </span>
-        </div>
+        <Tooltip placement="bottom" title="Settings">
+          <div
+            className="drawing-settings"
+            onClick={this.onSettingsClick}
+          >
+            <span className="material-icons">settings</span>
+          </div>
+        </Tooltip>
 
-        <div
-          className="drawing-grid"
-          onClick={this.onToggleGridOn}
-        >
-          <Tooltip align="bottom" title={this.props.gridOn ? 'Hide Grid' : 'Display Grid'} />
-          <span className="material-icons">
-            {!this.props.gridOn ? 'grid_off' : 'grid_on'}
-          </span>
-        </div>
-
-        <div
-          className="drawing-settings"
-          onClick={this.onSettingsClick}
-        >
-          <Tooltip align="bottom" title="Settings" />
-          <span className="material-icons">settings</span>
-        </div>
       </div>
     );
   }

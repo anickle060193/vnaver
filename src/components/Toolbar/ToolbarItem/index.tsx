@@ -1,6 +1,5 @@
 import React from 'react';
-
-import Tooltip from 'components/Tooltip';
+import { Tooltip } from '@material-ui/core';
 
 import './styles.css';
 
@@ -17,16 +16,20 @@ export default class ToolbarItem extends React.Component<Props>
   public render()
   {
     return (
-      <div
-        className={[
-          'toolbar-item',
-          this.props.active ? 'toolbar-item-active' : ''
-        ].join( ' ' )}
-        onClick={this.props.onClick}
+      <Tooltip
+        placement="right"
+        title={this.props.title + ( this.props.shortcut ? ` (${this.props.shortcut})` : '' )}
       >
-        <Tooltip align="right" title={this.props.title + ( this.props.shortcut ? ` (${this.props.shortcut})` : '' )} />
-        {this.props.children}
-      </div>
+        <div
+          className={[
+            'toolbar-item',
+            this.props.active ? 'toolbar-item-active' : ''
+          ].join( ' ' )}
+          onClick={this.props.onClick}
+        >
+          {this.props.children}
+        </div>
+      </Tooltip>
     );
   }
 }

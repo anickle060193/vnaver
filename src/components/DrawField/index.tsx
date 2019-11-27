@@ -579,8 +579,6 @@ class DrawField extends React.Component<Props, State>
 
   private onWheel = ( e: React.WheelEvent<{}> ) =>
   {
-    e.preventDefault();
-
     if( e.deltaY > 0 )
     {
       this.props.decrementScaleLevel();
