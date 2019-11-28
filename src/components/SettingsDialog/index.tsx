@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
+import { Dialog, DialogContent, DialogActions, Button, FormControlLabel, Checkbox, Typography, TextField, makeStyles, Grid, createStyles } from '@material-ui/core';
 
-import Dialog from 'components/Dialog';
 import ShortcutInput from 'components/SettingsDialog/ShortcutInput';
-import NumberInput from 'components/NumberInput';
 import
 {
   hideSettings,
@@ -20,6 +20,22 @@ import { drawingToolDisplayNames, DrawingTool, DrawingTypeMap, DrawingType, Tool
 import { ShortcutMap } from 'utils/shortcut';
 
 import './styles.css';
+
+const useStyles = makeStyles( ( theme ) => createStyles( {
+  dialogContent: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  header: {
+    marginTop: theme.spacing( 2 ),
+  },
+  noWrap: {
+    whiteSpace: 'nowrap',
+  },
+  centerCell: {
+    textAlign: 'center',
+  },
+} ) );
 
 interface PropsFromState
 {
@@ -49,225 +65,141 @@ interface PropsFromDispatch
 
 type Props = PropsFromState & PropsFromDispatch;
 
-interface State
+const SettingsDialog: React.SFC<Props> = ( {
+  show,
+  shortcuts,
+  defaultDrawingColors,
+  deselectToolAfterAdd,
+  gridIntervalX,
+  gridIntervalY,
+  snapToGrid,
+  transparentDrawingProperties,
+  autoHideToolbar,
+  ...actions
+} ) =>
 {
-  shortcut: string;
-}
+  const styles = useStyles();
 
-class SettingsDialog extends React.Component<Props, State>
-{
-  constructor( props: Props )
+  function onClose()
   {
-    super( props );
-
-    this.state = {
-      shortcut: ''
-    };
+    actions.hideSettings();
   }
 
-  public render()
-  {
-    return (
-      <Dialog
-        show={this.props.show}
-        onClose={this.onClose}
-        closeOnShadeClick={true}
-      >
-        <div className="settings">
-          <div className="container-fluid">
+  return (
+    <Dialog
+      open={show}
+      onClose={onClose}
+      scroll="paper"
+      maxWidth="lg"
+      fullWidth={true}
+    >
+      <DialogContent className={styles.dialogContent}>
+        <Typography variant="h5">Grid Settings:</Typography>
 
-            <div className="row">
-              <h5>Grid Settings:</h5>
-            </div>
+        <FormControlLabel
+          label="Snap to Grid"
+          control={<Checkbox />}
+          value={snapToGrid}
+          onChange={( e, checked ) => actions.setSnapToGrid( checked )}
+        />
 
-            <div className="form-row">
-              <div className="col-auto">
-                <div className="form-check">
-                  <label className="form-check-label">
-                    <input
-                      type="checkbox"
-                      className="form-check-input"
-                      checked={this.props.snapToGrid}
-                      onChange={this.onSnapToGridChange}
-                    />
-                    Snap to Grid
-                  </label>
-                </div>
-              </div>
-            </div>
+        <Grid container={true} spacing={1}>
+          <Grid item={true} md={3} sm={4} xs={12}>
+            <TextField
+              type="number"
+              label="Grid Interval X"
+              fullWidth={true}
+              value={gridIntervalX}
+              onChange={( e ) => actions.setGridIntervalX( parseInt( e.target.value, 10 ) )}
+            />
+          </Grid>
+          <Grid item={true} md={3} sm={4} xs={12}>
+            <TextField
+              type="number"
+              label="Grid Interval Y"
+              fullWidth={true}
+              value={gridIntervalY}
+              onChange={( e ) => actions.setGridIntervalY( parseInt( e.target.value, 10 ) )}
+            />
+          </Grid>
+        </Grid>
 
-            <div className="form-row">
-              <div className="col-1">
-                <label className="col-form-label">Interval X:</label>
-              </div>
-              <div className="col-3">
-                <NumberInput
-                  className="form-control"
-                  placeholder="x"
-                  min={1}
-                  value={this.props.gridIntervalX}
-                  onChange={this.onGridIntervalXChange}
-                />
-              </div>
-              <div className="col-1">
-                <label className="col-form-label">Interval Y:</label>
-              </div>
-              <div className="col-3">
-                <NumberInput
-                  className="form-control"
-                  placeholder="y"
-                  min={1}
-                  value={this.props.gridIntervalY}
-                  onChange={this.onGridIntervalYChange}
-                />
-              </div>
-            </div>
+        <Typography variant="h5" className={styles.header}>Tools Settings:</Typography>
 
-            <div className="row mt-2">
-              <h5>Tools Settings:</h5>
-            </div>
-
-            <div className="form-row">
-              <div className="col-4 d-flex align-items-end">
-                <b>Tool</b>
-              </div>
-              <div className="col-3 d-flex align-items-end justify-content-center text-center">
-                <b>Shortcut</b>
-              </div>
-              <div className="col-3 d-flex align-items-end justify-content-center text-center">
-                <b>Default Color</b>
-              </div>
-              <div className="col-2 d-flex align-items-end justify-content-center text-center">
-                <b>Deselect Tool After Add</b>
-              </div>
-            </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Tool</th>
+              <th>Shortcut</th>
+              <th className={classNames( styles.centerCell, styles.noWrap )}>Default Color</th>
+              <th className={styles.centerCell}>Deselect After Use</th>
+            </tr>
+          </thead>
+          <tbody>
             {Object.entries( drawingToolDisplayNames ).map( ( [ tool, name ] ) => (
-              <div key={tool} className="form-group form-row">
-                <label className="col-4 col-form-label">{name}:</label>
-                <div className="col-3">
+              <tr key={tool}>
+                <td className={styles.noWrap}>{name}:</td>
+                <td>
                   <ShortcutInput
                     className="form-control"
-                    shortcut={this.props.shortcuts[ tool as DrawingTool ]}
-                    onChange={( shortcut ) => this.onShortcutChange( tool as DrawingTool, shortcut )}
+                    shortcut={shortcuts[ tool as DrawingTool ]}
+                    onChange={( shortcut ) => actions.setShortcut( {
+                      tool: tool as DrawingTool,
+                      shortcut
+                    } )}
                   />
-                </div>
+                </td>
                 {( tool !== Tool.Cursor ) && (
                   <>
-                    <div className="col-3">
+                    <td className={styles.centerCell}>
                       <input
                         type="color"
-                        className="form-control"
-                        value={this.props.defaultDrawingColors[ tool as DrawingType ]}
-                        onChange={( e ) => this.onDefaultDrawingColorChange( tool as DrawingType, e.target.value )}
+                        value={defaultDrawingColors[ tool as DrawingType ]}
+                        onChange={( e ) => actions.setDefaultDrawingColor( {
+                          drawingType: tool as DrawingType,
+                          color: e.target.value
+                        } )}
                       />
-                    </div>
-                    <div className="col-2 d-flex justify-content-center">
-                      <div className="form-check form-check-inline">
-                        <input
-                          type="checkbox"
-                          className="form-check-input"
-                          checked={this.props.deselectToolAfterAdd[ tool as DrawingType ]}
-                          onChange={( e ) => this.onDeselectToolAfterAddChange( tool as DrawingType, e.target.checked )}
-                        />
-                      </div>
-                    </div>
+                    </td>
+                    <td className={styles.centerCell}>
+                      <Checkbox
+                        checked={deselectToolAfterAdd[ tool as DrawingType ]}
+                        onChange={( e, checked ) => actions.setDeselectToolAfterAdd( {
+                          drawingType: tool as DrawingType,
+                          deselectToolAfterAdd: checked
+                        } )}
+                      />
+                    </td>
                   </>
                 )}
-              </div>
+              </tr>
             ) )}
+          </tbody>
+        </table>
 
-            <div className="row mt-2">
-              <h5>Other Settings:</h5>
-            </div>
+        <Typography variant="h5" className={styles.header}>Other Settings:</Typography>
 
-            <div className="form-row">
-              <div className="col-auto">
-                <div className="form-check">
-                  <label className="form-check-label">
-                    <input
-                      type="checkbox"
-                      className="form-check-input"
-                      checked={this.props.transparentDrawingProperties}
-                      onChange={this.onTransparentDrawingPropertiesChange}
-                    />
-                    Display drawing properties dialog as transparent unless hovering
-                  </label>
-                </div>
-              </div>
-            </div>
+        <FormControlLabel
+          label="Display drawing properties dialog as transparent unless hovering"
+          control={<Checkbox />}
+          checked={transparentDrawingProperties}
+          onChange={( e, checked ) => actions.setTransparentDrawingProperties( checked )}
+        />
 
-            <div className="form-row">
-              <div className="col-auto">
-                <div className="form-check">
-                  <label className="form-check-label">
-                    <input
-                      type="checkbox"
-                      className="form-check-input"
-                      checked={this.props.autoHideToolbar}
-                      onChange={this.onAutoHideToolbarChange}
-                    />
-                    Hide toolbar when not hovering
-                  </label>
-                </div>
-              </div>
-            </div>
+        <FormControlLabel
+          label="Hide toolbar when not hovering"
+          control={<Checkbox />}
+          checked={autoHideToolbar}
+          onChange={( e, checked ) => actions.setAutoHideToolbar( checked )}
+        />
 
-            <div className="row mt-4">
-              <button className="btn btn-primary ml-auto" onClick={this.onClose}>Close</button>
-            </div>
-
-          </div>
-
-        </div>
-      </Dialog>
-    );
-  }
-
-  private onClose = () =>
-  {
-    this.props.hideSettings();
-  }
-
-  private onShortcutChange = ( tool: DrawingTool, shortcut: string ) =>
-  {
-    this.props.setShortcut( { tool, shortcut } );
-  }
-
-  private onDefaultDrawingColorChange = ( drawingType: DrawingType, color: string ) =>
-  {
-    this.props.setDefaultDrawingColor( { drawingType, color } );
-  }
-
-  private onSnapToGridChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
-  {
-    this.props.setSnapToGrid( e.target.checked );
-  }
-
-  private onGridIntervalXChange = ( gridIntervalX: number ) =>
-  {
-    this.props.setGridIntervalX( gridIntervalX );
-  }
-
-  private onGridIntervalYChange = ( gridIntervalY: number ) =>
-  {
-    this.props.setGridIntervalY( gridIntervalY );
-  }
-
-  private onDeselectToolAfterAddChange = ( drawingType: DrawingType, deselectToolAfterAdd: boolean ) =>
-  {
-    this.props.setDeselectToolAfterAdd( { drawingType, deselectToolAfterAdd } );
-  }
-
-  private onTransparentDrawingPropertiesChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
-  {
-    this.props.setTransparentDrawingProperties( e.target.checked );
-  }
-
-  private onAutoHideToolbarChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
-  {
-    this.props.setAutoHideToolbar( e.target.checked );
-  }
-}
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Close</Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   ( state ) => ( {
