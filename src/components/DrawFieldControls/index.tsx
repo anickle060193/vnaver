@@ -1,6 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Tooltip } from '@material-ui/core';
+import RemoveIcon from '@material-ui/icons/Remove';
+import AddIcon from '@material-ui/icons/Add';
+import GpsFixedIcon from '@material-ui/icons/GpsFixed';
+import GpsNotFixedIcon from '@material-ui/icons/GpsNotFixed';
+import GridOnIcon from '@material-ui/icons/GridOn';
+import GridOffIcon from '@material-ui/icons/GridOff';
+import SettingsIcon from '@material-ui/icons/Settings';
 
 import { resetScaleLevel, resetOrigin, incrementScaleLevel, decrementScaleLevel } from 'store/reducers/editor';
 import { showSettings, setGridOn } from 'store/reducers/settings';
@@ -43,9 +50,7 @@ class DrawFieldControls extends React.Component<Props>
         >
           <Tooltip placement="bottom" title="Zoom Out">
             <div onClick={this.onZoomOutClick}>
-              <span className="material-icons">
-                remove
-              </span>
+              <RemoveIcon />
             </div>
           </Tooltip>
 
@@ -59,9 +64,7 @@ class DrawFieldControls extends React.Component<Props>
 
           <Tooltip placement="bottom" title="Zoom In">
             <div onClick={this.onZoomInClick}>
-              <span className="material-icons">
-                add
-              </span>
+              <AddIcon />
             </div>
           </Tooltip>
 
@@ -75,9 +78,11 @@ class DrawFieldControls extends React.Component<Props>
             ].join( ' ' )}
             onClick={this.onResetOrigin}
           >
-            <span className="material-icons">
-              {centered ? 'gps_fixed' : 'gps_not_fixed'}
-            </span>
+            {centered ? (
+              <GpsFixedIcon />
+            ) : (
+                <GpsNotFixedIcon />
+              )}
           </div>
         </Tooltip>
 
@@ -86,9 +91,11 @@ class DrawFieldControls extends React.Component<Props>
             className="drawing-grid"
             onClick={this.onToggleGridOn}
           >
-            <span className="material-icons">
-              {!this.props.gridOn ? 'grid_off' : 'grid_on'}
-            </span>
+            {!this.props.gridOn ? (
+              <GridOffIcon />
+            ) : (
+                <GridOnIcon />
+              )}
           </div>
         </Tooltip>
 
@@ -97,7 +104,7 @@ class DrawFieldControls extends React.Component<Props>
             className="drawing-settings"
             onClick={this.onSettingsClick}
           >
-            <span className="material-icons">settings</span>
+            <SettingsIcon />
           </div>
         </Tooltip>
 

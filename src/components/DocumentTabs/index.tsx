@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import CloseIcon from '@material-ui/icons/Close';
+import AddIcon from '@material-ui/icons/Add';
 
 import { setCurrentDocument, swapDocuments, addDocument, closeDocument } from 'store/reducers/documents';
 import { DocumentAttributeMap, selectDocumentFilenames, selectDocumentSaveRevisions, selectDocumentCurrentRevision } from 'store/selectors';
@@ -87,13 +89,10 @@ class DocumentTabs extends React.Component<Props, State>
               >
                 {baseFilename}
               </span>
-              <span
-                title=""
-                className="material-icons document-tab-close"
+              <CloseIcon
+                className="document-tab-close"
                 onClick={() => this.onCloseTabClick( documentId )}
-              >
-                close
-              </span>
+              />
             </li>
           );
         } )}
@@ -101,7 +100,7 @@ class DocumentTabs extends React.Component<Props, State>
           className="document-tab new-document-tab"
           onClick={this.onNewTabClick}
         >
-          <span className="material-icons">add</span>
+          <AddIcon />
         </li>
       </ul>
     );

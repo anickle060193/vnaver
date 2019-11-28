@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import BuildIcon from '@material-ui/icons/Build';
+import TextFieldsIcon from '@material-ui/icons/TextFields';
 
 import ToolbarItem from 'components/Toolbar/ToolbarItem';
 import { setTool } from 'store/reducers/editor';
@@ -53,8 +55,9 @@ class Toolbar extends React.Component<Props>
           this.props.autoHideToolbar ? 'auto-hide-toolbars' : ''
         ].join( ' ' )}
       >
-
-        <span className="material-icons toolbar-indicator">build</span>
+        <div className="toolbar-indicator">
+          <BuildIcon />
+        </div>
 
         <div className="toolbar">
 
@@ -90,15 +93,12 @@ class Toolbar extends React.Component<Props>
             shortcuts={this.props.shortcuts}
             onClick={this.onToolClick}
           >
-            <span
-              className="material-icons"
+            <TextFieldsIcon
               style={{
                 color: this.props.defaultDrawingColors[ DrawingType.Text ],
                 fontSize: '26pt'
               }}
-            >
-              text_fields
-            </span>
+            />
           </DrawingToolToolbarItem>
 
           <DrawingToolToolbarItem

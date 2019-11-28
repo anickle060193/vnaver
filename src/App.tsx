@@ -1,6 +1,11 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 
+import 'typeface-roboto';
+import 'typeface-roboto-mono';
+
+import 'bootstrap-css-only';
+
 import ShortcutManager from 'components/ShortcutManager';
 import Layout from 'components/Layout';
 import UpdateNotification from 'components/UpdateNotification';

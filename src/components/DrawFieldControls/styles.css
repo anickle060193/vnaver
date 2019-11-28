@@ -34,7 +34,7 @@
   border-radius: 50%;
 }
 
-.drawing-settings .material-icons
+.drawing-settings
 {
   --size: 36px;
   font-size: var( --size );
@@ -96,7 +96,7 @@
   color: rgb(49, 147, 240);
 }
 
-.drawing-position .material-icons
+.drawing-position
 {
   --size: 40px;
   font-size: var( --size );
@@ -122,87 +122,9 @@
   border-radius: 8px;
 }
 
-.drawing-grid .material-icons
+.drawing-grid
 {
-  --size: 44px;
-  font-size: var( --size );
-  width: var( --size );
-  height: var( --size );
-}
-
-.drawing-open-diagram
-{
-  position: relative;
-
-  width: 3rem;
-  height: 3rem;
-  padding: 0.3rem;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  cursor: pointer;
-
-  color: slategray;
-  border-radius: 8px;
-}
-
-.drawing-open-diagram .material-icons
-{
-  --size: 44px;
-  font-size: var( --size );
-  width: var( --size );
-  height: var( --size );
-}
-
-.drawing-save-diagram
-{
-  position: relative;
-
-  width: 3rem;
-  height: 3rem;
-  padding: 0.3rem;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  cursor: pointer;
-
-  color: slategray;
-  border-radius: 8px;
-}
-
-.drawing-save-diagram .material-icons
-{
-  --size: 44px;
-  font-size: var( --size );
-  width: var( --size );
-  height: var( --size );
-}
-
-.drawing-export-image
-{
-  position: relative;
-
-  width: 3rem;
-  height: 3rem;
-  padding: 0.3rem;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  cursor: pointer;
-
-  color: slategray;
-  border-radius: 8px;
-}
-
-.drawing-export-image .material-icons
-{
-  --size: 44px;
+  --size: 40px;
   font-size: var( --size );
   width: var( --size );
   height: var( --size );
