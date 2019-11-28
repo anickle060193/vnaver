@@ -31,51 +31,60 @@ const PathLine: React.SFC<Props> = ( { drawing, onMouseDown, onMouseUp, drawings
     return null;
   }
 
+  const hasStart = !isNaN( start.x ) && !isNaN( start.y );
+  const hasEnd = !isNaN( end.x ) && !isNaN( end.y );
+
   return (
     <Group onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
-      <LineDrawing
-        x1={start.x}
-        y1={start.y}
-        x2={end.x}
-        y2={end.y}
-        color={drawing.color}
-        strokeWidth={drawing.strokeWidth}
-        dash={drawing.dash}
-        hitEnabled={true}
-      />
+      {hasStart && hasEnd && (
+        <LineDrawing
+          x1={start.x}
+          y1={start.y}
+          x2={end.x}
+          y2={end.y}
+          color={drawing.color}
+          strokeWidth={drawing.strokeWidth}
+          dash={drawing.dash}
+          hitEnabled={true}
+        />
+      )}
       {cursor && (
         <>
-          {!isNaN( end.x ) && !isNaN( end.y ) && (
-            <Circle
-              x={end.x}
-              y={end.y}
-              radius={OUTER_CIRCLE_RADIUS}
-              fill={drawing.color}
-            />
+          {hasEnd && (
+            <>
+              <Circle
+                x={end.x}
+                y={end.y}
+                radius={OUTER_CIRCLE_RADIUS}
+                fill={drawing.color}
+              />
+              {!drawing.end.connected && (
+                <Circle
+                  x={end.x}
+                  y={end.y}
+                  radius={INNER_CIRCLE_RADIUS}
+                  fill="white"
+                />
+              )}
+            </>
           )}
-          {!drawing.end.connected && (
-            <Circle
-              x={end.x}
-              y={end.y}
-              radius={INNER_CIRCLE_RADIUS}
-              fill="white"
-            />
-          )}
-          {!isNaN( start.x ) && !isNaN( start.y ) && (
-            <Circle
-              x={start.x}
-              y={start.y}
-              radius={OUTER_CIRCLE_RADIUS}
-              fill={drawing.color}
-            />
-          )}
-          {!drawing.start.connected && (
-            <Circle
-              x={start.x}
-              y={start.y}
-              radius={INNER_CIRCLE_RADIUS}
-              fill="white"
-            />
+          {hasStart && (
+            <>
+              <Circle
+                x={start.x}
+                y={start.y}
+                radius={OUTER_CIRCLE_RADIUS}
+                fill={drawing.color}
+              />
+              {!drawing.start.connected && (
+                <Circle
+                  x={start.x}
+                  y={start.y}
+                  radius={INNER_CIRCLE_RADIUS}
+                  fill="white"
+                />
+              )}
+            </>
           )}
         </>
       )}

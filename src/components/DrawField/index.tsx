@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, ReactReduxContext, Provider } from 'react-redux';
 import { Stage, Layer, Rect } from 'react-konva';
 import uuid from 'uuid/v4';
 
@@ -374,62 +374,68 @@ class DrawField extends React.Component<Props, State>
         style={{ cursor: cssCursor }}
         onWheel={this.onWheel}
       >
-        <Stage
-          width={this.state.width}
-          height={this.state.height}
-          scaleX={this.props.scale}
-          scaleY={this.props.scale}
-          x={this.props.originX}
-          y={this.props.originY}
-          onContentMouseDown={this.onContentMouseDown}
-          onContentMouseUp={this.onContentMouseUp}
-        >
-          <Layer>
-            <Rect
-              x={-this.props.originX / this.props.scale}
-              y={-this.props.originY / this.props.scale}
-              width={this.state.width / this.props.scale}
-              height={this.state.height / this.props.scale}
-              fill="white"
-            />
-            {this.props.gridOn && (
-              <Grid
-                width={this.state.width}
-                height={this.state.height}
-                originX={this.props.originX}
-                originY={this.props.originY}
-                scale={this.props.scale}
-                verticalInterval={this.props.gridIntervalX}
-                horizontalInterval={this.props.gridIntervalY}
-              />
-            )}
-            {this.props.selectedDrawingId && (
-              <ActiveIndication
-                drawings={this.props.drawings}
-                drawing={this.props.drawings[ this.props.selectedDrawingId ]}
-                originX={this.props.originX}
-                originY={this.props.originY}
-                scale={this.props.scale}
-                fieldWidth={this.state.width}
-                fieldHeight={this.state.height}
-              />
-            )}
-            {this.sortedDrawings().map( ( drawing, i ) =>
-            {
-              let DrawingComponent = drawingComponentMap[ drawing.type ];
-              return (
-                <DrawingComponent
-                  key={i}
-                  cursor={false}
-                  drawing={drawing}
-                  onMouseDown={( e ) => this.onDrawingMouseDown( drawing, e )}
-                  onMouseUp={( e ) => this.onDrawingMouseUp( drawing, e )}
-                />
-              );
-            } )}
-            {cursor}
-          </Layer>
-        </Stage>
+        <ReactReduxContext.Consumer>
+          {( { store } ) => (
+            <Stage
+              width={this.state.width}
+              height={this.state.height}
+              scaleX={this.props.scale}
+              scaleY={this.props.scale}
+              x={this.props.originX}
+              y={this.props.originY}
+              onContentMouseDown={this.onContentMouseDown}
+              onContentMouseUp={this.onContentMouseUp}
+            >
+              <Provider store={store}>
+                <Layer>
+                  <Rect
+                    x={-this.props.originX / this.props.scale}
+                    y={-this.props.originY / this.props.scale}
+                    width={this.state.width / this.props.scale}
+                    height={this.state.height / this.props.scale}
+                    fill="white"
+                  />
+                  {this.props.gridOn && (
+                    <Grid
+                      width={this.state.width}
+                      height={this.state.height}
+                      originX={this.props.originX}
+                      originY={this.props.originY}
+                      scale={this.props.scale}
+                      verticalInterval={this.props.gridIntervalX}
+                      horizontalInterval={this.props.gridIntervalY}
+                    />
+                  )}
+                  {this.props.selectedDrawingId && (
+                    <ActiveIndication
+                      drawings={this.props.drawings}
+                      drawing={this.props.drawings[ this.props.selectedDrawingId ]}
+                      originX={this.props.originX}
+                      originY={this.props.originY}
+                      scale={this.props.scale}
+                      fieldWidth={this.state.width}
+                      fieldHeight={this.state.height}
+                    />
+                  )}
+                  {this.sortedDrawings().map( ( drawing, i ) =>
+                  {
+                    let DrawingComponent = drawingComponentMap[ drawing.type ];
+                    return (
+                      <DrawingComponent
+                        key={i}
+                        cursor={false}
+                        drawing={drawing}
+                        onMouseDown={( e ) => this.onDrawingMouseDown( drawing, e )}
+                        onMouseUp={( e ) => this.onDrawingMouseUp( drawing, e )}
+                      />
+                    );
+                  } )}
+                  {cursor}
+                </Layer>
+              </Provider>
+            </Stage>
+          )}
+        </ReactReduxContext.Consumer>
       </div>
     );
   }
