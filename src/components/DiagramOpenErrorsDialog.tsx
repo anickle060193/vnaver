@@ -19,15 +19,28 @@ type Props = PropsFromState & PropsFromDispatch;
 
 const DiagramOpenErrorsDialog: React.SFC<Props> = ( { diagramOpenErrors, ...actions } ) =>
 {
+  const [ open, setOpen ] = React.useState( false );
+
+  React.useEffect( () =>
+  {
+    setOpen( !!diagramOpenErrors && diagramOpenErrors.length > 0 );
+  }, [ diagramOpenErrors ] );
+
   function onClose()
+  {
+    setOpen( false );
+  }
+
+  function onClosed()
   {
     actions.clearDiagramOpenErrors();
   }
 
   return (
     <Dialog
-      open={!!diagramOpenErrors && diagramOpenErrors.length > 0}
+      open={open}
       onClose={onClose}
+      onExited={onClosed}
     >
       <DialogTitle>
         Diagram Open Errors
@@ -46,7 +59,7 @@ const DiagramOpenErrorsDialog: React.SFC<Props> = ( { diagramOpenErrors, ...acti
           onClick={onClose}
           color="primary"
         >
-          Disagree
+          OK
         </Button>
       </DialogActions>
     </Dialog>
