@@ -80,8 +80,6 @@ const ShortcutManager: React.SFC<Props> = ( {
         return;
       }
 
-      console.log( 'Key Down:', e.key, e.keyCode, e.code );
-
       updateSecret( e.keyCode );
 
       if( e.key === 'Delete' )
