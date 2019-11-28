@@ -1,5 +1,4 @@
 import { Store } from 'redux';
-import fs from 'mz/fs';
 
 import { DrawingMap } from 'utils/draw';
 import { mapToArray } from 'utils/utils';
@@ -7,15 +6,15 @@ import { DrawingsParseResult, parseDrawings } from 'utils/drawing_validator';
 import { openDiagram } from 'utils/document';
 
 const electron = window.require( 'electron' );
+const fs = electron.remote.require( 'fs' );
 
 export default electron;
 
-async function isValidDiagramFilename( filename: string )
+function isValidDiagramFilename( filename: string )
 {
   return filename
     && ( filename.endsWith( '.vnav' )
-      || filename.endsWith( '.json' ) )
-    && fs.exists( filename );
+      || filename.endsWith( '.json' ) );
 }
 
 export async function openCommandLineFile( store: Store<RootState> )
@@ -25,7 +24,7 @@ export async function openCommandLineFile( store: Store<RootState> )
     let commandLineArgs: string[] = electron.remote.process.argv;
     for( let arg of commandLineArgs.slice( 1 ) )
     {
-      if( await isValidDiagramFilename( arg ) )
+      if( isValidDiagramFilename( arg ) )
       {
         console.log( 'Opening command line file:', arg );
         let result = await readDiagramFile( arg );
@@ -52,7 +51,7 @@ export async function exportImage( canvas: HTMLCanvasElement )
     let image = electron.nativeImage.createFromDataURL( data );
     let buffer = image.toPNG();
 
-    await fs.writeFile( filePath, buffer );
+    await fs.promises.writeFile( filePath, buffer );
   }
 }
 
@@ -60,7 +59,7 @@ export async function saveDrawingsToFile( drawings: DrawingMap, filename: string
 {
   let drawingsArray = mapToArray( drawings );
   let output = JSON.stringify( drawingsArray, null, 2 );
-  await fs.writeFile( filename, output );
+  await fs.promises.writeFile( filename, output );
 }
 
 export async function showSaveDiagramDialog( drawings: DrawingMap, filename: string | null )
@@ -104,7 +103,7 @@ export interface DocumentOpenResult extends DrawingsParseResult
 
 export async function readDiagramFile( filename: string ): Promise<DocumentOpenResult>
 {
-  let contentBuffer = await fs.readFile( filename );
+  let contentBuffer = await fs.promises.readFile( filename );
   let content = contentBuffer.toString();
   return {
     ...parseDrawings( content ),
