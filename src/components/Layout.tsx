@@ -1,8 +1,8 @@
 import React from 'react';
 import { makeStyles, createStyles } from '@material-ui/core';
 
-import DocumentTabs from 'components/DocumentTabs';
 import Toolbar from 'components/Toolbar';
+import DocumentTabs from 'components/DocumentTabs';
 import DrawField from 'components/DrawField';
 import DrawingPropertiesPopup from 'components/DrawingPropertiesPopup';
 import DrawFieldControls from 'components/DrawFieldControls';
@@ -12,11 +12,12 @@ const useStyles = makeStyles( ( theme ) => createStyles( {
     position: 'relative',
     width: '100%',
     height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
   },
   documentLayout: {
+    flex: 1,
     position: 'relative',
-    width: '100%',
-    height: '100%',
   },
   drawFieldContainer: {
     position: 'relative',
@@ -43,12 +44,12 @@ const Layout: React.SFC = () =>
 
   return (
     <div className={styles.mainLayout}>
+      <Toolbar />
       <DocumentTabs />
       <div className={styles.documentLayout}>
         <div className={styles.drawFieldContainer}>
           <DrawField />
         </div>
-        <Toolbar />
         <div className={styles.drawingPropertiesContainer}>
           <DrawingPropertiesPopup />
         </div>
