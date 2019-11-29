@@ -3,7 +3,9 @@ import { connect } from 'react-redux';
 import classNames from 'classnames';
 import { Dialog, DialogContent, DialogActions, Button, FormControlLabel, Checkbox, Typography, TextField, makeStyles, Grid, createStyles } from '@material-ui/core';
 
-import ShortcutInput from 'components/SettingsDialog/ShortcutInput';
+import ShortcutInput from 'components/ShortcutInput';
+import ColorPicker from 'components/ColorPicker';
+
 import
 {
   hideSettings,
@@ -16,10 +18,9 @@ import
   setTransparentDrawingProperties,
   setAutoHideToolbar
 } from 'store/reducers/settings';
+
 import { drawingToolDisplayNames, DrawingTool, DrawingTypeMap, DrawingType, Tool } from 'utils/draw';
 import { ShortcutMap } from 'utils/shortcut';
-
-import './styles.css';
 
 const useStyles = makeStyles( ( theme ) => createStyles( {
   dialogContent: {
@@ -141,7 +142,6 @@ const SettingsDialog: React.SFC<Props> = ( {
                 <td className={styles.noWrap}>{name}:</td>
                 <td>
                   <ShortcutInput
-                    className="form-control"
                     shortcut={shortcuts[ tool as DrawingTool ]}
                     onChange={( shortcut ) => actions.setShortcut( {
                       tool: tool as DrawingTool,
@@ -152,12 +152,11 @@ const SettingsDialog: React.SFC<Props> = ( {
                 {( tool !== Tool.Cursor ) && (
                   <>
                     <td className={styles.centerCell}>
-                      <input
-                        type="color"
-                        value={defaultDrawingColors[ tool as DrawingType ]}
-                        onChange={( e ) => actions.setDefaultDrawingColor( {
+                      <ColorPicker
+                        color={defaultDrawingColors[ tool as DrawingType ]}
+                        onChange={( c ) => actions.setDefaultDrawingColor( {
                           drawingType: tool as DrawingType,
-                          color: e.target.value
+                          color: c
                         } )}
                       />
                     </td>
