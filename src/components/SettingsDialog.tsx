@@ -16,7 +16,6 @@ import
   setGridIntervalY,
   setDeselectToolAfterAdd,
   setTransparentDrawingProperties,
-  setAutoHideToolbar
 } from 'store/reducers/settings';
 
 import { drawingToolDisplayNames, DrawingTool, DrawingTypeMap, DrawingType, Tool } from 'utils/draw';
@@ -48,7 +47,6 @@ interface PropsFromState
   gridIntervalY: number;
   snapToGrid: boolean;
   transparentDrawingProperties: boolean;
-  autoHideToolbar: boolean;
 }
 
 interface PropsFromDispatch
@@ -61,7 +59,6 @@ interface PropsFromDispatch
   setGridIntervalY: typeof setGridIntervalY;
   setSnapToGrid: typeof setSnapToGrid;
   setTransparentDrawingProperties: typeof setTransparentDrawingProperties;
-  setAutoHideToolbar: typeof setAutoHideToolbar;
 }
 
 type Props = PropsFromState & PropsFromDispatch;
@@ -75,7 +72,6 @@ const SettingsDialog: React.SFC<Props> = ( {
   gridIntervalY,
   snapToGrid,
   transparentDrawingProperties,
-  autoHideToolbar,
   ...actions
 } ) =>
 {
@@ -185,13 +181,6 @@ const SettingsDialog: React.SFC<Props> = ( {
           onChange={( e, checked ) => actions.setTransparentDrawingProperties( checked )}
         />
 
-        <FormControlLabel
-          label="Hide toolbar when not hovering"
-          control={<Checkbox />}
-          checked={autoHideToolbar}
-          onChange={( e, checked ) => actions.setAutoHideToolbar( checked )}
-        />
-
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Close</Button>
@@ -210,7 +199,6 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     gridIntervalY: state.settings.gridIntervalY,
     snapToGrid: state.settings.snapToGrid,
     transparentDrawingProperties: state.settings.transparentDrawingProperties,
-    autoHideToolbar: state.settings.autoHideToolbar
   } ),
   {
     hideSettings,
@@ -221,6 +209,5 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     setGridIntervalY,
     setSnapToGrid,
     setTransparentDrawingProperties,
-    setAutoHideToolbar
   }
 )( SettingsDialog );

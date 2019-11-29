@@ -13,7 +13,6 @@ enum SettingKey
   GridIntervalY = 'grid_interval_y',
   SnapToGrid = 'snap_to_grid',
   TransparentDrawingProperties = 'transparent_drawing_properties',
-  AutoHideToolbar = 'auto_hide_toolbar'
 }
 
 function k( ...subkeys: Array<SettingKey | DrawingTool> )
@@ -206,16 +205,6 @@ class Settings
   get transparentDrawingProperties()
   {
     return getValidItem( k( SettingKey.TransparentDrawingProperties ), SettingType.Boolean, true );
-  }
-
-  set autoHideToolbar( autoHideToolbar: boolean )
-  {
-    setValidItem( k( SettingKey.AutoHideToolbar ), SettingType.Boolean, autoHideToolbar );
-  }
-
-  get autoHideToolbar()
-  {
-    return getValidItem( k( SettingKey.AutoHideToolbar ), SettingType.Boolean, false );
   }
 }
 
