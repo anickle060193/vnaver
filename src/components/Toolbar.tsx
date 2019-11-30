@@ -47,13 +47,18 @@ const Toolbar: React.SFC<Props> = ( { tool, shortcuts, defaultDrawingColors, ...
 {
   const styles = useStyles();
 
+  function onToolChange( e: React.MouseEvent, newTool: DrawingTool | null )
+  {
+    actions.setTool( newTool || Tool.Cursor );
+  }
+
   return (
     <div className={styles.root}>
       <ToggleButtonGroup
         exclusive={true}
         size="small"
         value={tool}
-        onChange={( e, value: DrawingTool ) => actions.setTool( value )}
+        onChange={onToolChange}
       >
         <DrawingToolToggleButton value={Tool.Cursor} shortcuts={shortcuts}>
           <SvgIcon viewBox="0 0 100 100">
