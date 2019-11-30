@@ -27,6 +27,11 @@ const useStyles = makeStyles( ( theme ) => createStyles( {
     display: 'flex',
     flexDirection: 'row',
   },
+  buttonGroup: {
+    '& > button': {
+      border: 'none',
+    },
+  },
 } ) );
 
 interface PropsFromState
@@ -55,8 +60,9 @@ const Toolbar: React.SFC<Props> = ( { tool, shortcuts, defaultDrawingColors, ...
   return (
     <div className={styles.root}>
       <ToggleButtonGroup
-        exclusive={true}
+        className={styles.buttonGroup}
         size="small"
+        exclusive={true}
         value={tool}
         onChange={onToolChange}
       >
