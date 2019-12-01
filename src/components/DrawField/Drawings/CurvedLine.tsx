@@ -85,36 +85,40 @@ const CurvedLine: React.SFC<Props> = ( { drawing, onMouseDown, onMouseUp, drawin
       {cursor && (
         <>
           {!isNaN( end.x ) && !isNaN( end.y ) && (
-            <Circle
-              x={end.x}
-              y={end.y}
-              radius={OUTER_CIRCLE_RADIUS}
-              fill={drawing.color}
-            />
-          )}
-          {!drawing.end.connected && (
-            <Circle
-              x={end.x}
-              y={end.y}
-              radius={INNER_CIRCLE_RADIUS}
-              fill="white"
-            />
+            <>
+              <Circle
+                x={end.x}
+                y={end.y}
+                radius={OUTER_CIRCLE_RADIUS}
+                fill={drawing.color}
+              />
+              {!drawing.end.connected && (
+                <Circle
+                  x={end.x}
+                  y={end.y}
+                  radius={INNER_CIRCLE_RADIUS}
+                  fill="white"
+                />
+              )}
+            </>
           )}
           {!isNaN( start.x ) && !isNaN( start.y ) && (
-            <Circle
-              x={start.x}
-              y={start.y}
-              radius={OUTER_CIRCLE_RADIUS}
-              fill={drawing.color}
-            />
-          )}
-          {!drawing.start.connected && (
-            <Circle
-              x={start.x}
-              y={start.y}
-              radius={INNER_CIRCLE_RADIUS}
-              fill="white"
-            />
+            <>
+              <Circle
+                x={start.x}
+                y={start.y}
+                radius={OUTER_CIRCLE_RADIUS}
+                fill={drawing.color}
+              />
+              {!drawing.start.connected && (
+                <Circle
+                  x={start.x}
+                  y={start.y}
+                  radius={INNER_CIRCLE_RADIUS}
+                  fill="white"
+                />
+              )}
+            </>
           )}
         </>
       )}
