@@ -1,12 +1,19 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { makeStyles, createStyles, SvgIcon, Tooltip, IconButton } from '@material-ui/core';
+import classNames from 'classnames';
+import { makeStyles, createStyles, SvgIcon, Tooltip, IconButton, Button, colors } from '@material-ui/core';
 import { ToggleButtonGroup, ToggleButton } from '@material-ui/lab';
 import TextFieldsIcon from '@material-ui/icons/TextFields';
+import RemoveIcon from '@material-ui/icons/Remove';
+import AddIcon from '@material-ui/icons/Add';
+import GpsFixedIcon from '@material-ui/icons/GpsFixed';
+import GpsNotFixedIcon from '@material-ui/icons/GpsNotFixed';
+import GridOnIcon from '@material-ui/icons/GridOn';
+import GridOffIcon from '@material-ui/icons/GridOff';
 import SettingsIcon from '@material-ui/icons/Settings';
 
-import { setTool } from 'store/reducers/editor';
-import { showSettings } from 'store/reducers/settings';
+import { setTool, incrementScaleLevel, decrementScaleLevel, resetScaleLevel, resetOrigin } from 'store/reducers/editor';
+import { showSettings, setGridOn } from 'store/reducers/settings';
 import { currentEditorState } from 'store/selectors';
 
 import
@@ -18,7 +25,10 @@ import
   PLANE_PATH,
   UP_ARROW_PATH,
   DOWN_ARROW_PATH,
-  drawingToolDisplayNames
+  drawingToolDisplayNames,
+  MIN_SCALE_LEVEL,
+  MAX_SCALE_LEVEL,
+  getScale
 } from 'utils/draw';
 import { ShortcutMap } from 'utils/shortcut';
 
@@ -29,6 +39,7 @@ const useStyles = makeStyles( ( theme ) => createStyles( {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    flexWrap: 'wrap',
   },
   buttonGroup: {
     '& > button': {
@@ -44,6 +55,23 @@ const useStyles = makeStyles( ( theme ) => createStyles( {
       marginRight: theme.spacing( 0.5 ),
     },
   },
+  scaleControls: {
+    display: 'flex',
+    flexDirecton: 'row',
+    alignItems: 'center',
+  },
+  scaleText: {
+    minWidth: '3em',
+    textAlign: 'center',
+    paddingLeft: 0,
+    paddingRight: 0,
+  },
+  recenterButtonCentered: {
+    color: colors.lightBlue[ 800 ],
+  },
+  gridButton: {
+    borderRadius: 6,
+  },
 } ) );
 
 interface PropsFromState
@@ -51,11 +79,20 @@ interface PropsFromState
   tool: DrawingTool;
   shortcuts: ShortcutMap;
   defaultDrawingColors: DrawingTypeMap<string>;
+  originX: number;
+  originY: number;
+  scaleLevel: number;
+  gridOn: boolean;
 }
 
 interface PropsFromDispatch
 {
   setTool: typeof setTool;
+  incrementScaleLevel: typeof incrementScaleLevel;
+  decrementScaleLevel: typeof decrementScaleLevel;
+  resetScaleLevel: typeof resetScaleLevel;
+  resetOrigin: typeof resetOrigin;
+  setGridOn: typeof setGridOn;
   showSettings: typeof showSettings;
 }
 
@@ -65,15 +102,17 @@ const Toolbar: React.SFC<Props> = ( {
   tool,
   shortcuts,
   defaultDrawingColors,
+  originX,
+  originY,
+  scaleLevel,
+  gridOn,
   ...actions
 } ) =>
 {
   const styles = useStyles();
 
-  function onToolChange( e: React.MouseEvent, newTool: DrawingTool | null )
-  {
-    actions.setTool( newTool || Tool.Cursor );
-  }
+  const scale = getScale( scaleLevel );
+  const centered = ( originX === 0 && originY === 0 );
 
   return (
     <div className={styles.root}>
@@ -82,7 +121,7 @@ const Toolbar: React.SFC<Props> = ( {
         size="small"
         exclusive={true}
         value={tool}
-        onChange={onToolChange}
+        onChange={( e, t: DrawingTool ) => actions.setTool( t || Tool.Cursor )}
       >
         <DrawingToolToggleButton value={Tool.Cursor} shortcuts={shortcuts}>
           <SvgIcon viewBox="0 0 100 100">
@@ -178,6 +217,74 @@ const Toolbar: React.SFC<Props> = ( {
 
       <div className={styles.controls}>
 
+        <div className={styles.scaleControls}>
+
+          <Tooltip placement="bottom" title="Zoom Out">
+            <div>
+              <IconButton
+                size="small"
+                onClick={() => actions.decrementScaleLevel()}
+                disabled={scaleLevel === MIN_SCALE_LEVEL}
+              >
+                <RemoveIcon />
+              </IconButton>
+            </div>
+          </Tooltip>
+
+          <Tooltip placement="bottom" title="Reset Zoom">
+            <span>
+              <Button
+                className={styles.scaleText}
+                onClick={() => actions.resetScaleLevel()}
+              >
+                {( scale * 100 ).toFixed( 0 )}%
+              </Button>
+            </span>
+          </Tooltip>
+
+          <Tooltip placement="bottom" title="Zoom In">
+            <div>
+              <IconButton
+                size="small"
+                onClick={() => actions.incrementScaleLevel()}
+                disabled={scaleLevel === MAX_SCALE_LEVEL}
+              >
+                <AddIcon />
+              </IconButton>
+            </div>
+          </Tooltip>
+
+        </div>
+
+        <Tooltip placement="bottom" title="Re-center">
+          <IconButton
+            className={classNames( centered && styles.recenterButtonCentered )}
+            size="small"
+            color="default"
+            onClick={() => actions.resetOrigin()}
+          >
+            {centered ? (
+              <GpsFixedIcon />
+            ) : (
+                <GpsNotFixedIcon />
+              )}
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip placement="bottom" title={gridOn ? 'Hide Grid' : 'Display Grid'}>
+          <IconButton
+            size="small"
+            className={styles.gridButton}
+            onClick={() => actions.setGridOn( !gridOn )}
+          >
+            {!gridOn ? (
+              <GridOffIcon />
+            ) : (
+                <GridOnIcon />
+              )}
+          </IconButton>
+        </Tooltip>
+
         <Tooltip placement="bottom" title="Settings">
           <IconButton
             size="small"
@@ -223,9 +330,18 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     tool: currentEditorState( state ).tool,
     shortcuts: state.settings.shortcuts,
     defaultDrawingColors: state.settings.defaultDrawingColors,
+    originX: currentEditorState( state ).originX,
+    originY: currentEditorState( state ).originY,
+    scaleLevel: currentEditorState( state ).scaleLevel,
+    gridOn: state.settings.gridOn,
   } ),
   {
     setTool,
+    incrementScaleLevel,
+    decrementScaleLevel,
+    resetScaleLevel,
+    resetOrigin,
+    setGridOn,
     showSettings,
   }
 )( Toolbar );

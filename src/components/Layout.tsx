@@ -5,7 +5,6 @@ import Toolbar from 'components/Toolbar';
 import DocumentTabs from 'components/DocumentTabs';
 import DrawField from 'components/DrawField';
 import DrawingPropertiesPopup from 'components/DrawingPropertiesPopup';
-import DrawFieldControls from 'components/DrawFieldControls';
 
 const useStyles = makeStyles( ( theme ) => createStyles( {
   mainLayout: {
@@ -30,12 +29,6 @@ const useStyles = makeStyles( ( theme ) => createStyles( {
     right: '0%',
     bottom: '0%',
   },
-  drawFieldControls: {
-    position: 'absolute',
-    margin: '1rem',
-    right: '0%',
-    top: '0%',
-  },
 } ) );
 
 const Layout: React.SFC = () =>
@@ -52,9 +45,6 @@ const Layout: React.SFC = () =>
         </div>
         <div className={styles.drawingPropertiesContainer}>
           <DrawingPropertiesPopup />
-        </div>
-        <div className={styles.drawFieldControls}>
-          <DrawFieldControls />
         </div>
       </div>
     </div>
