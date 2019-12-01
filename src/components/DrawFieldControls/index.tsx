@@ -7,10 +7,9 @@ import GpsFixedIcon from '@material-ui/icons/GpsFixed';
 import GpsNotFixedIcon from '@material-ui/icons/GpsNotFixed';
 import GridOnIcon from '@material-ui/icons/GridOn';
 import GridOffIcon from '@material-ui/icons/GridOff';
-import SettingsIcon from '@material-ui/icons/Settings';
 
 import { resetScaleLevel, resetOrigin, incrementScaleLevel, decrementScaleLevel } from 'store/reducers/editor';
-import { showSettings, setGridOn } from 'store/reducers/settings';
+import { setGridOn } from 'store/reducers/settings';
 import { currentEditorState, currentDrawingsState } from 'store/selectors';
 import { getScale, DrawingMap } from 'utils/draw';
 
@@ -32,7 +31,6 @@ interface PropsFromDispatch
   resetScaleLevel: typeof resetScaleLevel;
   resetOrigin: typeof resetOrigin;
   setGridOn: typeof setGridOn;
-  showSettings: typeof showSettings;
 }
 
 type Props = PropsFromState & PropsFromDispatch;
@@ -99,15 +97,6 @@ class DrawFieldControls extends React.Component<Props>
           </div>
         </Tooltip>
 
-        <Tooltip placement="bottom" title="Settings">
-          <div
-            className="drawing-settings"
-            onClick={this.onSettingsClick}
-          >
-            <SettingsIcon />
-          </div>
-        </Tooltip>
-
       </div>
     );
   }
@@ -140,11 +129,6 @@ class DrawFieldControls extends React.Component<Props>
   {
     this.props.setGridOn( !this.props.gridOn );
   }
-
-  private onSettingsClick = () =>
-  {
-    this.props.showSettings();
-  }
 }
 
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
@@ -161,6 +145,5 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     resetScaleLevel,
     resetOrigin,
     setGridOn,
-    showSettings
   }
 )( DrawFieldControls );

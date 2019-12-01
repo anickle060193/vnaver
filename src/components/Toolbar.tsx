@@ -1,10 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { makeStyles, createStyles, SvgIcon, Tooltip } from '@material-ui/core';
+import { makeStyles, createStyles, SvgIcon, Tooltip, IconButton } from '@material-ui/core';
 import { ToggleButtonGroup, ToggleButton } from '@material-ui/lab';
 import TextFieldsIcon from '@material-ui/icons/TextFields';
+import SettingsIcon from '@material-ui/icons/Settings';
 
 import { setTool } from 'store/reducers/editor';
+import { showSettings } from 'store/reducers/settings';
 import { currentEditorState } from 'store/selectors';
 
 import
@@ -26,10 +28,20 @@ const useStyles = makeStyles( ( theme ) => createStyles( {
   root: {
     display: 'flex',
     flexDirection: 'row',
+    alignItems: 'center',
   },
   buttonGroup: {
     '& > button': {
       border: 'none',
+    },
+  },
+  controls: {
+    marginLeft: 'auto',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    '& > *': {
+      marginRight: theme.spacing( 0.5 ),
     },
   },
 } ) );
@@ -44,11 +56,17 @@ interface PropsFromState
 interface PropsFromDispatch
 {
   setTool: typeof setTool;
+  showSettings: typeof showSettings;
 }
 
 type Props = PropsFromState & PropsFromDispatch;
 
-const Toolbar: React.SFC<Props> = ( { tool, shortcuts, defaultDrawingColors, ...actions } ) =>
+const Toolbar: React.SFC<Props> = ( {
+  tool,
+  shortcuts,
+  defaultDrawingColors,
+  ...actions
+} ) =>
 {
   const styles = useStyles();
 
@@ -157,6 +175,20 @@ const Toolbar: React.SFC<Props> = ( { tool, shortcuts, defaultDrawingColors, ...
         </DrawingToolToggleButton>
 
       </ToggleButtonGroup>
+
+      <div className={styles.controls}>
+
+        <Tooltip placement="bottom" title="Settings">
+          <IconButton
+            size="small"
+            onClick={() => actions.showSettings()}
+          >
+            <SettingsIcon />
+          </IconButton>
+        </Tooltip>
+
+      </div>
+
     </div>
   );
 };
@@ -193,6 +225,7 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     defaultDrawingColors: state.settings.defaultDrawingColors,
   } ),
   {
-    setTool
+    setTool,
+    showSettings,
   }
 )( Toolbar );
