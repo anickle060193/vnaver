@@ -1,4 +1,5 @@
 import React from 'react';
+import { TextField } from '@material-ui/core';
 
 interface Props
 {
@@ -6,14 +7,12 @@ interface Props
   onChange: ( value: number ) => void;
   increment?: number;
 
-  className?: string;
-  placeholder?: string;
-  style?: React.StyleHTMLAttributes<HTMLInputElement>;
+  label?: string;
   min?: number;
   max?: number;
 }
 
-const NumberInput: React.SFC<Props> = ( { value, className, placeholder, style, onChange, increment = 1, min, max } ) =>
+const NumberInput: React.SFC<Props> = ( { value, label, onChange, increment = 1, min, max } ) =>
 {
   function updateValue( newValue: number )
   {
@@ -55,14 +54,13 @@ const NumberInput: React.SFC<Props> = ( { value, className, placeholder, style, 
   }
 
   return (
-    <input
+    <TextField
       type="number"
+      variant="outlined"
+      fullWidth={true}
+      label={label}
       value={value}
-      placeholder={placeholder}
-      className={className}
-      style={style}
-      min={min}
-      max={max}
+      inputProps={{ min, max }}
       onChange={onInputChange}
       onWheel={onWheel}
     />

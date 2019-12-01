@@ -16,18 +16,16 @@ const useStyles = makeStyles( ( theme ) => createStyles( {
   },
   documentLayout: {
     flex: 1,
-    position: 'relative',
   },
   drawFieldContainer: {
-    position: 'relative',
     width: '100%',
     height: '100%',
   },
   drawingPropertiesContainer: {
-    position: 'fixed',
+    position: 'absolute',
     margin: '1rem',
-    right: '0%',
-    bottom: '0%',
+    right: 0,
+    bottom: 0,
   },
 } ) );
 

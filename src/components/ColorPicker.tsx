@@ -9,8 +9,10 @@ interface StyleProps
 
 const useStyles = makeStyles( ( theme ) => createStyles( {
   button: ( { color }: StyleProps ) => ( {
-    minWidth: '2rem',
-    minHeight: '2rem',
+    height: '2rem',
+    width: '2rem',
+    minWidth: 0,
+    marginBottom: theme.spacing( 0.5 ),
     backgroundColor: color,
     '&:hover': {
       backgroundColor: theme.palette.augmentColor( { main: color } ).dark

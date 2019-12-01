@@ -1,14 +1,15 @@
 import React, { useEffect } from 'react';
-import { TextField, makeStyles } from '@material-ui/core';
+import { TextField, makeStyles, createStyles } from '@material-ui/core';
 
 import { getShortcutFromKeyEvent } from 'utils/shortcut';
 
-const useStyles = makeStyles( {
+const useStyles = makeStyles( ( theme ) => createStyles( {
   input: {
+    padding: theme.spacing( 0.75, 0, 0.875 ),
     textAlign: 'center',
     maxWidth: '10rem',
   },
-} );
+} ) );
 
 const noop = () => void 0;
 
@@ -49,10 +50,13 @@ const ShortcutInput: React.SFC<Props> = ( { shortcut, onChange } ) =>
 
   return (
     <TextField
-      inputProps={{
-        className: styles.input,
+      InputProps={{
+        classes: {
+          input: styles.input,
+        },
       }}
       type="text"
+      variant="outlined"
       value={localShortcut}
       onChange={noop}
       onKeyDown={onKeyDown}

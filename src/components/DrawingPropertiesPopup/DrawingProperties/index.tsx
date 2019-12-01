@@ -1,7 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Grid, MenuItem, TextField, FormControlLabel, Checkbox, Box, Typography, Button } from '@material-ui/core';
 
 import NumberInput from 'components/NumberInput';
+import ColorPicker from 'components/ColorPicker';
+
+import { selectDrawing } from 'store/reducers/drawings';
+import { currentDrawingsState } from 'store/selectors';
+
 import
 {
   BasicDrawing,
@@ -23,8 +29,6 @@ import
   VerticalAlign,
   CurvedLineDrawing
 } from 'utils/draw';
-import { selectDrawing } from 'store/reducers/drawings';
-import { currentDrawingsState } from 'store/selectors';
 
 type DrawingChangeEventHandler<D extends Drawing> = ( newDrawing: D ) => void;
 
@@ -37,50 +41,35 @@ interface Props<D extends Drawing>
 
 class DrawingPropertiesComponent<D extends Drawing> extends React.Component<Props<D>> { }
 
-type NumberInputRowChangeHandler = ( value: number ) => void;
-
-const NumberInputRow: React.SFC<{
-  value: number;
-  label: string;
-  labelWidth?: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
-  onChange: NumberInputRowChangeHandler;
-}> = ( { value, label, labelWidth = 3, onChange } ) => (
-  <div className="form-group row">
-    <label className={`col-sm-${labelWidth} col-form-label`}>{label}:</label>
-    <div className={`col-sm-${12 - labelWidth}`}>
-      <NumberInput
-        className="form-control"
-        placeholder={label}
-        value={value}
-        onChange={onChange}
-      />
-    </div>
-  </div>
-);
+type NumberInputChangeHandler = ( value: number ) => void;
 
 const XInput: React.SFC<{
   x: number;
-  onChange: NumberInputRowChangeHandler;
+  onChange: NumberInputChangeHandler;
 }> = ( { x, onChange } ) => (
-  <NumberInputRow value={x} label="X" onChange={onChange} />
+  <NumberInput value={x} label="X" onChange={onChange} />
 );
 
 const YInput: React.SFC<{
   y: number;
-  onChange: NumberInputRowChangeHandler;
+  onChange: NumberInputChangeHandler;
 }> = ( { y, onChange } ) => (
-  <NumberInputRow value={y} label="Y" onChange={onChange} />
+  <NumberInput value={y} label="Y" onChange={onChange} />
 );
 
 const XyInputs: React.SFC<{
   x: number;
   y: number;
-  onXChange: NumberInputRowChangeHandler;
-  onYChange: NumberInputRowChangeHandler;
+  onXChange: NumberInputChangeHandler;
+  onYChange: NumberInputChangeHandler;
 }> = ( { x, y, onXChange, onYChange } ) => (
   <>
-    <XInput x={x} onChange={onXChange} />
-    <YInput y={y} onChange={onYChange} />
+    <Grid item={true} xs={6}>
+      <XInput x={x} onChange={onXChange} />
+    </Grid>
+    <Grid item={true} xs={6}>
+      <YInput y={y} onChange={onYChange} />
+    </Grid>
   </>
 );
 
@@ -89,27 +78,31 @@ type LineStyleChangeEventHandler = ( lineStyleUpdate: Partial<LineStyle> ) => vo
 const LineStyleInputs: React.SFC<LineStyle & {
   onLineStyleChange: LineStyleChangeEventHandler;
 }> = ( { dash, strokeWidth, onLineStyleChange } ) => (
-  <>
-    <NumberInputRow
-      label="Width"
-      value={strokeWidth}
-      onChange={( s ) => onLineStyleChange( { strokeWidth: s } )}
-    />
-    <div className="form-group row">
-      <label className="col-sm-3 col-form-label">Dash:</label>
-      <div className="col-sm-9">
-        <select
-          className="form-control"
-          value={dash}
-          onChange={( e ) => onLineStyleChange( { dash: e.target.value as LineDashStyle } )}
-        >
-          {Object.keys( dashStyles ).map( ( dashStyle ) => (
-            <option key={dashStyle} value={dashStyle}>{dashStyle}</option>
-          ) )}
-        </select>
-      </div>
-    </div>
-  </>
+  <Grid item={true} xs={12} container={true} spacing={1}>
+    <Grid item={true} xs={6}>
+      <NumberInput
+        label="Width"
+        value={strokeWidth}
+        onChange={( s ) => onLineStyleChange( { strokeWidth: s } )}
+      />
+    </Grid>
+    <Grid item={true} xs={6}>
+      <TextField
+        label="Dash"
+        fullWidth={true}
+        variant="outlined"
+        select={true}
+        value={dash}
+        onChange={( e ) => onLineStyleChange( { dash: e.target.value as LineDashStyle } )}
+      >
+        {Object.keys( dashStyles ).map( ( dashStyle ) => (
+          <MenuItem key={dashStyle} value={dashStyle}>
+            {dashStyle}
+          </MenuItem>
+        ) )}
+      </TextField>
+    </Grid>
+  </Grid>
 );
 
 const GuideLineInputs: React.SFC<LineStyle & {
@@ -118,17 +111,14 @@ const GuideLineInputs: React.SFC<LineStyle & {
   onLineStyleChange: LineStyleChangeEventHandler;
 }> = ( { showGuideLine, onShowGuideLineChange, dash, strokeWidth, onLineStyleChange } ) => (
   <>
-    <div className="form-check">
-      <label className="form-check-label mb-2">
-        <input
-          type="checkbox"
-          className="form-check-input"
-          checked={showGuideLine}
-          onChange={( e ) => onShowGuideLineChange( e.target.checked )}
-        />
-        Show Guide Line
-    </label>
-    </div>
+    <Grid item={true} xs={12}>
+      <FormControlLabel
+        label="Show Guide Line"
+        checked={showGuideLine}
+        onChange={( e, checked ) => onShowGuideLineChange( checked )}
+        control={<Checkbox />}
+      />
+    </Grid>
     <LineStyleInputs
       dash={dash}
       strokeWidth={strokeWidth}
@@ -141,17 +131,17 @@ const ColorInput: React.SFC<{
   color: string;
   onChange: ( color: string ) => void;
 }> = ( { color, onChange } ) => (
-  <div className="form-group row">
-    <label className="col-sm-3 col-form-label">Color:</label>
-    <div className="col-sm-9">
-      <input
-        type="color"
-        className="form-control"
-        value={color}
-        onChange={( e ) => onChange( e.target.value )}
-      />
-    </div>
-  </div>
+  <Box display="flex" flexDirection="row" alignItems="center">
+    <Box mr={1}>
+      <Typography variant="body1" component="span">
+        Color:
+      </Typography>
+    </Box>
+    <ColorPicker
+      color={color}
+      onChange={onChange}
+    />
+  </Box>
 );
 
 export class BasicDrawingProperties extends DrawingPropertiesComponent<BasicDrawing<BasicDrawingTypes>>
@@ -159,17 +149,19 @@ export class BasicDrawingProperties extends DrawingPropertiesComponent<BasicDraw
   public render()
   {
     return (
-      <form>
+      <Grid container={true} spacing={1}>
         <XyInputs
           x={this.props.drawing.x}
           y={this.props.drawing.y}
           onXChange={this.onXChange}
           onYChange={this.onYChange}
         />
-        <ColorInput
-          color={this.props.drawing.color}
-          onChange={this.props.onColorChange}
-        />
+        <Grid item={true} xs={12}>
+          <ColorInput
+            color={this.props.drawing.color}
+            onChange={this.props.onColorChange}
+          />
+        </Grid>
         <GuideLineInputs
           showGuideLine={this.props.drawing.showGuideLine}
           onShowGuideLineChange={this.onShowGuideLineChange}
@@ -177,7 +169,7 @@ export class BasicDrawingProperties extends DrawingPropertiesComponent<BasicDraw
           strokeWidth={this.props.drawing.guideLine.strokeWidth}
           onLineStyleChange={this.onLineStyleChange}
         />
-      </form>
+      </Grid>
     );
   }
 
@@ -222,22 +214,26 @@ export class BetweenDrawingProperties extends DrawingPropertiesComponent<Between
   public render()
   {
     return (
-      <form>
+      <Grid container={true} spacing={1}>
         <XyInputs
           x={this.props.drawing.x}
           y={this.props.drawing.y}
           onXChange={this.onXChange}
           onYChange={this.onYChange}
         />
-        <NumberInputRow
-          value={this.props.drawing.height}
-          label="Height"
-          onChange={this.onHeightChange}
-        />
-        <ColorInput
-          color={this.props.drawing.color}
-          onChange={this.props.onColorChange}
-        />
+        <Grid item={true} xs={12}>
+          <NumberInput
+            value={this.props.drawing.height}
+            label="Height"
+            onChange={this.onHeightChange}
+          />
+        </Grid>
+        <Grid item={true} xs={12}>
+          <ColorInput
+            color={this.props.drawing.color}
+            onChange={this.props.onColorChange}
+          />
+        </Grid>
         <GuideLineInputs
           showGuideLine={this.props.drawing.showGuideLine}
           onShowGuideLineChange={this.onShowGuideLineChange}
@@ -245,7 +241,7 @@ export class BetweenDrawingProperties extends DrawingPropertiesComponent<Between
           strokeWidth={this.props.drawing.guideLine.strokeWidth}
           onLineStyleChange={this.onLineStyleChange}
         />
-      </form>
+      </Grid>
     );
   }
 
@@ -298,21 +294,23 @@ export class VerticalGridLineDrawingProperties extends DrawingPropertiesComponen
   public render()
   {
     return (
-      <form>
+      <Grid container={true} spacing={1}>
         <XInput
           x={this.props.drawing.x}
           onChange={this.onXChange}
         />
-        <ColorInput
-          color={this.props.drawing.color}
-          onChange={this.props.onColorChange}
-        />
+        <Grid item={true} xs={12}>
+          <ColorInput
+            color={this.props.drawing.color}
+            onChange={this.props.onColorChange}
+          />
+        </Grid>
         <LineStyleInputs
           dash={this.props.drawing.dash}
           strokeWidth={this.props.drawing.strokeWidth}
           onLineStyleChange={this.onLineStyleChange}
         />
-      </form>
+      </Grid>
     );
   }
 
@@ -338,21 +336,25 @@ export class HorizontalGridLineDrawingProperties extends DrawingPropertiesCompon
   public render()
   {
     return (
-      <form>
-        <YInput
-          y={this.props.drawing.y}
-          onChange={this.onYChange}
-        />
-        <ColorInput
-          color={this.props.drawing.color}
-          onChange={this.props.onColorChange}
-        />
+      <Grid container={true} spacing={1}>
+        <Grid item={true} xs={12}>
+          <YInput
+            y={this.props.drawing.y}
+            onChange={this.onYChange}
+          />
+        </Grid>
+        <Grid item={true} xs={12}>
+          <ColorInput
+            color={this.props.drawing.color}
+            onChange={this.props.onColorChange}
+          />
+        </Grid>
         <LineStyleInputs
           dash={this.props.drawing.dash}
           strokeWidth={this.props.drawing.strokeWidth}
           onLineStyleChange={this.onLineStyleChange}
         />
-      </form>
+      </Grid>
     );
   }
 
@@ -378,28 +380,34 @@ export class PlaneDrawingProperties extends DrawingPropertiesComponent<PlaneDraw
   public render()
   {
     return (
-      <form>
+      <Grid container={true} spacing={1}>
         <XyInputs
           x={this.props.drawing.x}
           y={this.props.drawing.y}
           onXChange={this.onXChange}
           onYChange={this.onYChange}
         />
-        <NumberInputRow
-          value={this.props.drawing.size}
-          label="Size"
-          onChange={this.onSizeChange}
-        />
-        <NumberInputRow
-          value={this.props.drawing.rotation}
-          label="Rotation"
-          onChange={this.onRotationChange}
-        />
-        <ColorInput
-          color={this.props.drawing.color}
-          onChange={this.props.onColorChange}
-        />
-      </form>
+        <Grid item={true} xs={6}>
+          <NumberInput
+            value={this.props.drawing.size}
+            label="Size"
+            onChange={this.onSizeChange}
+          />
+        </Grid>
+        <Grid item={true} xs={6}>
+          <NumberInput
+            value={this.props.drawing.rotation}
+            label="Rotation"
+            onChange={this.onRotationChange}
+          />
+        </Grid>
+        <Grid item={true} xs={12}>
+          <ColorInput
+            color={this.props.drawing.color}
+            onChange={this.props.onColorChange}
+          />
+        </Grid>
+      </Grid>
     );
   }
 
@@ -476,24 +484,38 @@ const EndPointDrawingProperties = endPointConnecter( class extends React.Compone
     {
       let anchorId = endPoint.anchorId;
       let anchor = this.props.drawings[ anchorId ];
+
       return (
-        <div className="d-flex flex-row align-items-center mb-2">
-          <b style={{ color: anchor.color }}>{drawingToolDisplayNames[ anchor.type ]}</b>
-          <button
-            type="button"
-            className="btn btn-sm btn-outline-primary ml-2"
-            onClick={() => this.props.selectDrawing( anchorId )}
-          >
-            Select
-          </button>
-          <button
-            type="button"
-            className="btn btn-sm btn-outline-warning ml-2"
-            onClick={this.onMakeAbsoluteClick}
-          >
-            Make Absolute
-          </button>
-        </div>
+        <Grid item={true} xs={12}>
+          <Box display="flex" flexDirection="row" alignItems="center">
+            <Box flex={1}>
+              <Typography
+                variant="body1"
+                component="span"
+              >
+                {drawingToolDisplayNames[ anchor.type ]}:
+              </Typography>
+            </Box>
+            <Box mx={1}>
+              <Button
+                variant="outlined"
+                color="primary"
+                size="small"
+                onClick={() => this.props.selectDrawing( anchorId )}
+              >
+                Select
+              </Button>
+            </Box>
+            <Button
+              variant="outlined"
+              color="secondary"
+              size="small"
+              onClick={this.onMakeAbsoluteClick}
+            >
+              Make Absolute
+            </Button>
+          </Box>
+        </Grid>
       );
     }
     else
@@ -621,29 +643,35 @@ export class PathLineDrawingProperties extends DrawingPropertiesComponent<PathLi
   public render()
   {
     return (
-      <form>
-        <b>Start:</b>
+      <Grid container={true} spacing={1}>
+        <Grid item={true} xs={12}>
+          <Typography variant="h6" component="span">Start:</Typography>
+        </Grid>
         <EndPointDrawingProperties
           start={true}
           drawing={this.props.drawing}
           onDrawingChange={this.props.onChange as EndPointDrawingChangeEventHandler}
         />
-        <b>End:</b>
+        <Grid item={true} xs={12}>
+          <Typography variant="h6" component="span">End:</Typography>
+        </Grid>
         <EndPointDrawingProperties
           start={false}
           drawing={this.props.drawing}
           onDrawingChange={this.props.onChange as EndPointDrawingChangeEventHandler}
         />
-        <ColorInput
-          color={this.props.drawing.color}
-          onChange={this.props.onColorChange}
-        />
+        <Grid item={true} xs={12}>
+          <ColorInput
+            color={this.props.drawing.color}
+            onChange={this.props.onColorChange}
+          />
+        </Grid>
         <LineStyleInputs
           dash={this.props.drawing.dash}
           strokeWidth={this.props.drawing.strokeWidth}
           onLineStyleChange={this.onLineStyleChange}
         />
-      </form>
+      </Grid>
     );
   }
 
@@ -661,29 +689,35 @@ export class CurvedLineDrawingProperties extends DrawingPropertiesComponent<Curv
   public render()
   {
     return (
-      <form>
-        <b>Start:</b>
+      <Grid container={true} spacing={1}>
+        <Grid item={true} xs={12}>
+          <Typography variant="h6" component="span">Start:</Typography>
+        </Grid>
         <EndPointDrawingProperties
           start={true}
           drawing={this.props.drawing}
           onDrawingChange={this.props.onChange as EndPointDrawingChangeEventHandler}
         />
-        <b>End:</b>
+        <Grid item={true} xs={12}>
+          <Typography variant="h6" component="span">End:</Typography>
+        </Grid>
         <EndPointDrawingProperties
           start={false}
           drawing={this.props.drawing}
           onDrawingChange={this.props.onChange as EndPointDrawingChangeEventHandler}
         />
-        <ColorInput
-          color={this.props.drawing.color}
-          onChange={this.props.onColorChange}
-        />
+        <Grid item={true} xs={12}>
+          <ColorInput
+            color={this.props.drawing.color}
+            onChange={this.props.onColorChange}
+          />
+        </Grid>
         <LineStyleInputs
           dash={this.props.drawing.dash}
           strokeWidth={this.props.drawing.strokeWidth}
           onLineStyleChange={this.onLineStyleChange}
         />
-      </form>
+      </Grid>
     );
   }
 
@@ -701,68 +735,67 @@ export class TextDrawingProperties extends DrawingPropertiesComponent<TextDrawin
   public render()
   {
     return (
-      <form>
-
-        <div className="form-group">
-          <textarea
-            className="form-control"
+      <Grid container={true} spacing={1}>
+        <Grid item={true} xs={12}>
+          <TextField
+            label="Text"
             rows={4}
-            cols={35}
+            fullWidth={true}
+            variant="outlined"
             autoFocus={true}
+            multiline={true}
             value={this.props.drawing.text}
             onChange={this.onTextChange}
           />
-        </div>
-
+        </Grid>
         <XyInputs
           x={this.props.drawing.x}
           y={this.props.drawing.y}
           onXChange={this.onXChange}
           onYChange={this.onYChange}
         />
-        <ColorInput
-          color={this.props.drawing.color}
-          onChange={this.props.onColorChange}
-        />
-
-        <NumberInputRow
-          label="Font Size"
-          labelWidth={6}
-          value={this.props.drawing.fontSize}
-          onChange={this.onFontSizeChange}
-        />
-
-        <div className="form-group row">
-          <label className="col-sm-6 col-form-label">Horizontal Align:</label>
-          <div className="col-sm-6">
-            <select
-              className="form-control"
-              value={this.props.drawing.horizontalAlign}
-              onChange={this.onHorizontalAlignChange}
-            >
-              {Object.keys( HorizontalAlign ).map( ( horizontalAlign ) => (
-                <option key={horizontalAlign} value={horizontalAlign}>{horizontalAlign}</option>
-              ) )}
-            </select>
-          </div>
-        </div>
-
-        <div className="form-group row">
-          <label className="col-sm-6 col-form-label">Vertical Align:</label>
-          <div className="col-sm-6">
-            <select
-              className="form-control"
-              value={this.props.drawing.verticalAlign}
-              onChange={this.onVerticalAlignChange}
-            >
-              {Object.keys( VerticalAlign ).map( ( verticalAlign ) => (
-                <option key={verticalAlign} value={verticalAlign}>{verticalAlign}</option>
-              ) )}
-            </select>
-          </div>
-        </div>
-
-      </form>
+        <Grid item={true} xs={12}>
+          <ColorInput
+            color={this.props.drawing.color}
+            onChange={this.props.onColorChange}
+          />
+        </Grid>
+        <Grid item={true} xs={4}>
+          <NumberInput
+            label="Font Size"
+            value={this.props.drawing.fontSize}
+            onChange={this.onFontSizeChange}
+          />
+        </Grid>
+        <Grid item={true} xs={4}>
+          <TextField
+            label="Horizontal Align"
+            fullWidth={true}
+            variant="outlined"
+            select={true}
+            value={this.props.drawing.horizontalAlign}
+            onChange={this.onHorizontalAlignChange}
+          >
+            {Object.keys( HorizontalAlign ).map( ( horizontalAlign ) => (
+              <MenuItem key={horizontalAlign} value={horizontalAlign}>{horizontalAlign}</MenuItem>
+            ) )}
+          </TextField>
+        </Grid>
+        <Grid item={true} xs={4}>
+          <TextField
+            label="Vertical Align"
+            fullWidth={true}
+            variant="outlined"
+            select={true}
+            value={this.props.drawing.verticalAlign}
+            onChange={this.onVerticalAlignChange}
+          >
+            {Object.keys( VerticalAlign ).map( ( verticalAlign ) => (
+              <MenuItem key={verticalAlign} value={verticalAlign}>{verticalAlign}</MenuItem>
+            ) )}
+          </TextField>
+        </Grid>
+      </Grid>
     );
   }
 
@@ -798,7 +831,7 @@ export class TextDrawingProperties extends DrawingPropertiesComponent<TextDrawin
     } );
   }
 
-  private onHorizontalAlignChange = ( e: React.ChangeEvent<HTMLSelectElement> ) =>
+  private onHorizontalAlignChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
   {
     this.props.onChange( {
       ...this.props.drawing,
@@ -806,7 +839,7 @@ export class TextDrawingProperties extends DrawingPropertiesComponent<TextDrawin
     } );
   }
 
-  private onVerticalAlignChange = ( e: React.ChangeEvent<HTMLSelectElement> ) =>
+  private onVerticalAlignChange = ( e: React.ChangeEvent<HTMLInputElement> ) =>
   {
     this.props.onChange( {
       ...this.props.drawing,

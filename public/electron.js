@@ -81,7 +81,7 @@ function createWindow()
     width: 1000,
     height: 800,
     minWidth: 600,
-    minHeight: 750,
+    minHeight: 600,
     show: false,
     backgroundColor: "#fff",
     icon: path.join( __dirname, 'icon.ico' ),

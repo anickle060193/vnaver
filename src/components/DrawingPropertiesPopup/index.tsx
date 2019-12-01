@@ -1,5 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import classNames from 'classnames';
+import { Button, makeStyles, createStyles, Paper, Typography, IconButton } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 
 import
 {
@@ -12,12 +15,47 @@ import
   TextDrawingProperties,
   CurvedLineDrawingProperties
 } from './DrawingProperties';
+
 import { deleteDrawing, updateDrawing, deselectDrawing } from 'store/reducers/drawings';
 import { currentDrawingsState } from 'store/selectors';
+
 import { Drawing, DrawingType, DrawingMap, drawingToolDisplayNames } from 'utils/draw';
 import { assertNever } from 'utils/utils';
 
-import './styles.css';
+const useStyles = makeStyles( ( theme ) => createStyles( {
+  root: {
+    padding: theme.spacing( 2 ),
+    position: 'relative',
+    maxWidth: '100vw',
+    minWidth: '400px',
+    width: '20vw',
+  },
+  transparent: {
+    opacity: 0.3,
+    '&:hover': {
+      opacity: 1.0,
+    },
+  },
+  title: {
+    width: '100%',
+    textAlign: 'center',
+    marginBottom: theme.spacing( 1 ),
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    margin: theme.spacing( 1 ),
+  },
+  deleteButton: {
+    marginTop: theme.spacing( 1 ),
+    backgroundColor: theme.palette.error.main,
+    color: theme.palette.error.contrastText,
+    '&:hover': {
+      backgroundColor: theme.palette.error.dark,
+    },
+  },
+} ) );
 
 interface PropsFromState
 {
@@ -35,159 +73,170 @@ interface PropsFromDispatch
 
 type Props = PropsFromState & PropsFromDispatch;
 
-class DrawingProperties extends React.Component<Props>
+const DrawingPropertiesPopup: React.SFC<Props> = ( {
+  drawings,
+  selectedDrawingId,
+  transparentDrawingProperties,
+  ...actions
+} ) =>
 {
-  public render()
+  const styles = useStyles();
+
+  if( !selectedDrawingId )
   {
-    if( !this.props.selectedDrawingId )
-    {
-      return null;
-    }
-
-    let selectedDrawing = this.props.drawings[ this.props.selectedDrawingId ];
-
-    let drawingProperties: React.ReactNode;
-
-    if( selectedDrawing.type === DrawingType.Above
-      || selectedDrawing.type === DrawingType.At
-      || selectedDrawing.type === DrawingType.Below )
-    {
-      drawingProperties = (
-        <BasicDrawingProperties
-          drawing={selectedDrawing}
-          onChange={this.onDrawingChange}
-          onColorChange={( color ) => this.onColorChange( selectedDrawing, color )}
-        />
-      );
-    }
-    else if( selectedDrawing.type === DrawingType.Between )
-    {
-      drawingProperties = (
-        <BetweenDrawingProperties
-          drawing={selectedDrawing}
-          onChange={this.onDrawingChange}
-          onColorChange={( color ) => this.onColorChange( selectedDrawing, color )}
-        />
-      );
-    }
-    else if( selectedDrawing.type === DrawingType.PathLine )
-    {
-      drawingProperties = (
-        <PathLineDrawingProperties
-          drawing={selectedDrawing}
-          onChange={this.onDrawingChange}
-          onColorChange={( color ) => this.onColorChange( selectedDrawing, color )}
-        />
-      );
-    }
-    else if( selectedDrawing.type === DrawingType.CurvedLine )
-    {
-      drawingProperties = (
-        <CurvedLineDrawingProperties
-          drawing={selectedDrawing}
-          onChange={this.onDrawingChange}
-          onColorChange={( color ) => this.onColorChange( selectedDrawing, color )}
-        />
-      );
-    }
-    else if( selectedDrawing.type === DrawingType.VerticalGridLine )
-    {
-      drawingProperties = (
-        <VerticalGridLineDrawingProperties
-          drawing={selectedDrawing}
-          onChange={this.onDrawingChange}
-          onColorChange={( color ) => this.onColorChange( selectedDrawing, color )}
-        />
-      );
-    }
-    else if( selectedDrawing.type === DrawingType.HorizontalGridLine )
-    {
-      drawingProperties = (
-        <HorizontalGridLineDrawingProperties
-          drawing={selectedDrawing}
-          onChange={this.onDrawingChange}
-          onColorChange={( color ) => this.onColorChange( selectedDrawing, color )}
-        />
-      );
-    }
-    else if( selectedDrawing.type === DrawingType.Plane )
-    {
-      drawingProperties = (
-        <PlaneDrawingProperties
-          drawing={selectedDrawing}
-          onChange={this.onDrawingChange}
-          onColorChange={( color ) => this.onColorChange( selectedDrawing, color )}
-        />
-      );
-    }
-    else if( selectedDrawing.type === DrawingType.Text )
-    {
-      drawingProperties = (
-        <TextDrawingProperties
-          drawing={selectedDrawing}
-          onChange={this.onDrawingChange}
-          onColorChange={( color ) => this.onColorChange( selectedDrawing, color )}
-        />
-      );
-    }
-    else
-    {
-      throw assertNever( selectedDrawing.type );
-    }
-
-    return (
-      <div
-        className={[
-          'drawing-properties',
-          this.props.transparentDrawingProperties ? 'drawing-properties-transparent' : ''
-        ].join( ' ' )}
-      >
-        <b className="drawing-properties-title">{drawingToolDisplayNames[ selectedDrawing.type ]}</b>
-        <button
-          type="button"
-          className="close drawing-properties-close"
-          onClick={this.onCloseClick}
-        >
-          &times;
-        </button>
-        {drawingProperties}
-        <button
-          type="button"
-          className="btn btn-danger"
-          onClick={this.onDeleteClick}
-        >
-          Delete
-        </button>
-      </div>
-    );
+    return null;
   }
 
-  private onCloseClick = () =>
+  const selectedDrawing = drawings[ selectedDrawingId ];
+
+  function onCloseClick()
   {
-    this.props.deselectDrawing();
+    actions.deselectDrawing();
   }
 
-  private onDrawingChange = ( drawing: Drawing ) =>
+  function onDrawingChange( drawing: Drawing )
   {
-    this.props.updateDrawing( drawing );
+    actions.updateDrawing( drawing );
   }
 
-  private onColorChange = ( drawing: Drawing, color: string ) =>
+  function onColorChange( drawing: Drawing, color: string )
   {
-    this.props.updateDrawing( {
+    actions.updateDrawing( {
       ...drawing,
       color
     } );
   }
 
-  private onDeleteClick = () =>
+  function onDeleteClick()
   {
-    if( this.props.selectedDrawingId )
+    if( selectedDrawingId )
     {
-      this.props.deleteDrawing( this.props.selectedDrawingId );
+      actions.deleteDrawing( selectedDrawingId );
     }
   }
-}
+
+  let drawingProperties: React.ReactNode;
+
+  if( selectedDrawing.type === DrawingType.Above
+    || selectedDrawing.type === DrawingType.At
+    || selectedDrawing.type === DrawingType.Below )
+  {
+    drawingProperties = (
+      <BasicDrawingProperties
+        drawing={selectedDrawing}
+        onChange={onDrawingChange}
+        onColorChange={( color ) => onColorChange( selectedDrawing, color )}
+      />
+    );
+  }
+  else if( selectedDrawing.type === DrawingType.Between )
+  {
+    drawingProperties = (
+      <BetweenDrawingProperties
+        drawing={selectedDrawing}
+        onChange={onDrawingChange}
+        onColorChange={( color ) => onColorChange( selectedDrawing, color )}
+      />
+    );
+  }
+  else if( selectedDrawing.type === DrawingType.PathLine )
+  {
+    drawingProperties = (
+      <PathLineDrawingProperties
+        drawing={selectedDrawing}
+        onChange={onDrawingChange}
+        onColorChange={( color ) => onColorChange( selectedDrawing, color )}
+      />
+    );
+  }
+  else if( selectedDrawing.type === DrawingType.CurvedLine )
+  {
+    drawingProperties = (
+      <CurvedLineDrawingProperties
+        drawing={selectedDrawing}
+        onChange={onDrawingChange}
+        onColorChange={( color ) => onColorChange( selectedDrawing, color )}
+      />
+    );
+  }
+  else if( selectedDrawing.type === DrawingType.VerticalGridLine )
+  {
+    drawingProperties = (
+      <VerticalGridLineDrawingProperties
+        drawing={selectedDrawing}
+        onChange={onDrawingChange}
+        onColorChange={( color ) => onColorChange( selectedDrawing, color )}
+      />
+    );
+  }
+  else if( selectedDrawing.type === DrawingType.HorizontalGridLine )
+  {
+    drawingProperties = (
+      <HorizontalGridLineDrawingProperties
+        drawing={selectedDrawing}
+        onChange={onDrawingChange}
+        onColorChange={( color ) => onColorChange( selectedDrawing, color )}
+      />
+    );
+  }
+  else if( selectedDrawing.type === DrawingType.Plane )
+  {
+    drawingProperties = (
+      <PlaneDrawingProperties
+        drawing={selectedDrawing}
+        onChange={onDrawingChange}
+        onColorChange={( color ) => onColorChange( selectedDrawing, color )}
+      />
+    );
+  }
+  else if( selectedDrawing.type === DrawingType.Text )
+  {
+    drawingProperties = (
+      <TextDrawingProperties
+        drawing={selectedDrawing}
+        onChange={onDrawingChange}
+        onColorChange={( color ) => onColorChange( selectedDrawing, color )}
+      />
+    );
+  }
+  else
+  {
+    throw assertNever( selectedDrawing.type );
+  }
+
+  return (
+    <Paper
+      className={classNames(
+        styles.root,
+        transparentDrawingProperties && styles.transparent,
+      )}
+    >
+      <Typography
+        className={styles.title}
+        variant="h5"
+        component="span"
+        display="block"
+      >
+        {drawingToolDisplayNames[ selectedDrawing.type ]}
+      </Typography>
+      <IconButton
+        className={styles.closeButton}
+        size="small"
+        onClick={onCloseClick}
+      >
+        <CloseIcon />
+      </IconButton>
+      {drawingProperties}
+      <Button
+        className={styles.deleteButton}
+        variant="contained"
+        onClick={onDeleteClick}
+      >
+        Delete
+      </Button>
+    </Paper>
+  );
+};
 
 export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
   ( state ) => ( {
@@ -200,4 +249,4 @@ export default connect<PropsFromState, PropsFromDispatch, {}, RootState>(
     updateDrawing,
     deselectDrawing
   }
-)( DrawingProperties );
+)( DrawingPropertiesPopup );
