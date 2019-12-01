@@ -85,23 +85,15 @@ export interface LineStyle
   strokeWidth: number;
 }
 
-interface ContainsGuideLineDrawing<T extends DrawingType> extends DrawingBase<T>
-{
-  showGuideLine: boolean;
-  guideLine: LineStyle & {
-    vertical: boolean;
-  };
-}
-
 export type BasicDrawingTypes = DrawingType.Above | DrawingType.At | DrawingType.Below;
 
-export interface BasicDrawing<T extends BasicDrawingTypes> extends ContainsGuideLineDrawing<T>
+export interface BasicDrawing<T extends BasicDrawingTypes> extends DrawingBase<T>
 {
   x: number;
   y: number;
 }
 
-export interface BetweenDrawing extends ContainsGuideLineDrawing<DrawingType.Between>
+export interface BetweenDrawing extends DrawingBase<DrawingType.Between>
 {
   x: number;
   y: number;

@@ -9,11 +9,9 @@ const MAX_COORDINATE = +1000000;
 
 enum Schemas
 {
-  Array = 'Array',
   Color = 'Color',
   DrawingBase = 'DrawingBase',
   LineStyle = 'LineStyle',
-  ContainsGuideLineDrawing = 'ContainsGuideLineDrawing',
   BasicDrawing = 'BasicDrawing',
   BetweenDrawing = 'BetweenDrawing',
   ConnectedEndPoint = 'ConnectedEndPoint',
@@ -67,10 +65,6 @@ export const validator = defineKeywords( new Ajv( {
   verbose: true
 } ), 'select' )
   .addSchema( {
-    $id: Schemas.Array,
-    type: 'array'
-  } )
-  .addSchema( {
     $id: Schemas.Color,
     type: 'string',
     pattern: '^#[0-9a-fA-F]{6}'
@@ -95,18 +89,6 @@ export const validator = defineKeywords( new Ajv( {
     }
   } )
   .addSchema( {
-    $id: Schemas.ContainsGuideLineDrawing,
-    type: 'object',
-    required: [ 'showGuideLine', 'guideLine' ],
-    properties: {
-      showGuideLine: { type: 'boolean' },
-      guideLine: { $ref: Schemas.LineStyle }
-    },
-    allOf: [
-      { $ref: Schemas.DrawingBase }
-    ]
-  } )
-  .addSchema( {
     $id: Schemas.BasicDrawing,
     type: 'object',
     required: [ 'type', 'x', 'y' ],
@@ -115,9 +97,6 @@ export const validator = defineKeywords( new Ajv( {
       x: { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE },
       y: { type: 'number', minimum: MIN_COORDINATE, maximum: MAX_COORDINATE }
     },
-    allOf: [
-      { $ref: Schemas.ContainsGuideLineDrawing }
-    ]
   } )
   .addSchema( {
     $id: Schemas.BetweenDrawing,
@@ -127,9 +106,6 @@ export const validator = defineKeywords( new Ajv( {
       type: { const: DrawingType.Between },
       height: { type: 'number', minimum: 0, maximum: MAX_COORDINATE }
     },
-    allOf: [
-      { $ref: Schemas.ContainsGuideLineDrawing }
-    ]
   } )
   .addSchema( {
     $id: Schemas.ConnectedEndPoint,
@@ -306,7 +282,8 @@ export function parseDrawings( drawingsJson: string ): DrawingsParseResult
   try
   {
     let parsedDrawings = JSON.parse( drawingsJson );
-    if( !validator.validate( Schemas.Array, parsedDrawings ) )
+
+    if( !Array.isArray( parsedDrawings ) )
     {
       return {
         errors: [ 'Parsed drawings are not an array.' ]

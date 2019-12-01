@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Grid, MenuItem, TextField, FormControlLabel, Checkbox, Box, Typography, Button } from '@material-ui/core';
+import { Grid, MenuItem, TextField, Box, Typography, Button } from '@material-ui/core';
 
 import NumberInput from 'components/NumberInput';
 import ColorPicker from 'components/ColorPicker';
@@ -105,28 +105,6 @@ const LineStyleInputs: React.SFC<LineStyle & {
   </Grid>
 );
 
-const GuideLineInputs: React.SFC<LineStyle & {
-  showGuideLine: boolean;
-  onShowGuideLineChange: ( showGuideLine: boolean ) => void;
-  onLineStyleChange: LineStyleChangeEventHandler;
-}> = ( { showGuideLine, onShowGuideLineChange, dash, strokeWidth, onLineStyleChange } ) => (
-  <>
-    <Grid item={true} xs={12}>
-      <FormControlLabel
-        label="Show Guide Line"
-        checked={showGuideLine}
-        onChange={( e, checked ) => onShowGuideLineChange( checked )}
-        control={<Checkbox />}
-      />
-    </Grid>
-    <LineStyleInputs
-      dash={dash}
-      strokeWidth={strokeWidth}
-      onLineStyleChange={onLineStyleChange}
-    />
-  </>
-);
-
 const ColorInput: React.SFC<{
   color: string;
   onChange: ( color: string ) => void;
@@ -162,13 +140,6 @@ export class BasicDrawingProperties extends DrawingPropertiesComponent<BasicDraw
             onChange={this.props.onColorChange}
           />
         </Grid>
-        <GuideLineInputs
-          showGuideLine={this.props.drawing.showGuideLine}
-          onShowGuideLineChange={this.onShowGuideLineChange}
-          dash={this.props.drawing.guideLine.dash}
-          strokeWidth={this.props.drawing.guideLine.strokeWidth}
-          onLineStyleChange={this.onLineStyleChange}
-        />
       </Grid>
     );
   }
@@ -186,25 +157,6 @@ export class BasicDrawingProperties extends DrawingPropertiesComponent<BasicDraw
     this.props.onChange( {
       ...this.props.drawing,
       y
-    } );
-  }
-
-  private onShowGuideLineChange = ( showGuideLine: boolean ) =>
-  {
-    this.props.onChange( {
-      ...this.props.drawing,
-      showGuideLine
-    } );
-  }
-
-  private onLineStyleChange = ( lineStyle: Partial<LineStyle> ) =>
-  {
-    this.props.onChange( {
-      ...this.props.drawing,
-      guideLine: {
-        ...this.props.drawing.guideLine,
-        ...lineStyle
-      }
     } );
   }
 }
@@ -234,13 +186,6 @@ export class BetweenDrawingProperties extends DrawingPropertiesComponent<Between
             onChange={this.props.onColorChange}
           />
         </Grid>
-        <GuideLineInputs
-          showGuideLine={this.props.drawing.showGuideLine}
-          onShowGuideLineChange={this.onShowGuideLineChange}
-          dash={this.props.drawing.guideLine.dash}
-          strokeWidth={this.props.drawing.guideLine.strokeWidth}
-          onLineStyleChange={this.onLineStyleChange}
-        />
       </Grid>
     );
   }
@@ -266,25 +211,6 @@ export class BetweenDrawingProperties extends DrawingPropertiesComponent<Between
     this.props.onChange( {
       ...this.props.drawing,
       height
-    } );
-  }
-
-  private onShowGuideLineChange = ( showGuideLine: boolean ) =>
-  {
-    this.props.onChange( {
-      ...this.props.drawing,
-      showGuideLine
-    } );
-  }
-
-  private onLineStyleChange = ( lineStyle: Partial<LineStyle> ) =>
-  {
-    this.props.onChange( {
-      ...this.props.drawing,
-      guideLine: {
-        ...this.props.drawing.guideLine,
-        ...lineStyle
-      }
     } );
   }
 }

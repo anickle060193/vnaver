@@ -37,11 +37,6 @@ const DEFAULT_LINE_STYLE: LineStyle = {
   strokeWidth: 2
 };
 
-const DEFAULT_GUIDE_LINE_STYLE: LineStyle = {
-  dash: LineDashStyle.Solid,
-  strokeWidth: 0.5
-};
-
 const DEFAULT_PATH_LINE_STYLE: LineStyle = {
   dash: LineDashStyle.Solid,
   strokeWidth: 2
@@ -188,11 +183,6 @@ class DrawField extends React.Component<Props, State>
                 x: this.state.startX,
                 y: Math.min( this.state.mouseY, this.state.startY ),
                 height: Math.abs( this.state.mouseY - this.state.startY ),
-                showGuideLine: false,
-                guideLine: {
-                  ...DEFAULT_GUIDE_LINE_STYLE,
-                  vertical: true
-                }
               }}
             />
           );
@@ -209,11 +199,6 @@ class DrawField extends React.Component<Props, State>
                 x: this.state.mouseX,
                 y: this.state.mouseY,
                 height: 0,
-                showGuideLine: false,
-                guideLine: {
-                  ...DEFAULT_GUIDE_LINE_STYLE,
-                  vertical: true
-                }
               }}
             />
           );
@@ -338,11 +323,6 @@ class DrawField extends React.Component<Props, State>
               color: this.props.defaultDrawingColors[ this.props.tool ],
               x: this.state.mouseX,
               y: this.state.mouseY,
-              showGuideLine: false,
-              guideLine: {
-                ...DEFAULT_GUIDE_LINE_STYLE,
-                vertical: true
-              }
             }}
           />
         );
@@ -757,11 +737,6 @@ class DrawField extends React.Component<Props, State>
               x: this.state.startX,
               y: Math.min( y, this.state.startY ),
               height: diff,
-              showGuideLine: true,
-              guideLine: {
-                ...DEFAULT_GUIDE_LINE_STYLE,
-                vertical: true
-              }
             } );
           }
         }
@@ -850,11 +825,6 @@ class DrawField extends React.Component<Props, State>
             color: this.props.defaultDrawingColors[ this.props.tool ],
             x: x,
             y: y,
-            showGuideLine: true,
-            guideLine: {
-              ...DEFAULT_GUIDE_LINE_STYLE,
-              vertical: true
-            }
           } );
         }
         else

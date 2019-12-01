@@ -74,34 +74,8 @@ const HorizontalGuideLine: React.SFC<HorizontalGuideLineProps> = ( { y, color, s
   />
 );
 
-interface GuideLineProps extends VerticalGuideLineProps, HorizontalGuideLineProps
-{
-  vertical: boolean;
-}
-
-const GuideLine: React.SFC<GuideLineProps> = ( { x, y, vertical, color, dash, strokeWidth, hitEnabled } ) => (
-  vertical ?
-    (
-      <VerticalGuideLine x={x} color={color} strokeWidth={strokeWidth} dash={dash} hitEnabled={hitEnabled} />
-    ) :
-    (
-      <HorizontalGuideLine y={y} color={color} strokeWidth={strokeWidth} dash={dash} hitEnabled={hitEnabled} />
-    )
-);
-
 export const Above: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Above>>> = ( { drawing, onMouseDown, onMouseUp } ) => (
   <Group onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
-    {drawing.showGuideLine && (
-      <GuideLine
-        x={drawing.x}
-        y={drawing.y}
-        color={drawing.color}
-        vertical={drawing.guideLine.vertical}
-        strokeWidth={drawing.guideLine.strokeWidth}
-        dash={drawing.guideLine.dash}
-        hitEnabled={false}
-      />
-    )}
     <Path
       x={drawing.x - ARROW_SIZE / 2}
       y={drawing.y - ARROW_SIZE / 2 + 5}
@@ -114,17 +88,6 @@ export const Above: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Abo
 
 export const At: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.At>>> = ( { drawing, onMouseDown, onMouseUp } ) => (
   <Group onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
-    {drawing.showGuideLine && (
-      <GuideLine
-        x={drawing.x}
-        y={drawing.y}
-        color={drawing.color}
-        vertical={drawing.guideLine.vertical}
-        strokeWidth={drawing.guideLine.strokeWidth}
-        dash={drawing.guideLine.dash}
-        hitEnabled={false}
-      />
-    )}
     <Path
       x={drawing.x - ARROW_SIZE / 2}
       y={drawing.y - ARROW_SIZE * 3 / 4 + 2}
@@ -144,17 +107,6 @@ export const At: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.At>>> 
 
 export const Below: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Below>>> = ( { drawing, onMouseDown, onMouseUp } ) => (
   <Group onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
-    {drawing.showGuideLine && (
-      <GuideLine
-        x={drawing.x}
-        y={drawing.y}
-        color={drawing.color}
-        vertical={drawing.guideLine.vertical}
-        strokeWidth={drawing.guideLine.strokeWidth}
-        dash={drawing.guideLine.dash}
-        hitEnabled={false}
-      />
-    )}
     <Path
       x={drawing.x - ARROW_SIZE / 2}
       y={drawing.y - ARROW_SIZE + 9}
@@ -167,17 +119,6 @@ export const Below: React.SFC<DrawingComponentProps<BasicDrawing<DrawingType.Bel
 
 export const Between: React.SFC<DrawingComponentProps<BetweenDrawing>> = ( { drawing, onMouseDown, onMouseUp } ) => (
   <Group onMouseDown={onMouseDown} onMouseUp={onMouseUp}>
-    {drawing.showGuideLine && (
-      <GuideLine
-        x={drawing.x}
-        y={drawing.y}
-        color={drawing.color}
-        vertical={drawing.guideLine.vertical}
-        strokeWidth={drawing.guideLine.strokeWidth}
-        dash={drawing.guideLine.dash}
-        hitEnabled={false}
-      />
-    )}
     <Path
       x={drawing.x - ARROW_SIZE / 2}
       y={drawing.y - ARROW_SIZE * 2 / 3}
