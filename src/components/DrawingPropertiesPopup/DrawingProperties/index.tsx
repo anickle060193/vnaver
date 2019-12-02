@@ -571,7 +571,7 @@ export class PathLineDrawingProperties extends DrawingPropertiesComponent<PathLi
     return (
       <Grid container={true} spacing={1}>
         <Grid item={true} xs={12}>
-          <Typography variant="h6" component="span">Start:</Typography>
+          <Typography variant="body1" component="span">Start:</Typography>
         </Grid>
         <EndPointDrawingProperties
           start={true}
@@ -579,7 +579,7 @@ export class PathLineDrawingProperties extends DrawingPropertiesComponent<PathLi
           onDrawingChange={this.props.onChange as EndPointDrawingChangeEventHandler}
         />
         <Grid item={true} xs={12}>
-          <Typography variant="h6" component="span">End:</Typography>
+          <Typography variant="body1" component="span">End:</Typography>
         </Grid>
         <EndPointDrawingProperties
           start={false}
@@ -617,7 +617,7 @@ export class CurvedLineDrawingProperties extends DrawingPropertiesComponent<Curv
     return (
       <Grid container={true} spacing={1}>
         <Grid item={true} xs={12}>
-          <Typography variant="h6" component="span">Start:</Typography>
+          <Typography variant="body1" component="span">Start:</Typography>
         </Grid>
         <EndPointDrawingProperties
           start={true}
@@ -625,7 +625,7 @@ export class CurvedLineDrawingProperties extends DrawingPropertiesComponent<Curv
           onDrawingChange={this.props.onChange as EndPointDrawingChangeEventHandler}
         />
         <Grid item={true} xs={12}>
-          <Typography variant="h6" component="span">End:</Typography>
+          <Typography variant="body1" component="span">End:</Typography>
         </Grid>
         <EndPointDrawingProperties
           start={false}
