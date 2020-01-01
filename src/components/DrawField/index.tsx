@@ -617,16 +617,6 @@ class DrawField extends React.Component<Props, State>
           }
         }
       }
-      else if( this.props.tool === Tool.Cursor )
-      {
-        this.moved = true;
-
-        this.setState( { dragging: true } );
-
-        let originX = this.props.originX + e.movementX;
-        let originY = this.props.originY + e.movementY;
-        this.props.setOrigin( { originX, originY } );
-      }
 
       if( this.moved )
       {
@@ -878,7 +868,8 @@ class DrawField extends React.Component<Props, State>
   {
     if( e.evt.button === 0 )
     {
-      if( this.props.tool === Tool.Cursor )
+      if( this.props.tool === Tool.Cursor
+        && !this.state.ctrlDown )
       {
         this.props.selectDrawing( drawing.id );
 
