@@ -39,7 +39,7 @@
     "react-start": "cross-env NODE_ENV=development react-scripts start",
     "pack": "yarn run build && electron-builder --dir",
     "dist": "yarn run build && electron-builder",
-    "release": "yarn run build && env-cmd ./secret.env electron-builder --publish always",
+    "release": "yarn run build && env-cmd -f ./secret.env electron-builder --publish always",
     "postinstall": "electron-builder install-app-deps"
   },
   "eslintConfig": {
@@ -66,10 +66,9 @@
     "classnames": "^2.2.6",
     "concurrently": "^5.0.0",
     "cross-env": "^6.0.3",
-    "electron": "^7.1.2",
-    "electron-builder": "^21.2.0",
     "electron-log": "^3.0.9",
     "electron-updater": "^4.2.0",
+    "env-cmd": "^10.0.1",
     "konva": "^4.0.18",
     "react": "^16.12.0",
     "react-color": "^2.17.3",
@@ -89,5 +88,9 @@
     "typescript-fsa-reducers": "^1.2.1",
     "uuid": "^3.3.3",
     "wait-on": "^3.3.0"
+  },
+  "devDependencies": {
+    "electron": "^7.1.2",
+    "electron-builder": "^21.2.0"
   }
 }
