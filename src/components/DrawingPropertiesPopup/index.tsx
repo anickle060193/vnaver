@@ -210,6 +210,7 @@ const DrawingPropertiesPopup: React.SFC<Props> = ( {
         styles.root,
         transparentDrawingProperties && styles.transparent,
       )}
+      elevation={8}
     >
       <Typography
         className={styles.title}
